@@ -1,0 +1,22 @@
+{
+  "name": "statisticalcalc",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "4.16.2",
+    "json-sql": "^0.4.11",
+    "pg": "^7.8.0"
+  },
+  "engines": {
+    "node": "6.8.1",
+    "npm": "3.10.8"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "Server.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "description": ""
+}
