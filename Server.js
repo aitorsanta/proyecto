@@ -17,4 +17,9 @@ app.get('/', (req, res) => {
 	res.redirect("index.html");
 });
 
+app.get('/loginApp', function(req, res) {
+	console.log("Login method");
+	controller.dispatch(urlResponseHandlers.loginApp, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
