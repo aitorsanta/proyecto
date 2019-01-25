@@ -1,4 +1,5 @@
 var url = require("url");
+const sqlite3 = require('sqlite3').verbose();
 
 
 exports.loginApp = loginApp;
@@ -19,4 +20,16 @@ function loginApp(req, res){
 	  	//PERFEKTO HELTZEN DA
 	    //email en em || Contrasenia en contr
 	    console.log(em+","+contr);
+
+	    var db = new sqlite3.Database('./proyecto/ProyectoAitor.db', (err)=>{
+	    	if(err){return console.error(err.message);}
+	    	console.log("Connected to de DB");
+
+	    	db.close();
+	    })
+
+
+
+
+
 }
