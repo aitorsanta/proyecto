@@ -33,8 +33,7 @@
 
     function login(email,contr){
         window.alert("Hementxe");
-        var url = "/loginApp?email="+email+"&?contr="+contr;
-        //EMAILA HELTZEN DA BAIE CONTRASEÑA EZ  
+        var url = "/loginApp?email="+email+"&contr="+contr;
             $.get(url, {}, function(data){
               var email = document.getElementById('email').value;
               var contr = document.getElementById('password').value;

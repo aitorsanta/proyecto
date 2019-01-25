@@ -16,6 +16,7 @@ function loginApp(req, res){
 	      }
 	    }
 	  }
+	  	//PERFEKTO HELTZEN DA
 	    //email en em || Contrasenia en contr
 	    console.log(em+","+contr);
 }
