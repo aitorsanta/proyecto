@@ -9,6 +9,7 @@ const passadmin = "root1234";
 exports.loginApp = loginApp;
 
 function loginApp(req, res){
+
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
 	    var pathname = _url.pathname;
@@ -28,23 +29,28 @@ function loginApp(req, res){
 	    //Si es el administrador de la aplicación
 	    if(em==usuadmin && contr==passadmin){
 	    	console.log("Usuario administrador");
-	    	res.write("1"); //Devolvemos un 1 si el login es satisfactorio
+	    	console.log(res.write(""+1)); //Devolvemos un 1 si el login es satisfactorio
 	    	res.end();
-	    }else{
+	    }else if(em!=usuadmin){
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}
 	    		console.log("Barruan");
-		    	//Creamos la consulta de buscar el email introducido
-		    	let sql_usu_alum = "SELECT email_a FROM alumno WHERE email_a ="+em;
-		    	
-		    	db.each(sql_usu_alum, (err, row)=>{
+		    	//Creamos la consulta de buscar el email y pass introducido
+		    	let sql_usuPass_alum = "SELECT email_a, contra_usu_a FROM alumno WHERE email_a ='"+em+"' AND contra_usu_a='"+contr+"'";
+		    
+		    	db.each(sql_usuPass_alum, (err, row)=>{
 		    		if (err){throw err;}
-		    		console.log(`$(row.email_a)`)
-		    	});	    	
+		    		db.close();
+		    		console.log("Barruan 2");
+		    		console.log(res.write(""+1)); //El usuario alumno existe en la base de datos
+		    		res.end();    		
+		    	});	
 
-		    	db.close();
+		    	//db.close();
 	    	});
 	    }
+
+	    
 
 }

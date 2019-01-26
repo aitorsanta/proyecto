@@ -36,12 +36,16 @@
             $.get(url, {}, function(data){
               var email = document.getElementById('email').value;
               var contr = document.getElementById('password').value;
-
-              if(data==1){ //Registro correcto, pasamos a la siguiente página
+              var laData = data;
+              window.alert(laData);
+              if(laData=="1"){ //Registro correcto, pasamos a la siguiente página
+                window.alert("1. data = "+data);
                 document.getElementById('email').value="";
                 document.getElementById('password').value="";
-                location.href = "index.html";
-              }else if (data==0){ //Eliminamos campos y mostramos mensaje
+                window.open(location.href = "main.html");
+                
+              }else if (laData==0){ //Eliminamos campos y mostramos mensaje
+                window.alert("0. data ="+data);
                 window.alert("ERROR. Identificación incorrecta");
                 document.getElementById('email').value="";
                 document.getElementById('password').value="";
@@ -66,7 +70,7 @@
                         <form role="form">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail" id="email" type="email" autofocus>
+                                    <input class="form-control" placeholder="E-mail" id="email" type="text" autofocus>
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Contraseña" id="password" type="password" value="">
