@@ -14,7 +14,7 @@ var app = express();
 app.use(express.static(__dirname + '/static'));
 
 app.get('/', (req, res) => {
-	res.redirect("index.html");
+	res.redirect("pages/login.html");
 });
 
 app.get('/loginApp', function(req, res) {
