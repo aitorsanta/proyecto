@@ -31,7 +31,7 @@ function loginApp(req, res){
 	    	console.log("Usuario administrador");
 	    	console.log(res.write(""+1)); //Devolvemos un 1 si el login es satisfactorio
 	    	res.end();
-	    }else if(em!=usuadmin){
+	    }else{	
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}

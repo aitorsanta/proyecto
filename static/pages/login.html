@@ -38,19 +38,22 @@
               var contr = document.getElementById('password').value;
               var laData = data;
               window.alert(laData);
+              
               if(laData=="1"){ //Registro correcto, pasamos a la siguiente página
                 window.alert("1. data = "+data);
                 document.getElementById('email').value="";
                 document.getElementById('password').value="";
-                window.open(location.href = "main.html");
-                
-              }else if (laData==0){ //Eliminamos campos y mostramos mensaje
+                //window.open(location.href = "index.html");
+                window.location.replace('http://aprenderaprogramar.com');
+
+              }else{ //Eliminamos campos y mostramos mensaje
                 window.alert("0. data ="+data);
                 window.alert("ERROR. Identificación incorrecta");
                 document.getElementById('email').value="";
                 document.getElementById('password').value="";
               }
             });
+            location.href = "index.html";
     }
 
     </script>
