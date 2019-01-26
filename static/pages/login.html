@@ -36,6 +36,16 @@
             $.get(url, {}, function(data){
               var email = document.getElementById('email').value;
               var contr = document.getElementById('password').value;
+
+              if(data==1){ //Registro correcto, pasamos a la siguiente página
+                document.getElementById('email').value="";
+                document.getElementById('password').value="";
+                location.href = "index.html";
+              }else if (data==0){ //Eliminamos campos y mostramos mensaje
+                window.alert("ERROR. Identificación incorrecta");
+                document.getElementById('email').value="";
+                document.getElementById('password').value="";
+              }
             });
     }
 
@@ -67,7 +77,7 @@
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <a href="index.html" class="btn btn-lg btn-success btn-block" onclick="login(document.getElementById('email').value,document.getElementById('password').value)">Entrar</a>
+                                <button class="btn btn-lg btn-success btn-block" onclick="login(document.getElementById('email').value,document.getElementById('password').value)">Entrar</button>
                             </fieldset>
                         </form>
                     </div>
