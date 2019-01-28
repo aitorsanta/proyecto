@@ -32,6 +32,10 @@ app.get('/introNewTeacher', function(req, res) {
 	controller.dispatch(urlResponseHandlers.introNewTeacher, req, res);
 });
 
+app.get('/introNewFamily', function(req, res) {
+	console.log("Introducing family in the DB");
+	controller.dispatch(urlResponseHandlers.introNewFamily, req, res);
+});
 
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

@@ -9,6 +9,7 @@ const passadmin = "root1234";
 exports.loginApp = loginApp;
 exports.introNewStudent = introNewStudent;
 exports.introNewTeacher = introNewTeacher;
+exports.introNewFamily = introNewFamily;
 
 function loginApp(req, res){
 	var check = 0;
@@ -156,4 +157,36 @@ function introNewTeacher(req,res){
 	    //Parametros
 	    	console.log(perfil+","+nombre+","+apellido1+","+apellido2+","+fechaNacimiento+","+dni+","+email+","+telf);
 	    
+}
+
+function introNewFamily(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        perfil = _url.query.perfil;
+	        nombre = _url.query.nombre;
+	        apellido1 = _url.query.apellido1;
+	        apellido2 = _url.query.apellido2;
+	        fechaNacimiento = _url.query.fechaNacimiento;
+	        dni = _url.query.dni;
+	        email = _url.query.email;
+	        telf = _url.query.telf1;
+
+	        nombre2 = _url.query.nombre2;
+	        apellido12 = _url.query.apellido12;
+	        apellido22 = _url.query.apellido22;
+	        fechaNacimiento2 = _url.query.fechaNacimiento2;
+	        dni2 = _url.query.dni2;
+	        email2 = _url.query.email2;
+	        telf2 = _url.query.telf2;
+	      } catch (e) {
+	      }
+	    }
+	  }
+	    //Parametros
+	    	console.log("TL1 "+perfil+","+nombre+","+apellido1+","+apellido2+","+fechaNacimiento+","+dni+","+email+","+telf);
+	    	console.log("TL2 "+perfil+","+nombre2+","+apellido12+","+apellido22+","+fechaNacimiento2+","+dni2+","+email2+","+telf2);
 }
