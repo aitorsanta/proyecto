@@ -20,8 +20,8 @@ function loginApp(req, res){
 	    var mail = 0;
 	    if(_url.query) {
 	      try {
-	        em = _url.query.email;
-	        contr = _url.query.contr;
+	        em = _url.query.email; //Email introducido por el usuario
+	        contr = _url.query.contr; //Contraseña introducida por el usuario
 	      } catch (e) {
 	      }
 	    }
@@ -90,11 +90,10 @@ function loginApp(req, res){
 
 		    	if(check != 1){
 			    	//Creamos la consulta de buscar el email y pass introducido FAMILIA
-			    	let sql_usuPass_fam = "SELECT email_TL2, contr_usu_TL2 FROM familia WHERE email_TL2 ='"+em+"' AND contr_usu_TL2='"+contr+"'";
-			    
-			    	db.each(sql_usuPass_fam, (err, row)=>{
+			    	let sql_usuPass_fam2 = "SELECT email_TL2, contr_usu_TL2 FROM familia WHERE email_TL2 ='"+em+"' AND contr_usu_TL2='"+contr+"'";
+			    	
+			    	db.each(sql_usuPass_fam2, (err, row)=>{
 			    		if (err){throw err;}
-			    		db.close();
 			    		console.log("TL2");
 			    		console.log(res.write(""+4)); //El usuario TL existe en la base de datos
 			    		res.end();   
@@ -106,7 +105,7 @@ function loginApp(req, res){
 		    		res.write(""+0);
 		    	}
 
-		    	//db.close();
+		    	db.close();
 	    	});
 	    	
 	    }
