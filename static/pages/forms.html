@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>Sande</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -29,7 +29,120 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script type="text/javascript">
 
+    function saveData(){
+        var okey=1;
+        var perfil = document.getElementById("perfil").value;
+        var nombre = document.getElementById("nombre").value;
+        var apellido1 = document.getElementById("apellido1").value;
+        var apellido2 = document.getElementById("apellido2").value;
+        var anyo = document.getElementById("anyo").value;
+        var mes = document.getElementById("mes").value;
+        var dia = document.getElementById("dia").value;
+        var fechaNacimiento = anyo +""+mes+""+dia;
+        var dni = document.getElementById("dni").value;
+        var email = document.getElementById("email").value;
+        var telf=1; //Inicializamos este valor para que no influya cuando metemos un alumno
+
+        if(perfil == "Docente"){
+                telf = document.getElementById("tel2").value;   
+        }
+
+        
+        //COMPROBACIONES
+        //Campo en blanco
+        if (nombre == "" || apellido1 == "" || apellido2 == "" || anyo == "" || mes == "" || dia == "" || dni =="" || email == ""||telf=="") {
+            window.alert("Campos en blanco");
+        }else{
+            //Fecha
+            var f = new Date();
+            if(0 >= anyo || anyo > f.getFullYear()){
+                window.alert("Año incorrecto");
+                document.getElementById("anyo").value="";
+                okey=0;
+            }
+            if(0 >= mes || mes > 12){
+                window.alert("Mes incorrecto");
+                document.getElementById("mes").value="";
+                okey=0;
+            }
+            if (0 >= dia || dia > 31) {
+                window.alert("Día incorrecto");
+                document.getElementById("dia").value="";
+                okey=0;
+            }
+            //DNI
+            //Para coger la letra: dni.substring(8,9)
+            var letr = /^[A-Za-z\_\-\.\s\xF1\xD1]+$/;
+
+            if(0 >= dni || dni > 99999999 || !letr.test(dni.substring(8,9))){
+                window.alert("DNI incorrecto");
+                document.getElementById("dni").value="";
+                okey=0;
+            }
+
+            //EMAIL
+            if (/^\w+([\.\+\-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email) == false) {
+                window.alert("email incorrecto");
+                document.getElementById("email").value="";
+                okey=0;
+            }
+            //TELEFONO
+            if(perfil == "Docente"){
+                if(100000000>= telf || telf > 999999999){
+                   window.alert("Teléfono incorrecto");
+                    document.getElementById("tel2").value="";
+                    okey=0; 
+                }
+            }
+
+
+            if(okey==1){
+                if(perfil == "Alumno"){
+                    var url = "/introNewStudent?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email;      
+                    $.get(url, {}, function(data){
+                      
+                    });    
+                }else if(perfil == "Docente"){
+                    var url = "/introNewTeacher?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&telf="+telf;      
+                    $.get(url, {}, function(data){
+                      
+                    });    
+                }
+                
+
+                enBlanco();
+            }
+        }
+        
+    }
+    function enBlanco(){
+        document.getElementById("perfil").value="";
+        document.getElementById("nombre").value="";
+        document.getElementById("apellido1").value="";
+        document.getElementById("apellido2").value="";
+        document.getElementById("anyo").value="";
+        document.getElementById("mes").value="";
+        document.getElementById("dia").value="";
+        document.getElementById("dni").value="";
+        document.getElementById("email").value="";
+    }
+
+    function Visible(){
+        var perfil = document.getElementById("perfil").value;
+
+        if(perfil == "Docente"){
+            document.getElementById('tel1').style.visibility = "visible"; 
+            document.getElementById('tel2').style.visibility = "visible";     
+        }else if(perfil == "Alumno"){
+            document.getElementById('tel1').style.visibility = "hidden"; 
+            document.getElementById('tel2').style.visibility = "hidden";     
+        }
+        
+    }
+    
+    </script>
 </head>
 
 <body>
@@ -45,7 +158,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+                <a class="navbar-brand" href="index.html">Sande</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -274,7 +387,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
@@ -370,7 +483,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Forms</h1>
+                    <h1 class="page-header">Nuevo usuario</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -381,7 +494,64 @@
                         <div class="panel-heading">
                             Basic Form Elements
                         </div>
+                        <div>
                         <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <form role="form">
+                                        <div class="form-group">
+                                            <label>Tipo de perfil</label>
+                                            <select class="form-control" id="perfil" onchange="Visible();">
+                                                <option>Alumno</option>
+                                                <option>Docente</option>
+                                                <option>Familia</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nombre</label>
+                                            <input class="form-control" id="nombre">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Primer apellido</label>
+                                            <input class="form-control" id="apellido1">
+                                        </div>
+                                        <div class="form-group"> 
+                                            <label>Segundo apellido</label>
+                                            <input class="form-control" id="apellido2">
+                                        </div>
+                                        <label>Fecha de nacimiento</label>
+                                        <div class="form-group" style="float:left;">
+                                            <div class="col-lg-3">
+                                                <input class="form-control" placeholder="Año" id="anyo">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" placeholder="Mes" id="mes">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" placeholder="Día" id="dia">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>DNI</label>
+                                            <input class="form-control" placeholder="Ej.: 12345678A" id="dni">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input class="form-control" id="email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label id="tel1" style="visibility:hidden">Teléfono</label>
+                                            <input id="tel2" class="form-control" style="visibility:hidden">
+                                        </div>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <form role="form">
@@ -489,9 +659,9 @@
                                         <button type="submit" class="btn btn-default">Submit Button</button>
                                         <button type="reset" class="btn btn-default">Reset Button</button>
                                     </form>
-                                </div>
+                                </div> -->
                                 <!-- /.col-lg-6 (nested) -->
-                                <div class="col-lg-6">
+                            <!--    <div class="col-lg-6">
                                     <h1>Disabled Form States</h1>
                                     <form role="form">
                                         <fieldset disabled>
@@ -558,9 +728,12 @@
                                     </form>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
+                            </form>
+                                <button type="submit" class="btn btn-guardar" onclick="saveData()">Guardar</button>
+                                <!--<button type="reset" class="btn btn-default">Reset Button</button> -->
                             </div>
                             <!-- /.row (nested) -->
-                        </div>
+                        </div> 
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->

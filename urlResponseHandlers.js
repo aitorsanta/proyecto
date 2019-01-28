@@ -7,6 +7,8 @@ const passadmin = "root1234";
 
 
 exports.loginApp = loginApp;
+exports.introNewStudent = introNewStudent;
+exports.introNewTeacher = introNewTeacher;
 
 function loginApp(req, res){
 	var check = 0;
@@ -23,9 +25,6 @@ function loginApp(req, res){
 	      }
 	    }
 	  }
-	  	//PERFEKTO HELTZEN DA
-	    //email en em || Contrasenia en contr
-	    console.log(em+","+contr);
 	    /*
 		Index de números
 		1 - Administrador
@@ -110,4 +109,51 @@ function loginApp(req, res){
 	    	});
 	    	
 	    }
+}
+
+function introNewStudent(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        perfil = _url.query.perfil;
+	        nombre = _url.query.nombre;
+	        apellido1 = _url.query.apellido1;
+	        apellido2 = _url.query.apellido2;
+	        fechaNacimiento = _url.query.fechaNacimiento;
+	        dni = _url.query.dni;
+	        email = _url.query.email;
+	      } catch (e) {
+	      }
+	    }
+	  }
+	    //Parametros
+	    	console.log(perfil+","+nombre+","+apellido1+","+apellido2+","+fechaNacimiento+","+dni+","+email);
+	    
+}
+
+function introNewTeacher(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        perfil = _url.query.perfil;
+	        nombre = _url.query.nombre;
+	        apellido1 = _url.query.apellido1;
+	        apellido2 = _url.query.apellido2;
+	        fechaNacimiento = _url.query.fechaNacimiento;
+	        dni = _url.query.dni;
+	        email = _url.query.email;
+	        telf = _url.query.telf;
+	      } catch (e) {
+	      }
+	    }
+	  }
+	    //Parametros
+	    	console.log(perfil+","+nombre+","+apellido1+","+apellido2+","+fechaNacimiento+","+dni+","+email+","+telf);
+	    
 }

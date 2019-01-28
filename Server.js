@@ -22,4 +22,16 @@ app.get('/loginApp', function(req, res) {
 	controller.dispatch(urlResponseHandlers.loginApp, req, res);
 });
 
+app.get('/introNewStudent', function(req, res) {
+	console.log("Introducing student in the DB");
+	controller.dispatch(urlResponseHandlers.introNewStudent, req, res);
+});
+
+app.get('/introNewTeacher', function(req, res) {
+	console.log("Introducing teacher in the DB");
+	controller.dispatch(urlResponseHandlers.introNewTeacher, req, res);
+});
+
+
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
