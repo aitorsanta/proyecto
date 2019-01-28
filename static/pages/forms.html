@@ -54,11 +54,20 @@
         var dni2 = "a";
         var email2 = "a";
         var telf2 = 1;
+        var calle = "a";
+        var portal = 1;
+        var piso = 1;
+        var mano = "a";
+        var cp = 1;
+        var ciudad = "a";
+        var mun = "a";
+        var pais = "a";
 
         if(perfil == "Docente"){
                 telf1 = document.getElementById("tel2").value;   
         }
         if(perfil == "Familia"){
+            telf1 = document.getElementById("tel2").value;   
             nombre2 = document.getElementById("nombre2").value;
             apellido12 = document.getElementById("apellido12").value;
             apellido22 = document.getElementById("apellido22").value;
@@ -68,13 +77,21 @@
             fechaNacimiento2 = anyo2 +""+mes2+""+dia2;
             dni2 = document.getElementById("dni2").value;
             email2 = document.getElementById("email2").value;
-            telf2 = document.getElementById("tel4").value;   
+            telf2 = document.getElementById("tel4").value;
+            calle = document.getElementById("calle2").value;
+            portal = document.getElementById("portal2").value;
+            piso = document.getElementById("piso2").value;
+            mano = document.getElementById("mano2").value;
+            cp = document.getElementById("cp2").value;
+            ciudad = document.getElementById("ciudad2").value;
+            mun = document.getElementById("mun2").value;
+            pais = document.getElementById("pais2").value;
         }
 
         
         //COMPROBACIONES
         //Campo en blanco
-        if (nombre == "" || apellido1 == "" || apellido2 == "" || anyo == "" || mes == "" || dia == "" || dni =="" || email == ""||telf1 == "" || nombre2 == "" || apellido12 == "" || apellido22 == "" || anyo2 == "" || mes2 == "" || dia2 == "" || dni2 =="" || email2 == ""||telf2 == "") {
+        if (nombre == "" || apellido1 == "" || apellido2 == "" || anyo == "" || mes == "" || dia == "" || dni =="" || email == ""||telf1 == "" || nombre2 == "" || apellido12 == "" || apellido22 == "" || anyo2 == "" || mes2 == "" || dia2 == "" || dni2 =="" || email2 == ""|| telf2 == "" || calle == "" || portal == "" ||piso == "" || mano == "" || cp == "" || ciudad == "" || mun == "" || pais == "") {
             window.alert("Campos en blanco");
         }else{
             //Fecha
@@ -161,6 +178,7 @@
 
 
             if(okey==1){
+                //ENVIAMOS LOS DATOS AL URLRESPONSEHANDLER
                 if(perfil == "Alumno"){
                     var url = "/introNewStudent?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email;      
                     $.get(url, {}, function(data){
@@ -172,7 +190,7 @@
                       
                     });    
                 }else if(perfil == "Familia"){
-                    var url = "/introNewFamily?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&telf1="+telf1+"&nombre2="+nombre2+"&apellido12="+apellido12+"&apellido22="+apellido22+"&fechaNacimiento2="+fechaNacimiento2+"&dni2="+dni2+"&email2="+email2+"&telf2="+telf2;      
+                    var url = "/introNewFamily?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&telf1="+telf1+"&nombre2="+nombre2+"&apellido12="+apellido12+"&apellido22="+apellido22+"&fechaNacimiento2="+fechaNacimiento2+"&dni2="+dni2+"&email2="+email2+"&telf2="+telf2+"&calle="+calle+"&portal="+portal+"&piso="+piso+"&mano="+mano+"&cp="+cp+"&ciudad="+ciudad+"&mun="+mun+"&pais="+pais;      
                     $.get(url, {}, function(data){
                       
                     });
@@ -195,6 +213,10 @@
         document.getElementById("dni").value="";
         document.getElementById("email").value="";
         document.getElementById("tel2").value="";
+        document.getElementById("calle2").value="";
+        document.getElementById("portal2").value="";
+        document.getElementById("piso2").value="";
+        document.getElementById("mano2").value="";
 
         document.getElementById("nombre2").value="";
         document.getElementById("apellido12").value="";
@@ -205,6 +227,10 @@
         document.getElementById("dni2").value="";
         document.getElementById("email2").value="";
         document.getElementById("tel4").value="";
+        document.getElementById("cp2").value="";
+        document.getElementById("ciudad2").value="";
+        document.getElementById("mun2").value="";
+        document.getElementById("pais2").value="";
     }
 
     function Visible(){
@@ -215,19 +241,76 @@
             document.getElementById('tel1').style.visibility = "visible"; 
             document.getElementById('tel2').style.visibility = "visible";  
             document.getElementById('tel3').style.visibility = "hidden"; 
-            document.getElementById('tel4').style.visibility = "hidden";    
+            document.getElementById('tel4').style.visibility = "hidden";
+            document.getElementById('lugar').style.visibility = "hidden";     
+            document.getElementById('calle1').style.visibility = "hidden";     
+            document.getElementById('calle2').style.visibility = "hidden";
+            document.getElementById('portal1').style.visibility = "hidden";
+            document.getElementById('portal2').style.visibility = "hidden";
+            document.getElementById('piso1').style.visibility = "hidden";
+            document.getElementById('piso2').style.visibility = "hidden";
+            document.getElementById('mano1').style.visibility = "hidden";
+            document.getElementById('mano2').style.visibility = "hidden";  
+            document.getElementById('linea').style.visibility = "hidden";  
+            document.getElementById('linea2').style.visibility = "hidden";  
+            document.getElementById('cp1').style.visibility = "hidden";
+            document.getElementById('cp2').style.visibility = "hidden";
+            document.getElementById('ciudad1').style.visibility = "hidden";
+            document.getElementById('ciudad2').style.visibility = "hidden";
+            document.getElementById('mun1').style.visibility = "hidden";
+            document.getElementById('mun2').style.visibility = "hidden";
+            document.getElementById('pais1').style.visibility = "hidden";
+            document.getElementById('pais2').style.visibility = "hidden";
         }else if(perfil == "Alumno"){
             document.getElementById('familias').style.visibility = "hidden";
             document.getElementById('tel1').style.visibility = "hidden"; 
             document.getElementById('tel2').style.visibility = "hidden"; 
             document.getElementById('tel3').style.visibility = "hidden"; 
-            document.getElementById('tel4').style.visibility = "hidden";     
+            document.getElementById('tel4').style.visibility = "hidden";    
+            document.getElementById('lugar').style.visibility = "hidden";     
+            document.getElementById('calle1').style.visibility = "hidden";     
+            document.getElementById('calle2').style.visibility = "hidden";
+            document.getElementById('portal1').style.visibility = "hidden";
+            document.getElementById('portal2').style.visibility = "hidden";
+            document.getElementById('piso1').style.visibility = "hidden";
+            document.getElementById('piso2').style.visibility = "hidden";
+            document.getElementById('mano1').style.visibility = "hidden";
+            document.getElementById('mano2').style.visibility = "hidden";
+            document.getElementById('linea').style.visibility = "hidden"; 
+            document.getElementById('linea2').style.visibility = "hidden";
+            document.getElementById('cp1').style.visibility = "hidden";
+            document.getElementById('cp2').style.visibility = "hidden";
+            document.getElementById('ciudad1').style.visibility = "hidden";
+            document.getElementById('ciudad2').style.visibility = "hidden";
+            document.getElementById('mun1').style.visibility = "hidden";
+            document.getElementById('mun2').style.visibility = "hidden";
+            document.getElementById('pais1').style.visibility = "hidden";
+            document.getElementById('pais2').style.visibility = "hidden";  
         }else if(perfil == "Familia"){
             document.getElementById('familias').style.visibility = "visible";
             document.getElementById('tel1').style.visibility = "visible"; 
             document.getElementById('tel2').style.visibility = "visible";     
             document.getElementById('tel3').style.visibility = "visible"; 
-            document.getElementById('tel4').style.visibility = "visible";     
+            document.getElementById('tel4').style.visibility = "visible";
+            document.getElementById('lugar').style.visibility = "visible";     
+            document.getElementById('calle1').style.visibility = "visible";     
+            document.getElementById('calle2').style.visibility = "visible";
+            document.getElementById('portal1').style.visibility = "visible";
+            document.getElementById('portal2').style.visibility = "visible";
+            document.getElementById('piso1').style.visibility = "visible";
+            document.getElementById('piso2').style.visibility = "visible";
+            document.getElementById('mano1').style.visibility = "visible";
+            document.getElementById('mano2').style.visibility = "visible";
+            document.getElementById('linea').style.visibility = "visible";
+            document.getElementById('linea2').style.visibility = "visible";
+            document.getElementById('cp1').style.visibility = "visible";
+            document.getElementById('cp2').style.visibility = "visible";
+            document.getElementById('ciudad1').style.visibility = "visible";
+            document.getElementById('ciudad2').style.visibility = "visible";
+            document.getElementById('mun1').style.visibility = "visible";
+            document.getElementById('mun2').style.visibility = "visible";
+            document.getElementById('pais1').style.visibility = "visible";
+            document.getElementById('pais2').style.visibility = "visible";
         }
         
     }
@@ -598,18 +681,18 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Nombre</label>
+                                            <label>Nombre:</label>
                                             <input class="form-control" id="nombre">
                                         </div>
                                         <div class="form-group">
-                                            <label>Primer apellido</label>
+                                            <label>Primer apellido:</label>
                                             <input class="form-control" id="apellido1">
                                         </div>
                                         <div class="form-group"> 
-                                            <label>Segundo apellido</label>
+                                            <label>Segundo apellido:</label>
                                             <input class="form-control" id="apellido2">
                                         </div>
-                                        <label>Fecha de nacimiento</label>
+                                        <label>Fecha de nacimiento:</label>
                                         <div class="form-group" style="float:left;">
                                             <div class="col-lg-3">
                                                 <input class="form-control" placeholder="Año" id="anyo">
@@ -625,16 +708,41 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label>DNI</label>
+                                            <label>DNI:</label>
                                             <input class="form-control" placeholder="Ej.: 12345678A" id="dni">
                                         </div>
                                         <div class="form-group">
-                                            <label>Email</label>
+                                            <label>Email:</label>
                                             <input class="form-control" id="email">
                                         </div>
                                         <div class="form-group">
-                                            <label id="tel1" style="visibility:hidden">Teléfono</label>
+                                            <label id="tel1" style="visibility:hidden">Teléfono:</label>
                                             <input id="tel2" class="form-control" style="visibility:hidden">
+                                        </div>
+                                        <div id="linea" style="visibility:hidden">
+                                            <hr align="center"></hr>
+                                        </div>  
+                                        <label id="lugar" style="visibility:hidden">Lugar de residencia:</label>
+                                        <div class="form-group">
+                                            <label id="calle1" style="visibility:hidden">Calle:</label>
+                                            <input id="calle2" class="form-control" style="visibility:hidden">
+                                        </div>
+                                        <div class="form-group" style="float:left;">
+                                            <div class="col-lg-3">
+                                                <label id="portal1" style="visibility:hidden">Portal:</label>
+                                                <input class="form-control" placeholder="Portal" id="portal2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label id="piso1" style="visibility:hidden">Piso:</label>
+                                                <input class="form-control" placeholder="Piso" id="piso2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label id="mano1" style="visibility:hidden">Mano:</label>
+                                                <input class="form-control" placeholder="Mano" id="mano2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -686,6 +794,33 @@
                                             <label id="tel3" style="visibility:hidden">Teléfono (2)</label>
                                             <input id="tel4" class="form-control" style="visibility:hidden">
                                         </div>
+                                        <div id="linea2" style="visibility:hidden">
+                                            <hr align="center"></hr>
+                                        </div> 
+                                        <div class="form-group" style="float:left;">
+                                            <div class="col-lg-3">
+                                                <label id="cp1" style="visibility:hidden">C.P.:</label>
+                                                <input class="form-control" placeholder="C.P." id="cp2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label id="ciudad1" style="visibility:hidden">Ciudad:</label>
+                                                <input class="form-control" placeholder="Ciudad" id="ciudad2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </div> 
+                                        <div class="form-group" style="float:left;">
+                                            <div class="col-lg-3">
+                                                <label id="mun1" style="visibility:hidden">Municipio:</label>
+                                                <input class="form-control" placeholder="Municipio" id="mun2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label id="pais1" style="visibility:hidden">País:</label>
+                                                <input class="form-control" placeholder="País" id="pais2" style="visibility:hidden">
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </div> 
                                     </form>
                                 </div>
                             </div>
