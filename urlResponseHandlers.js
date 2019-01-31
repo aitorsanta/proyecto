@@ -248,8 +248,7 @@ function introNewFamily(req,res){
 
 		//Creamos la consulta de insertar el nuevo TL1
 		let query_insert_fam = "INSERT INTO familia (nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, telefono_TL1, DNI_TL1, contr_usu_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, DNI_TL2, contr_usu_TL2, calle, portal, piso, mano, ciudad, cp, municipio, pais) VALUES ('"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"',"+telf+",'"+dni+"','"+con1+"','"+nombre2+"','"+apellido12+"','"+apellido22+"',"+fechaNacimiento2+",'"+email2+"',"+telf2+",'"+dni2+"','"+con2+"','"+calle+"',"+portal+","+piso+",'"+mano+"','"+ciudad+"',"+cp+",'"+mun+"','"+pais+"')";	
-		//let query_insert_tl2 = "INSERT INTO familia (nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, DNI_TL2, contr_usu_TL2) VALUES ('"+nombre2+"','"+apellido12+"','"+apellido22+"',"+fechaNacimiento2+",'"+email2+"',"+telf2+",'"+dni2+"','"+con2+"')";	
-		//let query_insert_viv = "INSERT INTO familia (calle, portal, piso, mano, ciudad, cp, municipio, pais) VALUES ('"+calle+"',"+portal+","+piso+",'"+mano+"','"+ciudad+"',"+cp+",'"+mun+"','"+pais+"')";	
+		
 
 		db.run(query_insert_fam, (err, row)=>{
 			if (err){throw err;}
@@ -259,4 +258,10 @@ function introNewFamily(req,res){
 	  	db.close();
 	});
 	    	
+}
+
+function changePass(pass){
+	//var pass = ""+fecha+nombre.substring(0,1);
+
+
 }
