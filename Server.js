@@ -37,5 +37,10 @@ app.get('/introNewFamily', function(req, res) {
 	controller.dispatch(urlResponseHandlers.introNewFamily, req, res);
 });
 
+app.get('/changePassword', function(req, res) {
+	console.log("Changing password");
+	controller.dispatch(urlResponseHandlers.changePassword, req, res);
+});
+
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

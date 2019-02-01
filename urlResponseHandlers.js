@@ -4,12 +4,15 @@ const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoAitor.db')
 const usuadmin = "admin";
 const passadmin = "root1234";
+var dniSave = ""; //Guardamos el dni aquí
+var people = ""; //Variable que registra de qué tipo ha sido la última inserción
 
 
 exports.loginApp = loginApp;
 exports.introNewStudent = introNewStudent;
 exports.introNewTeacher = introNewTeacher;
 exports.introNewFamily = introNewFamily;
+exports.changePassword = changePassword;
 
 function loginApp(req, res){
 	var check = 0;
@@ -44,16 +47,18 @@ function loginApp(req, res){
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}
-	    		console.log("Entrando en la Base de Datos "+ dbPath);
 		    	
 		    	//Creamos la consulta de buscar el email y pass introducido ALUMNO
 		    	let sql_usuPass_alum = "SELECT email_a, contra_usu_a FROM alumno WHERE email_a ='"+em+"' AND contra_usu_a='"+contr+"'";
 		    
 		    	db.each(sql_usuPass_alum, (err, row)=>{
 		    		if (err){throw err;}
-		    		db.close();
+		    		//db.close();
 		    		console.log("Alumno");
 		    		console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
+		    		console.log("1. "+dniSave);
+		    		getDNI(em, "alumno");
+		    		console.log("2. "+dniSave);
 		    		res.end(); 
 		    		check = 1;   		
 		    	});	
@@ -64,9 +69,10 @@ function loginApp(req, res){
 			    
 			    	db.each(sql_usuPass_doc, (err, row)=>{
 			    		if (err){throw err;}
-			    		db.close();
+			    		//db.close();
 			    		console.log("Docente");
 			    		console.log(res.write(""+3)); //El usuario docente existe en la base de datos
+			    		var elDNI = getDNI(em, "docente");
 			    		res.end();   
 			    		check = 1; 		
 			    	});	
@@ -79,7 +85,7 @@ function loginApp(req, res){
 			    
 			    	db.each(sql_usuPass_fam, (err, row)=>{
 			    		if (err){throw err;}
-			    		db.close();
+			    		//db.close();
 			    		console.log("TL1");
 			    		console.log(res.write(""+4)); //El usuario TL existe en la base de datos
 			    		res.end();   
@@ -105,7 +111,7 @@ function loginApp(req, res){
 		    		res.write(""+0);
 		    	}
 
-		    	db.close();
+		    	//db.close();
 	    	});
 	    	
 	    }
@@ -113,7 +119,43 @@ function loginApp(req, res){
 
 function generatePass(fecha, nombre){
 	var pass = ""+fecha+nombre.substring(0,1);
+	oldPass = pass;
 	return pass;
+}
+
+function getDNI(email,type){
+	var dniLocal = "";
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+	    if(err){return console.error(err.message);}
+
+	if(type=="alumno"){
+	console.log("Soy un alumno");
+	let sql_DNI = "SELECT DNI_a FROM alumno WHERE email_a ='"+email+"'";
+			    
+		db.each(sql_DNI, (err, row)=>{
+			if (err){throw err;}
+				console.log("Soy un alumno 2");
+				dniLocal = row;	
+				dniSave = dniLocal;
+	    });
+	}else if(type=="docente"){
+	console.log("Soy un profesor");
+	let sql_DNI = "SELECT DNI_d FROM docente WHERE email_d ='"+email+"'";
+			    
+		db.each(sql_DNI, (err, row)=>{
+			if (err){throw err;}
+				dniLocal = row;	
+				dniSave = dniLocal;
+	    })
+	}/*else if(){
+
+	}*/
+		//db.close();
+	});
+	dniSave = dniLocal;
+	console.log("El DNI es: "+dniLocal);
+	return dniLocal;
 }
 
 function introNewStudent(req,res){
@@ -147,10 +189,12 @@ function introNewStudent(req,res){
 		
 		db.run(query_insert_alumno, (err, row)=>{
 			if (err){throw err;}
-			console.log("Usuario "+nombre+" insertado correctamente.");		    		
+			console.log("Usuario "+nombre+" insertado correctamente.");		
+			people="alumno";    		
+			dniSave = dni;
 	  	});	
 
-	  	db.close();
+	  	//db.close();
 	});
 	    
 }
@@ -187,10 +231,12 @@ function introNewTeacher(req,res){
 		
 		db.run(query_insert_docente, (err, row)=>{
 			if (err){throw err;}
-			console.log("Usuario "+nombre+" insertado correctamente.");		    		
+			console.log("Usuario "+nombre+" insertado correctamente.");		
+			people="docente";    		
+			dniSave = dni;
 	  	});	
 
-	  	db.close();
+	  	//db.close();
 	});
 }
 
@@ -252,16 +298,53 @@ function introNewFamily(req,res){
 
 		db.run(query_insert_fam, (err, row)=>{
 			if (err){throw err;}
-			console.log("Usuarios "+nombre+", "+nombre2+" insertados correctamente.");		    		
+			console.log("Usuarios "+nombre+", "+nombre2+" insertados correctamente.");	
+
 	  	});	
 
-	  	db.close();
+	  	//db.close();
 	});
 	    	
 }
 
-function changePass(pass){
+function changePassword(req, res){
 	//var pass = ""+fecha+nombre.substring(0,1);
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        pass = _url.query.pass;
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	  console.log("Esta es la nueva contrasenia: "+pass);
+	  
+	if(people=="alumno"){
+		console.log("estoy dentro 41");
+		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+pass+"' WHERE DNI_a ='"+dniSave+"'";
+	    	db.run(sql_usuPass_doc, (err, row)=>{
+	    		if (err){throw err;}
+	    		console.log("Barruen");
+	    		//db.close();
+	    	});	
+	}else if(people=="docente"){
+		let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+pass+"' WHERE DNI_d ='"+dniSave+"'";
+	    	db.run(sql_usuPass_doc, (err, row)=>{
+	    		if (err){throw err;}
+	    		console.log("Barruen docente");
+	    		//db.close();
+	    	});	
+	}else{
+		console.log(people);
+	}
+	
+
+
+
 
 
 }
