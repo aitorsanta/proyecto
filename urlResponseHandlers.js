@@ -1,7 +1,7 @@
 var url = require("url");
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
-const dbPath = path.resolve(__dirname, 'ProyectoAitor.db')
+const dbPath = path.resolve(__dirname, 'ProyectoAitor.db') //Path de la base de datos
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -56,9 +56,8 @@ function loginApp(req, res){
 		    		//db.close();
 		    		console.log("Alumno");
 		    		console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
-		    		console.log("1. "+dniSave);
-		    		getDNI(em, "alumno");
-		    		console.log("2. "+dniSave);
+		    		dniSave = getDNI(em, "alumno");
+		    		people="alumno";
 		    		res.end(); 
 		    		check = 1;   		
 		    	});	
@@ -72,7 +71,8 @@ function loginApp(req, res){
 			    		//db.close();
 			    		console.log("Docente");
 			    		console.log(res.write(""+3)); //El usuario docente existe en la base de datos
-			    		var elDNI = getDNI(em, "docente");
+			    		dniSave = getDNI(em, "docente");
+			    		people="docente";
 			    		res.end();   
 			    		check = 1; 		
 			    	});	
@@ -130,31 +130,29 @@ function getDNI(email,type){
 	    if(err){return console.error(err.message);}
 
 	if(type=="alumno"){
-	console.log("Soy un alumno");
 	let sql_DNI = "SELECT DNI_a FROM alumno WHERE email_a ='"+email+"'";
 			    
 		db.each(sql_DNI, (err, row)=>{
 			if (err){throw err;}
-				console.log("Soy un alumno 2");
 				dniLocal = row;	
 				dniSave = dniLocal;
+				return dniSave;
 	    });
 	}else if(type=="docente"){
-	console.log("Soy un profesor");
 	let sql_DNI = "SELECT DNI_d FROM docente WHERE email_d ='"+email+"'";
 			    
 		db.each(sql_DNI, (err, row)=>{
 			if (err){throw err;}
 				dniLocal = row;	
 				dniSave = dniLocal;
-	    })
+				return dniSave;
+	    });
 	}/*else if(){
 
 	}*/
 		//db.close();
 	});
 	dniSave = dniLocal;
-	console.log("El DNI es: "+dniLocal);
 	return dniLocal;
 }
 
@@ -308,7 +306,8 @@ function introNewFamily(req,res){
 }
 
 function changePassword(req, res){
-	//var pass = ""+fecha+nombre.substring(0,1);
+	var elDNI="";
+	
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
 	    var pathname = _url.pathname;
@@ -321,23 +320,31 @@ function changePassword(req, res){
 	    }
 	  }
 
-	  console.log("Esta es la nueva contrasenia: "+pass);
-	  
+	  elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+
 	if(people=="alumno"){
-		console.log("estoy dentro 41");
-		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+pass+"' WHERE DNI_a ='"+dniSave+"'";
-	    	db.run(sql_usuPass_doc, (err, row)=>{
+		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+pass+"' WHERE DNI_a ='"+elDNI+"'";
+	    	db.run(sql_passUpdate, (err, row)=>{
 	    		if (err){throw err;}
-	    		console.log("Barruen");
+	    		console.log("Contraseña actualizada");
 	    		//db.close();
 	    	});	
+	    });
 	}else if(people=="docente"){
-		let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+pass+"' WHERE DNI_d ='"+dniSave+"'";
-	    	db.run(sql_usuPass_doc, (err, row)=>{
-	    		if (err){throw err;}
-	    		console.log("Barruen docente");
-	    		//db.close();
-	    	});	
+		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+			let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+pass+"' WHERE DNI_d ='"+elDNI+"'";
+		    	db.run(sql_passUpdate, (err, row)=>{
+		    		if (err){throw err;}
+		    		console.log("Contraseña actualizada");
+		    		//db.close();
+		    	});	
+		});
 	}else{
 		console.log(people);
 	}
