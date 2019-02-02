@@ -30,31 +30,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script type="text/javascript">
-
-    function cambiar(contr1, contr2){
-        var resul;
-        //Comprobamos que las contraseñas son iguales
-        if(contr1 != contr2){
-            window.alert("Las contraseñas no coinciden. Vuelva a introducir los valores");
-            document.getElementById('contr1').value = "";
-            document.getElementById('contr2').value = "";
-        }else{
-            //Mandamos el valor al URLResponseHandler, para que actualice la tabla correspondiente
-            var url = "/changePassword?pass="+contr1;
-            $.get(url, {}, function(data){ 
-                //var pass = document.getElementById('contr1').value;
-                window.alert(data);
-                open(location.href = data);
-            });
-        }
-        
-
-
-    }
-
-    </script>
-
 </head>
 
 <body>
@@ -299,7 +274,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
+                            <a href="indexAlum.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
@@ -373,6 +348,18 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
+                        <li class="active">
+                            <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a class="active" href="blank.html">Blank Page</a>
+                                </li>
+                                <li>
+                                    <a href="login.html">Login Page</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -382,23 +369,15 @@
 
         <!-- Page Content -->
         <div id="page-wrapper">
-            <div class="panel-heading">
-                                <h3 class="panel-title">Cambiar contraseña</h3>
-                            </div>
-                            <div class="panel-body">
-                                <form role="form">
-                                    <fieldset>
-                                        <div class="form-group">
-                                            <input class="form-control" placeholder="Nueva contraseña" id="contr1" type="password" autofocus>
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control" placeholder="Introduzca de nuevo la contraseña" id="contr2" type="password" value="">
-                                        </div>
-                                        <!-- Change this to a button or input when using this as a form -->
-                                        <button class="btn btn-lg btn-success btn-block" onclick="cambiar(document.getElementById('contr1').value,document.getElementById('contr2').value)">Confirmar</button>
-                                    </fieldset>
-                                </form>
-                            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Blank</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+            </div>
             <!-- /.container-fluid -->
         </div>
         <!-- /#page-wrapper -->

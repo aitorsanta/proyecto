@@ -30,31 +30,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script type="text/javascript">
-
-    function cambiar(contr1, contr2){
-        var resul;
-        //Comprobamos que las contraseñas son iguales
-        if(contr1 != contr2){
-            window.alert("Las contraseñas no coinciden. Vuelva a introducir los valores");
-            document.getElementById('contr1').value = "";
-            document.getElementById('contr2').value = "";
-        }else{
-            //Mandamos el valor al URLResponseHandler, para que actualice la tabla correspondiente
-            var url = "/changePassword?pass="+contr1;
-            $.get(url, {}, function(data){ 
-                //var pass = document.getElementById('contr1').value;
-                window.alert(data);
-                open(location.href = data);
-            });
-        }
-        
-
-
-    }
-
-    </script>
-
 </head>
 
 <body>
@@ -70,7 +45,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Sande</a>
+                <a class="navbar-brand" href="indexAlum.html">Sande</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -299,7 +274,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
+                            <a href="indexAlum.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
@@ -344,31 +319,16 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+                            <a href="cambiarContraseniaA.html">Cambiar contraseña</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Second Level Item</a>
+                                    <a href="blank.html">Blank Page</a>
                                 </li>
                                 <li>
-                                    <a href="#">Second Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level <span class="fa arrow"></span></a>
-                                    <ul class="nav nav-third-level">
-                                        <li>
-                                            <a href="#">Third Level Item</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Third Level Item</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Third Level Item</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Third Level Item</a>
-                                        </li>
-                                    </ul>
-                                    <!-- /.nav-third-level -->
+                                    <a href="login.html">Login Page</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -382,23 +342,19 @@
 
         <!-- Page Content -->
         <div id="page-wrapper">
-            <div class="panel-heading">
-                                <h3 class="panel-title">Cambiar contraseña</h3>
+            <div class="container-fluid">
+                <div class="row">
+                    <div >
+                    <div class="col-md-5 col-md-offset-3">
+                        <div class="alert alert-success" align="center">
+                                Contraseña actualizada correctamente.
                             </div>
-                            <div class="panel-body">
-                                <form role="form">
-                                    <fieldset>
-                                        <div class="form-group">
-                                            <input class="form-control" placeholder="Nueva contraseña" id="contr1" type="password" autofocus>
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control" placeholder="Introduzca de nuevo la contraseña" id="contr2" type="password" value="">
-                                        </div>
-                                        <!-- Change this to a button or input when using this as a form -->
-                                        <button class="btn btn-lg btn-success btn-block" onclick="cambiar(document.getElementById('contr1').value,document.getElementById('contr2').value)">Confirmar</button>
-                                    </fieldset>
-                                </form>
-                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+            </div>
             <!-- /.container-fluid -->
         </div>
         <!-- /#page-wrapper -->

@@ -307,6 +307,7 @@ function introNewFamily(req,res){
 
 function changePassword(req, res){
 	var elDNI="";
+	var resul = 0;
 	
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -331,6 +332,7 @@ function changePassword(req, res){
 	    	db.run(sql_passUpdate, (err, row)=>{
 	    		if (err){throw err;}
 	    		console.log("Contraseña actualizada");
+	    		res.write(""+"confirmarPassA.html");
 	    		//db.close();
 	    	});	
 	    });
@@ -342,6 +344,7 @@ function changePassword(req, res){
 		    	db.run(sql_passUpdate, (err, row)=>{
 		    		if (err){throw err;}
 		    		console.log("Contraseña actualizada");
+		    		res.write(""+1);
 		    		//db.close();
 		    	});	
 		});
@@ -350,7 +353,7 @@ function changePassword(req, res){
 	}
 	
 
-
+	//res.write(""+resul);
 
 
 
