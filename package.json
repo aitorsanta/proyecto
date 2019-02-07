@@ -1,7 +1,9 @@
 {
-  "name": "statisticalcalc",
+  "name": "Sande",
   "version": "0.0.1",
   "dependencies": {
+    "datatables.net": "^1.10.19",
+    "datatables.net-dt": "^1.10.19",
     "express": "4.16.2",
     "json-sql": "^0.4.11",
     "pg": "^7.8.0",
