@@ -13,6 +13,7 @@ exports.introNewStudent = introNewStudent;
 exports.introNewTeacher = introNewTeacher;
 exports.introNewFamily = introNewFamily;
 exports.changePassword = changePassword;
+exports.matriculaAlumno = matriculaAlumno;
 
 function loginApp(req, res){
 	var check = 0;
@@ -351,10 +352,24 @@ function changePassword(req, res){
 	}else{
 		console.log(people);
 	}
-	
 
-	//res.write(""+resul);
+}
 
+function matriculaAlumno(req, res){
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta de buscar el email y pass introducido ALUMNO
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a FROM alumno";
+    
+    	db.all(sql_alumnos, (err, rows)=>{
+    		if (err){throw err;}
 
-
+    		rows.forEach((row) => {
+    			res.write("[\""+row.nombre_a+"\",\""+row.apellido1_a+"\",\""+row.apellido2_a+"\",\""+row.fecha_nac_a+"\"],");
+  			});
+    		
+    		res.end();
+    	});
+	}); 	
 }

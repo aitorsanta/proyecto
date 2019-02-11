@@ -42,5 +42,9 @@ app.get('/changePassword', function(req, res) {
 	controller.dispatch(urlResponseHandlers.changePassword, req, res);
 });
 
+app.get('/matriculaAlumno', function(req, res) {
+	console.log("Obteniendo datos de los alumnos de la BD");
+	controller.dispatch(urlResponseHandlers.matriculaAlumno, req, res);
+});
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

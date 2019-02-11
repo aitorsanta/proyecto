@@ -45,9 +45,9 @@
 
     $(function(){
     $("#tablaUsuarios").dataTable({
+
       "aaData":[
         ["Aitor", "Santamaria", "Zuluaga", "19970428", "DB3C"],
-    ["Mikel", "Santamaria", "Zuluaga", "19990326", "DB1A"],
     ["Ekain", "Basterretxea", "Zabala", "19981122", "DB2B"],
     ["Borja", "Romero", "Landeta", "19940310", "BT2C"],
     ["Unai", "Garcia", "Romera", "20000823", "LH06E"],
@@ -60,6 +60,14 @@
   }]
 });
   })
+
+    function listaAlumnos(){
+    //Tenemos que hacer llegar la data desde la base de datos
+    var url = "/matriculaAlumno";
+        $.get(url, {}, function(data){
+            window.alert(data);
+        });
+    }
     </script>
 
 </head>
@@ -418,6 +426,7 @@
                                         <th>Curso</th>
                                     </tr>
                                 </thead>
+                                <button onclick="listaAlumnos()">OK</button>
                             <!--     <tbody>
                                     <tr class="odd gradeX">
                                         <td>Trident</td>
