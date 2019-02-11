@@ -44,29 +44,34 @@
     <script type="text/javascript">
 
     $(function(){
-    $("#tablaUsuarios").dataTable({
+            var url = "/matriculaAlumno";
+        $.get(url, {}, function(data){
 
-      "aaData":[
-        ["Aitor", "Santamaria", "Zuluaga", "19970428", "DB3C"],
-    ["Ekain", "Basterretxea", "Zabala", "19981122", "DB2B"],
-    ["Borja", "Romero", "Landeta", "19940310", "BT2C"],
-    ["Unai", "Garcia", "Romera", "20000823", "LH06E"],
-    ["Liher", "Arrieta", "Angulo", "20000521", "LH06E"],
-    ["Jokin", "Kortazar", "Barron", "20000811", "LH06A"]    
-      ],
-  "aoColumnDefs":[{
-        "sTitle":"Site name"
-      , "aTargets": [ "site_name" ]
-  }]
-});
+            window.alert(data);
+            
+            $("#tablaUsuarios").dataTable({
+
+              "aaData":[
+                /*["Aitor", "Santamaria", "Zuluaga", "19970428", "DB3C"],
+                ["Ekain", "Basterretxea", "Zabala", "19981122", "DB2B"],
+                ["Borja", "Romero", "Landeta", "19940310", "BT2C"],
+                ["Unai", "Garcia", "Romera", "20000823", "LH06E"],
+                ["Liher", "Arrieta", "Angulo", "20000521", "LH06E"],
+                ["Jokin", "Kortazar", "Barron", "20000811", "LH06A"]*/
+                data    
+                  ],
+              "aoColumnDefs":[{
+                    "sTitle":"Site name"
+                  , "aTargets": [ "site_name" ]
+              }]
+            });
+        });
+
+
   })
 
     function listaAlumnos(){
-    //Tenemos que hacer llegar la data desde la base de datos
-    var url = "/matriculaAlumno";
-        $.get(url, {}, function(data){
-            window.alert(data);
-        });
+    
     }
     </script>
 
@@ -423,7 +428,7 @@
                                         <th>Apellido 1</th>
                                         <th>Apellido 2</th>
                                         <th>Fecha de Nacimiento</th>
-                                        <th>Curso</th>
+                                       <!-- <th>Curso</th> -->
                                     </tr>
                                 </thead>
                                 <button onclick="listaAlumnos()">OK</button>
