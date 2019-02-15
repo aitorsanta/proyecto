@@ -46,19 +46,31 @@
     $(function(){
             var url = "/matriculaAlumno";
         $.get(url, {}, function(data){
-
             window.alert(data);
+
+            //Separamos el array recibido y lo guardamos
+            var arrayDeCadenas = data.split(",");
+            
+            window.alert(arrayDeCadenas.length);
+            var resul = [];
+            for (var i = 0; i < arrayDeCadenas.length; i++) {
+                resul.push(""+arrayDeCadenas[i]+"");
+                if(i==3 || i==7 || i==11 || i==15 || i==19 || i==23){
+                    resul.push("\n");
+                }
+            };
+            window.alert(resul);
             
             $("#tablaUsuarios").dataTable({
 
-              "aaData":[
-                /*["Aitor", "Santamaria", "Zuluaga", "19970428", "DB3C"],
-                ["Ekain", "Basterretxea", "Zabala", "19981122", "DB2B"],
-                ["Borja", "Romero", "Landeta", "19940310", "BT2C"],
-                ["Unai", "Garcia", "Romera", "20000823", "LH06E"],
-                ["Liher", "Arrieta", "Angulo", "20000521", "LH06E"],
-                ["Jokin", "Kortazar", "Barron", "20000811", "LH06A"]*/
-                data    
+              "aaData":[ resul, resul
+                /*[""+arrayDeCadenas[0]+"", ""+arrayDeCadenas[1]+"", ""+arrayDeCadenas[2]+"", ""+arrayDeCadenas[3]+"", "DB3C"],
+                [""+arrayDeCadenas[4]+"", ""+arrayDeCadenas[5]+"", ""+arrayDeCadenas[6]+"", ""+arrayDeCadenas[7]+"", "DB2B"],
+                [""+arrayDeCadenas[8]+"",""+arrayDeCadenas[9]+"",""+arrayDeCadenas[10]+"", ""+arrayDeCadenas[11]+"", "BT2C"],
+                [""+arrayDeCadenas[12]+"", ""+arrayDeCadenas[13]+"", ""+arrayDeCadenas[14]+"", ""+arrayDeCadenas[15]+"", "LH06E"],
+                [""+arrayDeCadenas[16]+"", ""+arrayDeCadenas[17]+"", ""+arrayDeCadenas[18]+"", ""+arrayDeCadenas[19]+"", "LH06E"],
+                [""+arrayDeCadenas[20]+"", ""+arrayDeCadenas[21]+"", ""+arrayDeCadenas[22]+"", ""+arrayDeCadenas[23]+"", "LH06A"]*/
+  
                   ],
               "aoColumnDefs":[{
                     "sTitle":"Site name"
@@ -70,9 +82,6 @@
 
   })
 
-    function listaAlumnos(){
-    
-    }
     </script>
 
 </head>
@@ -431,7 +440,6 @@
                                        <!-- <th>Curso</th> -->
                                     </tr>
                                 </thead>
-                                <button onclick="listaAlumnos()">OK</button>
                             <!--     <tbody>
                                     <tr class="odd gradeX">
                                         <td>Trident</td>

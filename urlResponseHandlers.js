@@ -356,7 +356,7 @@ function changePassword(req, res){
 }
 
 function matriculaAlumno(req, res){
-	var array = [];
+	arrayAlumnos = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
@@ -367,11 +367,10 @@ function matriculaAlumno(req, res){
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			//array.push("[\""+row.nombre_a+"\",\""+row.apellido1_a+"\",\""+row.apellido2_a+"\",\""+row.fecha_nac_a+"\"]");
-    			array.push("[\""+row.nombre_a+"\",\""+row.apellido1_a+"\",\""+row.apellido2_a+"\",\""+row.fecha_nac_a+"\"]");
+    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a);
   			});
-  			console.log(array);
-  			res.write(""+array);
+  			console.log(arrayAlumnos);
+  			res.write(""+arrayAlumnos);
     		res.end();
     	});
 	}); 	
