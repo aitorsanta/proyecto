@@ -47,4 +47,19 @@ app.get('/matriculaAlumno', function(req, res) {
 	controller.dispatch(urlResponseHandlers.matriculaAlumno, req, res);
 });
 
+app.get('/obtenerCursos', function(req, res) {
+	console.log("Obteniendo todos los cursos disponibles");
+	controller.dispatch(urlResponseHandlers.obtenerCursos, req, res);
+});
+
+app.get('/matriculaProfesor', function(req, res) {
+	console.log("Obteniendo todos los profesores");
+	controller.dispatch(urlResponseHandlers.matriculaProfesor, req, res);
+});
+
+app.get('/matriculaTutor', function(req, res) {
+	console.log("Obteniendo todos los profesores");
+	controller.dispatch(urlResponseHandlers.matriculaTutor, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

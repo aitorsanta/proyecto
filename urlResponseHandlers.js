@@ -14,6 +14,9 @@ exports.introNewTeacher = introNewTeacher;
 exports.introNewFamily = introNewFamily;
 exports.changePassword = changePassword;
 exports.matriculaAlumno = matriculaAlumno;
+exports.obtenerCursos = obtenerCursos;
+exports.matriculaProfesor = matriculaProfesor;
+exports.matriculaTutor = matriculaTutor;
 
 function loginApp(req, res){
 	var check = 0;
@@ -360,18 +363,83 @@ function matriculaAlumno(req, res){
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
-    	//Creamos la consulta de buscar el email y pass introducido ALUMNO
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a FROM alumno";
+    	//Creamos la consulta
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso FROM alumno";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a);
+    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.ID_curso);
   			});
   			console.log(arrayAlumnos);
   			res.write(""+arrayAlumnos);
     		res.end();
     	});
 	}); 	
+}
+
+function obtenerCursos(req, res){
+	arrayCursos = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_cursos = "SELECT ID_curso FROM curso";
+    
+    	db.all(sql_cursos, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayCursos.push(row.ID_curso);
+  			});
+    		console.log(arrayCursos);
+  			res.write(""+arrayCursos);
+    		res.end();
+    	});
+	});
+}
+
+function matriculaProfesor(req, res){
+	arrayProfesores = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_profesores = "SELECT nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d FROM docente";
+    
+    	db.all(sql_profesores, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayProfesores.push(row.nombre_d+","+row.apellido1_d+","+row.apellido2_d+","+row.fecha_nac_d+","+row.email_d);
+  			});
+  			console.log(arrayProfesores);
+  			res.write(""+arrayProfesores);
+    		res.end();
+    	});
+	});
+}
+
+function matriculaTutor(req, res){
+	arrayTutores = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_tutores = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, ID_familia FROM familia";
+    
+    	db.all(sql_tutores, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayTutores.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1+","+row.fecha_nac_TL1+","+row.email_TL1+","+row.ID_familia+","+row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2+","+row.fecha_nac_TL2+","+row.email_TL2+","+row.ID_familia);
+  			});
+  			console.log(arrayTutores);
+  			res.write(""+arrayTutores);
+    		res.end();
+    	});
+	});
 }
