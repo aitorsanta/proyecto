@@ -42,7 +42,6 @@
               if(laData=="1"){ //ADMINISTRADOR
                 document.getElementById('email').value="";
                 document.getElementById('password').value="";
-                //Funciona pero nueva ventana
                 open(location.href = "indexAdmin.html");
 
               }else if(laData=="02"){ //ALUMNO
@@ -60,11 +59,11 @@
                 document.getElementById('password').value="";
                 open(location.href = "indexFam.html");
                 
-              }else if(laData=="0"){ //Eliminamos campos y mostramos mensaje
-                window.alert("0. data ="+data);
-                window.alert("ERROR. Identificación incorrecta");
+              }else if(laData=="5"){ //Eliminamos campos y mostramos mensaje
+                window.alert("Error, usuario o contraseña incorrecta");
                 document.getElementById('email').value="";
-                document.getElementById('password').value="";
+                document.getElementById('password').value="";            
+                //document.getElementById('al1').style.visibility = "visible";
               }
             });
 
@@ -74,7 +73,7 @@
 
 </head>
 
-<body>
+<body background="/SandeBackground.jpg">
 
     <div class="container">
         <div class="row">
@@ -99,10 +98,16 @@
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
                                 <button class="btn btn-lg btn-success btn-block" onclick="login(document.getElementById('email').value,document.getElementById('password').value)">Entrar</button>
+                                <div class="panel-body">
+                        </div>
                             </fieldset>
                         </form>
                     </div>
+
                 </div>
+                    <div class="alert alert-danger" id="al1" style="visibility: hidden">
+                        Usuario o contraseña incorrecta<a href="#" class="alert-link"></a>.
+                    </div>
             </div>
         </div>
     </div>

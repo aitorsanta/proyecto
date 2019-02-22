@@ -111,8 +111,9 @@ function loginApp(req, res){
 			    	});	
 
 		    	}
-		    	if(check == 0){
-		    		res.write(""+0);
+		    	if(check != 1){
+		    		console.log(res.write(""+5));
+		    		res.end();
 		    	}
 
 		    	//db.close();
@@ -364,13 +365,13 @@ function matriculaAlumno(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso FROM alumno";
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.ID_curso);
+    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
   			});
   			console.log(arrayAlumnos);
   			res.write(""+arrayAlumnos);
