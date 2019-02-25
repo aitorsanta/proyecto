@@ -5,9 +5,10 @@
  */
 body {
   /*background-color: #f8f8f8;*/
-  background-image: url("/img/SandeBackground.jpg");
+  background-color: #82D0E3;
+  /*background-image: url("/img/SandeBackground.jpg");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover;*/
 }
 #wrapper {
   width: 100%;

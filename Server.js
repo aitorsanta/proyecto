@@ -62,4 +62,10 @@ app.get('/matriculaTutor', function(req, res) {
 	controller.dispatch(urlResponseHandlers.matriculaTutor, req, res);
 });
 
+app.get('/matriculaAlumnoSinCurso', function(req, res) {
+	console.log("Obteniendo todos los alumnos sin curso");
+	controller.dispatch(urlResponseHandlers.matriculaAlumnoSinCurso, req, res);
+});
+
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
