@@ -46,9 +46,11 @@
   <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/e-1.8.1/b-1.5.4/sl-1.2.6/datatables.min.js"></script>
   
   <script type="text/javascript">
+  var long;
+  arrayInicial = new Array();
 
     $(function(){
-            var url = "/matriculaAlumno";
+            var url = "/matriculaAlumnoSinCurso";
 
         $.get(url, {}, function(data){
             /*
@@ -63,6 +65,9 @@
 
             //Separamos el array recibido y lo guardamos
             var arrayDeCadenas = data.split(",");
+
+            arrayInicial = arrayDeCadenas;
+            long = arrayDeCadenas.length;
             
             var resul = [];
             
@@ -91,6 +96,30 @@
         });
 
   })
+
+function guardar(){
+    /*
+    Coger información de tabla
+    Comparar array actual con inicial
+    Mandarlo al server
+    Actualizar información de la BD
+    */
+
+    arrayActualizado = new Array();
+    var a="";
+
+    for (var i = 0; i < long; i++) { 
+        //Volcamos información actual en el array
+        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+
+    };
+
+    var url = "/actualizarMatricula?arrayActualizado="+arrayActualizado;
+    $.get(url, {}, function(data){
+        window.alert("HECHO");
+    });
+
+}
 
 function prueba(){
     var url = "/matriculaAlumnoSinCurso";
@@ -452,7 +481,7 @@ function prueba(){
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <table id="tablaUsuarios" width="100%" class="table table-striped table-bordered table-hover" >
+                            <table id="tablaUsuarios" width="100%" class="table table-striped table-bordered table-hover" contenteditable='true'>
                                 <thead>
                                    <tr>
                                         <th>Nombre</th>
@@ -462,12 +491,12 @@ function prueba(){
                                         <th>Email</th>
                                         <th>Curso</th>
                                     </tr>
-                                    <body>
+                                    <body >
 
                                     </body>
                                 </thead>
                             </table> 
-                            <button onclick="prueba()">OK</button> 
+                            <button class="btn btn-success" onclick="guardar()">Guardar</button> 
                         </div>
                         <!-- /.panel-body -->
                     </div>

@@ -18,6 +18,7 @@ exports.obtenerCursos = obtenerCursos;
 exports.matriculaProfesor = matriculaProfesor;
 exports.matriculaTutor = matriculaTutor;
 exports.matriculaAlumnoSinCurso = matriculaAlumnoSinCurso;
+exports.actualizarMatricula = actualizarMatricula;
 
 function loginApp(req, res){
 	var check = 0;
@@ -189,7 +190,7 @@ function introNewStudent(req,res){
 		if(err){return console.error(err.message);}
 
 		//Creamos la consulta de insertar el nuevo alumno
-		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"','"+con+"')";
+		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_curso) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"','"+con+"','"+0+"')";
 		
 		db.run(query_insert_alumno, (err, row)=>{
 			if (err){throw err;}
@@ -393,7 +394,7 @@ function matriculaAlumnoSinCurso(req, res){
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a);
+    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
   			});
   			console.log(arrayAlumnos);
   			res.write(""+arrayAlumnos);
@@ -465,4 +466,37 @@ function matriculaTutor(req, res){
     		res.end();
     	});
 	});
+
+}
+
+function actualizarMatricula(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    arrayActualizado = new Array();
+	    if(_url.query) {
+	      try {
+	        arrayActualizado = _url.query.arrayActualizado; //Array enviado
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	//Separamos los campos por el separador , y lo guardamos en un array
+	var arrayDeCadenas = arrayActualizado.split(",");
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		var i = 0;
+		while(i<arrayDeCadenas.length){
+			let sql_newStudents = "UPDATE alumno SET ID_curso ='"+arrayDeCadenas[i+5]+"' WHERE nombre_a ='"+arrayDeCadenas[i]+"'";
+		    	db.run(sql_newStudents, (err, row)=>{
+		    		if (err){throw err;}
+		    		console.log("Información actualizada");
+		    		//db.close();
+		    	});
+		   	i=i+6;
+		}
+	});	
 }

@@ -67,5 +67,8 @@ app.get('/matriculaAlumnoSinCurso', function(req, res) {
 	controller.dispatch(urlResponseHandlers.matriculaAlumnoSinCurso, req, res);
 });
 
-
+app.get('/actualizarMatricula', function(req, res) {
+	console.log("Actualizando matrícula");
+	controller.dispatch(urlResponseHandlers.actualizarMatricula, req, res);
+});
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
