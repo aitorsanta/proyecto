@@ -40,7 +40,7 @@
         var anyo = document.getElementById("anyo").value;
         var mes = document.getElementById("mes").value;
         var dia = document.getElementById("dia").value;
-        var fechaNacimiento = anyo +""+mes+""+dia;
+        var fechaNacimiento = anyo.concat('-',mes,'-',dia);
         var dni = document.getElementById("dni").value;
         var email = document.getElementById("email").value;
         //Inicializamos los siguientes valores porque no todos los usuarios los tienen
@@ -74,7 +74,7 @@
             anyo2 = document.getElementById("anyo2").value;
             mes2 = document.getElementById("mes2").value;
             dia2 = document.getElementById("dia2").value;
-            fechaNacimiento2 = anyo2 +""+mes2+""+dia2;
+            fechaNacimiento2 = anyo2.concat('-',mes2,'-',dia2);
             dni2 = document.getElementById("dni2").value;
             email2 = document.getElementById("email2").value;
             telf2 = document.getElementById("tel4").value;

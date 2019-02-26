@@ -116,7 +116,10 @@ function guardar(){
 
     var url = "/actualizarMatricula?arrayActualizado="+arrayActualizado;
     $.get(url, {}, function(data){
-        window.alert("HECHO");
+        if(data=="1"){
+            window.alert("Información actualizada correctamente");
+            location.reload();
+        }
     });
 
 }

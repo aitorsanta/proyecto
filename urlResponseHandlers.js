@@ -48,7 +48,6 @@ function loginApp(req, res){
 	    if(em==usuadmin && contr==passadmin){
 	    	console.log("Usuario administrador");
 	    	console.log(res.write(""+1)); //Devolvemos un 1 si el login es satisfactorio
-	    	res.end();
 	    }else{	
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
@@ -61,10 +60,10 @@ function loginApp(req, res){
 		    		if (err){throw err;}
 		    		//db.close();
 		    		console.log("Alumno");
-		    		console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
+		    		res.write("2", function(err){res.end();});
+		    		//console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
 		    		dniSave = getDNI(em, "alumno");
 		    		people="alumno";
-		    		res.end(); 
 		    		check = 1;   		
 		    	});	
 		    	
@@ -76,10 +75,10 @@ function loginApp(req, res){
 			    		if (err){throw err;}
 			    		//db.close();
 			    		console.log("Docente");
-			    		console.log(res.write(""+3)); //El usuario docente existe en la base de datos
+			    		res.write("3", function(err){res.end();});
+			    		//console.log(res.write(""+3)); //El usuario docente existe en la base de datos
 			    		dniSave = getDNI(em, "docente");
-			    		people="docente";
-			    		res.end();   
+			    		people="docente"; 
 			    		check = 1; 		
 			    	});	
 
@@ -93,8 +92,8 @@ function loginApp(req, res){
 			    		if (err){throw err;}
 			    		//db.close();
 			    		console.log("TL1");
-			    		console.log(res.write(""+4)); //El usuario TL existe en la base de datos
-			    		res.end();   
+			    		res.write("4", function(err){res.end();});
+			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos
 			    		check = 1; 		
 			    	});	
 
@@ -107,21 +106,21 @@ function loginApp(req, res){
 			    	db.each(sql_usuPass_fam2, (err, row)=>{
 			    		if (err){throw err;}
 			    		console.log("TL2");
-			    		console.log(res.write(""+4)); //El usuario TL existe en la base de datos
-			    		res.end();   
+			    		res.write("4", function(err){res.end();});
+			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos  
 			    		check = 1; 		
 			    	});	
 
 		    	}
 		    	if(check != 1){
-		    		console.log(res.write(""+5));
-		    		res.end();
+		    		res.write("5", function(err){res.end();});
 		    	}
 
 		    	//db.close();
 	    	});
 	    	
 	    }
+
 }
 
 function generatePass(fecha, nombre){
@@ -190,7 +189,7 @@ function introNewStudent(req,res){
 		if(err){return console.error(err.message);}
 
 		//Creamos la consulta de insertar el nuevo alumno
-		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_curso) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"','"+con+"','"+0+"')";
+		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_curso) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"','"+fechaNacimiento+"','"+email+"','"+con+"','"+0+"')";
 		
 		db.run(query_insert_alumno, (err, row)=>{
 			if (err){throw err;}
@@ -232,7 +231,7 @@ function introNewTeacher(req,res){
 		if(err){return console.error(err.message);}
 
 		//Creamos la consulta de insertar el nuevo alumno
-		let query_insert_docente = "INSERT INTO docente (DNI_d, nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d, telefono_d, contra_usu_d) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"',"+telf+",'"+con+"')";
+		let query_insert_docente = "INSERT INTO docente (DNI_d, nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d, telefono_d, contra_usu_d) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"','"+fechaNacimiento+"','"+email+"',"+telf+",'"+con+"')";
 		
 		db.run(query_insert_docente, (err, row)=>{
 			if (err){throw err;}
@@ -298,7 +297,7 @@ function introNewFamily(req,res){
 		if(err){return console.error(err.message);}
 
 		//Creamos la consulta de insertar el nuevo TL1
-		let query_insert_fam = "INSERT INTO familia (nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, telefono_TL1, DNI_TL1, contr_usu_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, DNI_TL2, contr_usu_TL2, calle, portal, piso, mano, ciudad, cp, municipio, pais) VALUES ('"+nombre+"','"+apellido1+"','"+apellido2+"',"+fechaNacimiento+",'"+email+"',"+telf+",'"+dni+"','"+con1+"','"+nombre2+"','"+apellido12+"','"+apellido22+"',"+fechaNacimiento2+",'"+email2+"',"+telf2+",'"+dni2+"','"+con2+"','"+calle+"',"+portal+","+piso+",'"+mano+"','"+ciudad+"',"+cp+",'"+mun+"','"+pais+"')";	
+		let query_insert_fam = "INSERT INTO familia (nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, telefono_TL1, DNI_TL1, contr_usu_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, DNI_TL2, contr_usu_TL2, calle, portal, piso, mano, ciudad, cp, municipio, pais) VALUES ('"+nombre+"','"+apellido1+"','"+apellido2+"','"+fechaNacimiento+"','"+email+"',"+telf+",'"+dni+"','"+con1+"','"+nombre2+"','"+apellido12+"','"+apellido22+"','"+fechaNacimiento2+"','"+email2+"',"+telf2+",'"+dni2+"','"+con2+"','"+calle+"',"+portal+","+piso+",'"+mano+"','"+ciudad+"',"+cp+",'"+mun+"','"+pais+"')";	
 		
 
 		db.run(query_insert_fam, (err, row)=>{
@@ -498,5 +497,7 @@ function actualizarMatricula(req,res){
 		    	});
 		   	i=i+6;
 		}
+		console.log(res.write("1"));
+		res.end();
 	});	
 }
