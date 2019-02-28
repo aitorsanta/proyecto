@@ -20,6 +20,9 @@ exports.matriculaTutor = matriculaTutor;
 exports.matriculaAlumnoSinCurso = matriculaAlumnoSinCurso;
 exports.actualizarMatricula = actualizarMatricula;
 
+/*
+Función para logearte en la aplicación
+*/
 function loginApp(req, res){
 	var check = 0;
 
@@ -35,6 +38,7 @@ function loginApp(req, res){
 	      }
 	    }
 	  }
+
 	    /*
 		Index de números
 		1 - Administrador
@@ -48,26 +52,27 @@ function loginApp(req, res){
 	    if(em==usuadmin && contr==passadmin){
 	    	console.log("Usuario administrador");
 	    	console.log(res.write(""+1)); //Devolvemos un 1 si el login es satisfactorio
+	    	res.end();
 	    }else{	
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}
-		    	
+
+	    		if(check != 1){
 		    	//Creamos la consulta de buscar el email y pass introducido ALUMNO
 		    	let sql_usuPass_alum = "SELECT email_a, contra_usu_a FROM alumno WHERE email_a ='"+em+"' AND contra_usu_a='"+contr+"'";
-		    
 		    	db.each(sql_usuPass_alum, (err, row)=>{
 		    		if (err){throw err;}
 		    		//db.close();
 		    		console.log("Alumno");
-		    		res.write("2", function(err){res.end();});
-		    		//console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
+		    		console.log(res.write(""+2)); //El usuario alumno existe en la base de datos
 		    		dniSave = getDNI(em, "alumno");
 		    		people="alumno";
-		    		check = 1;   		
+		    		check = 1;
+		    		res.end();
 		    	});	
 		    	
-		    	if(check != 1){
+		    	}if(check != 1){
 			    	//Creamos la consulta de buscar el email y pass introducido DOCENTE
 			    	let sql_usuPass_doc = "SELECT email_d, contra_usu_d FROM docente WHERE email_d ='"+em+"' AND contra_usu_d='"+contr+"'";
 			    
@@ -75,11 +80,12 @@ function loginApp(req, res){
 			    		if (err){throw err;}
 			    		//db.close();
 			    		console.log("Docente");
-			    		res.write("3", function(err){res.end();});
+			    		res.write(""+3, function(err){/*res.end();*/});
 			    		//console.log(res.write(""+3)); //El usuario docente existe en la base de datos
 			    		dniSave = getDNI(em, "docente");
 			    		people="docente"; 
-			    		check = 1; 		
+			    		check = 1; 
+			    		res.end();
 			    	});	
 
 		    	}
@@ -92,9 +98,10 @@ function loginApp(req, res){
 			    		if (err){throw err;}
 			    		//db.close();
 			    		console.log("TL1");
-			    		res.write("4", function(err){res.end();});
+			    		res.write(""+4, function(err){/*res.end();*/});
 			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos
-			    		check = 1; 		
+			    		check = 1; 
+			    		res.end();		
 			    	});	
 
 		    	}
@@ -106,15 +113,20 @@ function loginApp(req, res){
 			    	db.each(sql_usuPass_fam2, (err, row)=>{
 			    		if (err){throw err;}
 			    		console.log("TL2");
-			    		res.write("4", function(err){res.end();});
+			    		res.write(""+4);
 			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos  
-			    		check = 1; 		
+			    		check = 1; 	
+			    		res.end();	
 			    	});	
 
 		    	}
+		    	/*
 		    	if(check != 1){
-		    		res.write("5", function(err){res.end();});
-		    	}
+		    		
+		    		console.log(check);
+		    		res.write(""+5);
+		    		res.end();
+		    	}*/
 
 		    	//db.close();
 	    	});
@@ -123,12 +135,18 @@ function loginApp(req, res){
 
 }
 
+/*
+Función para generar una contraseña preliminar
+*/
 function generatePass(fecha, nombre){
 	var pass = ""+fecha+nombre.substring(0,1);
 	oldPass = pass;
 	return pass;
 }
 
+/*
+Función para obtener el DNI del usuario conectado
+*/
 function getDNI(email,type){
 	var dniLocal = "";
 
@@ -162,6 +180,9 @@ function getDNI(email,type){
 	return dniLocal;
 }
 
+/*
+Función para registrar un nuevo estudiante en la base de datos
+*/
 function introNewStudent(req,res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -203,6 +224,9 @@ function introNewStudent(req,res){
 	    
 }
 
+/*
+Función para registrar un nuevo docente en la base de datos
+*/
 function introNewTeacher(req,res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -244,6 +268,9 @@ function introNewTeacher(req,res){
 	});
 }
 
+/*
+Función para registrar una nueva familia en la base de datos
+*/
 function introNewFamily(req,res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -311,6 +338,9 @@ function introNewFamily(req,res){
 	    	
 }
 
+/*
+Función que se encarga de cambiar la contraseña que se le ha asignado por defecto.
+*/
 function changePassword(req, res){
 	var elDNI="";
 	var resul = 0;
@@ -359,7 +389,9 @@ function changePassword(req, res){
 	}
 
 }
-
+/*
+Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
 function matriculaAlumno(req, res){
 	arrayAlumnos = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
@@ -381,6 +413,9 @@ function matriculaAlumno(req, res){
 	}); 	
 }
 
+/*
+Recoge toda la información de los alumnos cuyo curso sea 0 y lo manda al lado del cliente, para que se muestre en MATRICULAR ALUMNOS
+*/
 function matriculaAlumnoSinCurso(req, res){
 	arrayAlumnos = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
@@ -401,7 +436,9 @@ function matriculaAlumnoSinCurso(req, res){
     	});
 	}); 	
 }
-
+/*
+Obtiene la lista de todos los cursos guardados en la base de datos.
+*/
 function obtenerCursos(req, res){
 	arrayCursos = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
@@ -422,7 +459,9 @@ function obtenerCursos(req, res){
     	});
 	});
 }
-
+/*
+Recoge toda la información de los profesores y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
 function matriculaProfesor(req, res){
 	arrayProfesores = new Array();
 
@@ -445,6 +484,9 @@ function matriculaProfesor(req, res){
 	});
 }
 
+/*
+Recoge toda la información de los tutores y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
 function matriculaTutor(req, res){
 	arrayTutores = new Array();
 
@@ -467,7 +509,9 @@ function matriculaTutor(req, res){
 	});
 
 }
-
+/*
+Método que recibe el array de los campos de Matricular alumno y los vuelca a la Base de Datos
+*/
 function actualizarMatricula(req,res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -489,6 +533,7 @@ function actualizarMatricula(req,res){
 
 		var i = 0;
 		while(i<arrayDeCadenas.length){
+			//Actualiza únicamente los CURSOS
 			let sql_newStudents = "UPDATE alumno SET ID_curso ='"+arrayDeCadenas[i+5]+"' WHERE nombre_a ='"+arrayDeCadenas[i]+"'";
 		    	db.run(sql_newStudents, (err, row)=>{
 		    		if (err){throw err;}

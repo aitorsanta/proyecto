@@ -58,7 +58,7 @@ app.get('/matriculaProfesor', function(req, res) {
 });
 
 app.get('/matriculaTutor', function(req, res) {
-	console.log("Obteniendo todos los profesores");
+	console.log("Obteniendo todos los tutores legales");
 	controller.dispatch(urlResponseHandlers.matriculaTutor, req, res);
 });
 
