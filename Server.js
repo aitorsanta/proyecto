@@ -71,4 +71,15 @@ app.get('/actualizarMatricula', function(req, res) {
 	console.log("Actualizando matrícula");
 	controller.dispatch(urlResponseHandlers.actualizarMatricula, req, res);
 });
+
+app.get('/obtenerNom', function(req, res) {
+	console.log("Obteniendo el nombre");
+	controller.dispatch(urlResponseHandlers.obtenerNom, req, res);
+});
+
+app.get('/obtenerCurso', function(req, res) {
+	console.log("Obteniendo el curso");
+	controller.dispatch(urlResponseHandlers.obtenerCurso, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

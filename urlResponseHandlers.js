@@ -19,6 +19,8 @@ exports.matriculaProfesor = matriculaProfesor;
 exports.matriculaTutor = matriculaTutor;
 exports.matriculaAlumnoSinCurso = matriculaAlumnoSinCurso;
 exports.actualizarMatricula = actualizarMatricula;
+exports.obtenerNom = obtenerNom;
+exports.obtenerCurso = obtenerCurso;
 
 /*
 Función para logearte en la aplicación
@@ -544,5 +546,51 @@ function actualizarMatricula(req,res){
 		}
 		console.log(res.write("1"));
 		res.end();
+	});	
+}
+
+//Método para obtener el nombre del alumno
+function obtenerNom(req, res){
+
+	//Obtenemos el DNI que se ha guardado anteriormente
+	var elDNI = "";
+
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	//Generamos una consulta sql para obtener el nombre
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_nom = "SELECT nombre_a FROM alumno WHERE DNI_a ='"+elDNI+"'";
+			    	
+	    	db.each(sql_nom, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		res.write(""+row.nombre_a);
+	    		res.end();	
+	    	});	
+	});	
+}
+
+//Método para obtener el nombre del alumno
+function obtenerCurso(req, res){
+
+	//Obtenemos el DNI que se ha guardado anteriormente
+	var elDNI = "";
+
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	//Generamos una consulta sql para obtener el nombre
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_nom = "SELECT ID_curso FROM alumno WHERE DNI_a ='"+elDNI+"'";
+			    	
+	    	db.each(sql_nom, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		res.write(""+row.ID_curso);
+	    		res.end();	
+	    	});	
 	});	
 }
