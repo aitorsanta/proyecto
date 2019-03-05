@@ -73,13 +73,33 @@ app.get('/actualizarMatricula', function(req, res) {
 });
 
 app.get('/obtenerNom', function(req, res) {
-	console.log("Obteniendo el nombre");
+	//console.log("Obteniendo el nombre del alumno");
 	controller.dispatch(urlResponseHandlers.obtenerNom, req, res);
 });
 
+app.get('/obtenerNomP', function(req, res) {
+	//console.log("Obteniendo el nombre del profesor");
+	controller.dispatch(urlResponseHandlers.obtenerNomP, req, res);
+});
+
 app.get('/obtenerCurso', function(req, res) {
-	console.log("Obteniendo el curso");
+	//console.log("Obteniendo el curso");
 	controller.dispatch(urlResponseHandlers.obtenerCurso, req, res);
+});
+
+app.get('/obtenerProfesores', function(req, res) {
+	//console.log("Obteniendo los profesores");
+	controller.dispatch(urlResponseHandlers.obtenerProfesores, req, res);
+});
+
+app.get('/introducirAsig', function(req, res) {
+	console.log("Introduciendo nueva asignatura");
+	controller.dispatch(urlResponseHandlers.introducirAsig, req, res);
+});
+
+app.get('/introducirCurso', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.introducirCurso, req, res);
 });
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

@@ -15,12 +15,16 @@ exports.introNewFamily = introNewFamily;
 exports.changePassword = changePassword;
 exports.matriculaAlumno = matriculaAlumno;
 exports.obtenerCursos = obtenerCursos;
+exports.obtenerProfesores = obtenerProfesores;
 exports.matriculaProfesor = matriculaProfesor;
 exports.matriculaTutor = matriculaTutor;
 exports.matriculaAlumnoSinCurso = matriculaAlumnoSinCurso;
 exports.actualizarMatricula = actualizarMatricula;
 exports.obtenerNom = obtenerNom;
+exports.obtenerNomP = obtenerNomP;
 exports.obtenerCurso = obtenerCurso;
+exports.introducirAsig = introducirAsig;
+exports.introducirCurso = introducirCurso;
 
 /*
 Función para logearte en la aplicación
@@ -447,7 +451,7 @@ function obtenerCursos(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_cursos = "SELECT ID_curso FROM curso";
+    	let sql_cursos = "SELECT ID_curso FROM curso ORDER BY ID_curso";
     
     	db.all(sql_cursos, (err, rows)=>{
     		if (err){throw err;}
@@ -461,6 +465,31 @@ function obtenerCursos(req, res){
     	});
 	});
 }
+
+/*
+Obtiene la lista de todos los profesores guardados en la base de datos.
+*/
+function obtenerProfesores(req, res){
+	arrayProfes = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_profes = "SELECT nombre_d, apellido1_d, apellido2_d FROM docente";
+    
+    	db.all(sql_profes, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayProfes.push(row.nombre_d+","+row.apellido1_d+","+row.apellido2_d);
+  			});
+    		console.log(arrayProfes);
+  			res.write(""+arrayProfes);
+    		res.end();
+    	});
+	});
+}
+
 /*
 Recoge toda la información de los profesores y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
 */
@@ -572,7 +601,30 @@ function obtenerNom(req, res){
 	});	
 }
 
-//Método para obtener el nombre del alumno
+//Método para obtener el nombre del profesor
+function obtenerNomP(req, res){
+
+	//Obtenemos el DNI que se ha guardado anteriormente
+	var elDNI = "";
+
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	//Generamos una consulta sql para obtener el nombre
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_nomP = "SELECT nombre_d FROM docente WHERE DNI_d ='"+elDNI+"'";
+			    	
+	    	db.each(sql_nomP, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		res.write(""+row.nombre_d);
+	    		res.end();	
+	    	});	
+	});	
+}
+
+//Método para obtener el curso del alumno
 function obtenerCurso(req, res){
 
 	//Obtenemos el DNI que se ha guardado anteriormente
@@ -593,4 +645,78 @@ function obtenerCurso(req, res){
 	    		res.end();	
 	    	});	
 	});	
+}
+
+/*
+Método para introducir una nueva asignatura en la base de datos
+*/
+function introducirAsig(req, res){
+	var dniP = "";
+
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    var nombre = "";
+	    var docente = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el administrador
+	        nombre = _url.query.nombre; //Nombre introducida por el administrador
+	        docente = _url.query.docente; //Docente introducida por el administrador
+	      } catch (e) {
+	      }
+	    }
+	  }	
+	
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		//Obtenemos el DNI del docente
+		let sql_nom = "SELECT DNI_d FROM docente WHERE nombre_d ='"+docente+"'";
+	    	db.each(sql_nom, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		dniP = row.DNI_d;
+	    		
+	    		//Introducimos asignatura en la BD
+			    let query_insert_subject = "INSERT INTO asignatura (nombre, DNI_d, ID_curso) VALUES ('"+nombre+"','"+dniP+"','"+curso+"')";
+				
+				db.run(query_insert_subject, (err, row)=>{
+					if (err){throw err;}
+					console.log("Asignatura "+nombre+" insertada correctamente.");
+			  	});
+
+	    	});	
+	    });
+
+}
+
+function introducirCurso(req,res){
+		if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el administrador
+	      } catch (e) {
+	      }
+	    }
+	  }	
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+    		//Introducimos curso en la BD
+		    let query_insert_course = "INSERT INTO curso (ID_curso) VALUES ('"+curso+"')";
+			
+			db.run(query_insert_course, (err, row)=>{
+				if (err){throw err;}
+				console.log("Curso "+curso+" insertado correctamente.");
+				res.write("1");
+				res.end();
+    	});	
+    });
+
 }
