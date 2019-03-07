@@ -53,14 +53,11 @@
             $.get(url, {}, function(data){
                 var opciones = '';
                 var arrayDeCadenas = data.split(",");
-                window.alert(arrayDeCadenas);
 
-                //Con este bucle cargamos todos los profesores de la BD en la lista
+                //Con este bucle cargamos todos los profesores (nombre y dos apellidos) de la BD en la lista
                 for (var i = 0; i< arrayDeCadenas.length; i++) {
-                    opciones += '<option value="'+arrayDeCadenas[i]+'">' + arrayDeCadenas[i] +'</option>';
-                    opciones += '<option value="'+arrayDeCadenas[i+1]+'">' + arrayDeCadenas[i+1] +'</option>';
-                    opciones += '<option value="'+arrayDeCadenas[i+2]+'">' + arrayDeCadenas[i+2] +'</option>';
-                    i=i+3;
+                    opciones += '<option value="'+arrayDeCadenas[i]+" "+arrayDeCadenas[i+1]+" "+arrayDeCadenas[i+2]+'">' + arrayDeCadenas[i] +" "+arrayDeCadenas[i+1] +" "+arrayDeCadenas[i+2] +'</option>'
+                    i=i+2;
                 };
 
                 $('#docente').append($('<option></option>'));
@@ -80,13 +77,52 @@
 
         if (curso=="" || nombre=="" || docente=="") {
             window.alert("Atención, información incompleta");
-            document.getElementById("curso").value = "";
-            document.getElementById("nombre").value = "";
-            document.getElementById("docente").value = "";
         }else{
-            var url = "/introducirAsig?curso="+curso+"&nombre="+nombre+"&docente="+docente;
+            //Separar nombre y apellidos
+            var doc_nom="";
+            var doc_ap1="";
+            var doc_ap2="";
+            
+            var i=0;
+            var w=0;
+            var espacio="";
+            while(w==0){
+                espacio=docente.substring(i,i+1);
+                if(espacio==" "){
+                    w=1;
+                }else{
+                    doc_nom+=docente.substring(i,i+1);
+                }
+                i=i+1;
+            }
+            espacio="";
+            while(w==1){
+                espacio=docente.substring(i,i+1);
+                if(espacio==" "){
+                    w=2;
+                }else{
+                    doc_ap1+=docente.substring(i,i+1);
+                }
+                i=i+1;
+            }
+            espacio="";
+            while(w==2 && i<docente.length){
+                espacio=docente.substring(i,i+1);
+                if(espacio==" "){
+                    w=3;
+                }else{
+                    doc_ap2+=docente.substring(i,i+1);
+                }
+                i=i+1;
+            }
+
+            var url = "/introducirAsig?curso="+curso+"&nombre="+nombre+"&doc_nom="+doc_nom+"&doc_ap1="+doc_ap1+"&doc_ap2="+doc_ap2;
             $.get(url, {}, function(data){
-                
+                if(data==1){
+                    window.alert("Información insertada correctamente:\n"+curso+"-"+nombre+"-"+doc_nom+" "+doc_ap1+" "+doc_ap2);
+                    document.getElementById("nombre").value="";
+                    document.getElementById("docente").value="";
+                }
             });
         }
     }
@@ -347,6 +383,9 @@
                         </li>
                         <li>
                             <a href="mostrarUsuarios.html"><i class="fa fa-table fa-fw"></i> Mostrar usuarios</a>
+                        </li>
+                        <li>
+                            <a href="mostrarAsignaturas.html"><i class="fa fa-table fa-fw"></i> Mostrar asignaturas</a>
                         </li>
                         <li>
                             <a href="introCurso.html"><i class="fa fa-edit fa-fw"></i> Introducir curso</a>

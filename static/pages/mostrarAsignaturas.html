@@ -44,7 +44,7 @@
     <script type="text/javascript">
 
     $(function(){
-            var url = "/matriculaAlumno";
+            var url = "/mostrarAsig";
 
         $.get(url, {}, function(data){
             /*
@@ -65,109 +65,19 @@
             //Vamos metiendo en el nuevo array la información por líneas
             var i=0;
             while(i<arrayDeCadenas.length){
-                resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+""]);
-                i=i+6;
+                resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+""]);
+                i=i+3;
             }
 
             
-            $('#tablaUsuarios').dataTable({
+            $('#tablaAsignaturas').dataTable({
 
               "data": resul,
   
               "aoColumnDefs":[
-                { "data" : "Nombre" },
-                { "data" : "Apellido 1" },
-                { "data" : "Apellido 2" },
-                { "data" : "Fecha de Nacimiento" },
-                { "data" : "Email" },
-                { "data" : "Curso"}
-              ]
-            });
-        });
-
-  })
-
-    $(function(){
-            var url = "/matriculaProfesor";
-
-        $.get(url, {}, function(data){
-            /*
-            Si queremos meter más parámetros (de columnas):
-            1. Modificar el html de la tabla, para que aparezca otra columna.
-            2. En el URLResponseHandler añadimos en la select la nueva columna.
-            3. En el URLResponseHandler añadimos el nuevo dato al array que se pasa aquí.
-            4. Modificamos el bucle while para que inserte también el nuevo dato.
-            5. Le sumamos un número más a la i.
-            6. En la dataTable añadimos la columna.
-            */
-
-            //Separamos el array recibido y lo guardamos
-            var arrayDeCadenas = data.split(",");
-            
-            var resul = [];
-            
-            //Vamos metiendo en el nuevo array la información por líneas
-            var i=0;
-            while(i<arrayDeCadenas.length){
-                resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+""]);
-                i=i+5;
-            }
-
-            
-            $('#tablaUsuarios2').dataTable({
-
-              "data": resul,
-  
-              "aoColumnDefs":[
-                { "data" : "Nombre" },
-                { "data" : "Apellido 1" },
-                { "data" : "Apellido 2" },
-                { "data" : "Fecha de Nacimiento" },
-                { "data" : "Email"}
-              ]
-            });
-        });
-
-  })
-
-    $(function(){
-            var url = "/matriculaTutor";
-
-        $.get(url, {}, function(data){
-            /*
-            Si queremos meter más parámetros (de columnas):
-            1. Modificar el html de la tabla, para que aparezca otra columna.
-            2. En el URLResponseHandler añadimos en la select la nueva columna.
-            3. En el URLResponseHandler añadimos el nuevo dato al array que se pasa aquí.
-            4. Modificamos el bucle while para que inserte también el nuevo dato.
-            5. Le sumamos un número más a la i.
-            6. En la dataTable añadimos la columna.
-            */
-
-            //Separamos el array recibido y lo guardamos
-            var arrayDeCadenas = data.split(",");
-            
-            var resul = [];
-            
-            //Vamos metiendo en el nuevo array la información por líneas
-            var i=0;
-            while(i<arrayDeCadenas.length){
-                resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+""]);
-                i=i+6;
-            }
-
-            
-            $('#tablaUsuarios3').dataTable({
-
-              "data": resul,
-  
-              "aoColumnDefs":[
-                { "data" : "Nombre" },
-                { "data" : "Apellido 1" },
-                { "data" : "Apellido 2" },
-                { "data" : "Fecha de Nacimiento" },
-                { "data" : "Email"},
-                { "data" : "ID familia"}
+                { "data" : "Curso" },
+                { "data" : "Nombre asignatura" },
+                { "data" : "Docente"}
               ]
             });
         });
@@ -521,7 +431,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Mostrar usuarios</h1>
+                    <h1 class="page-header">Mostrar asignaturas</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -529,61 +439,14 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Alumnos
-                        </div>
-                        <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <table id="tablaUsuarios" width="100%" class="table table-striped table-bordered table-hover" >
+                            <table id="tablaAsignaturas" width="100%" class="table table-striped table-bordered table-hover" >
                                 <thead>
                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido 1</th>
-                                        <th>Apellido 2</th>
-                                        <th>Fecha de Nacimiento</th>
-                                        <th>Email</th>
                                         <th>Curso</th>
-                                    </tr>
-                                    <body>
-
-                                    </body>
-                                </thead>
-                            </table> 
-                        </div>
-                        <div class="panel-heading">
-                            Profesores
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <table id="tablaUsuarios2" width="100%" class="table table-striped table-bordered table-hover" >
-                                <thead>
-                                   <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido 1</th>
-                                        <th>Apellido 2</th>
-                                        <th>Fecha de Nacimiento</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    <body>
-
-                                    </body>
-                                </thead>
-                            </table> 
-                        </div>
-                        <div class="panel-heading">
-                            Tutores legales
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <table id="tablaUsuarios3" width="100%" class="table table-striped table-bordered table-hover" >
-                                <thead>
-                                   <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido 1</th>
-                                        <th>Apellido 2</th>
-                                        <th>Fecha de Nacimiento</th>
-                                        <th>Email</th>
-                                        <th>ID Familia</th>
+                                        <th>Nombre asignatura</th>
+                                        <th>Docente</th>
+                                        <!--<th>Número de alumnos</th>-->
                                     </tr>
                                     <body>
 

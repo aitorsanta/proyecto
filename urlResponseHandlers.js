@@ -25,6 +25,7 @@ exports.obtenerNomP = obtenerNomP;
 exports.obtenerCurso = obtenerCurso;
 exports.introducirAsig = introducirAsig;
 exports.introducirCurso = introducirCurso;
+exports.mostrarAsig = mostrarAsig;
 
 /*
 Función para logearte en la aplicación
@@ -420,6 +421,43 @@ function matriculaAlumno(req, res){
 }
 
 /*
+Recoge toda la información de las asignaturas y lo manda al lado del cliente, para que se muestre en MOSTRAR ASIGNATURAS
+*/
+function mostrarAsig(req, res){
+	arrayAsignaturas = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_asig = "SELECT ID_curso, nombre, DNI_d FROM asignatura ORDER BY nombre";
+    
+    	db.all(sql_asig, (err, rows)=>{
+    		if (err){throw err;}
+//ESTO FALLA
+	    		let sql_asig = "SELECT nombre_d, apellido1_d, apellido2_d FROM docente WHERE DNI_d='"+rows.DNI_d+"'";
+	    
+		    	db.all(sql_asig, (err, rows)=>{
+		    		if (err){throw err;}
+		    		var nombre = rows.nombre_d.concat(apellido1_d,apellido2_d);
+		    		rows.forEach((row) => {
+		    			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+nombre);
+		  			});
+		  			console.log(arrayAsignaturas);
+		  			res.write(""+arrayAsignaturas);
+		    		res.end();
+		    	});
+
+    		rows.forEach((row) => {
+    			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+row.DNI_d);
+  			});
+  			console.log(arrayAsignaturas);
+  			res.write(""+arrayAsignaturas);
+    		res.end();
+    	});
+	}); 	
+}
+
+/*
 Recoge toda la información de los alumnos cuyo curso sea 0 y lo manda al lado del cliente, para que se muestre en MATRICULAR ALUMNOS
 */
 function matriculaAlumnoSinCurso(req, res){
@@ -475,7 +513,7 @@ function obtenerProfesores(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_profes = "SELECT nombre_d, apellido1_d, apellido2_d FROM docente";
+    	let sql_profes = "SELECT nombre_d, apellido1_d, apellido2_d FROM docente ORDER BY nombre_d";
     
     	db.all(sql_profes, (err, rows)=>{
     		if (err){throw err;}
@@ -658,22 +696,27 @@ function introducirAsig(req, res){
 	    var pathname = _url.pathname;
 	    var curso = "";
 	    var nombre = "";
-	    var docente = "";
+	    var doc_nom = "";
+	    var doc_ap1 = "";
+	    var doc_ap2 = "";
 	    if(_url.query) {
 	      try {
 	        curso = _url.query.curso; //Curso introducido por el administrador
 	        nombre = _url.query.nombre; //Nombre introducida por el administrador
-	        docente = _url.query.docente; //Docente introducida por el administrador
+	        doc_nom = _url.query.doc_nom; //Docente nom introducida por el administrador
+	        doc_ap1 = _url.query.doc_ap1; //Docente ap1 introducida por el administrador
+	        doc_ap2 = _url.query.doc_ap2; //Docente ap2 introducida por el administrador
 	      } catch (e) {
 	      }
 	    }
 	  }	
+	console.log(curso+", "+nombre+", "+doc_nom+", "+doc_ap1+", "+doc_ap2);
 	
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
 		//Obtenemos el DNI del docente
-		let sql_nom = "SELECT DNI_d FROM docente WHERE nombre_d ='"+docente+"'";
+		let sql_nom = "SELECT DNI_d FROM docente WHERE nombre_d ='"+doc_nom+"' AND apellido1_d='"+doc_ap1+"' AND apellido2_d='"+doc_ap2+"'";
 	    	db.each(sql_nom, (err, row)=>{
 	    		if (err){throw err;}
 	    		//Enviamos el nombre al front-end
@@ -685,6 +728,8 @@ function introducirAsig(req, res){
 				db.run(query_insert_subject, (err, row)=>{
 					if (err){throw err;}
 					console.log("Asignatura "+nombre+" insertada correctamente.");
+					res.write("1");
+					res.end();
 			  	});
 
 	    	});	
