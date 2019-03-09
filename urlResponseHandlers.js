@@ -26,6 +26,8 @@ exports.obtenerCurso = obtenerCurso;
 exports.introducirAsig = introducirAsig;
 exports.introducirCurso = introducirCurso;
 exports.mostrarAsig = mostrarAsig;
+exports.obtenerClasesProfesor = obtenerClasesProfesor;
+exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
 
 /*
 Función para logearte en la aplicación
@@ -424,35 +426,26 @@ function matriculaAlumno(req, res){
 Recoge toda la información de las asignaturas y lo manda al lado del cliente, para que se muestre en MOSTRAR ASIGNATURAS
 */
 function mostrarAsig(req, res){
+	var elNombre="";
 	arrayAsignaturas = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
-    	
     	//Creamos la consulta
     	let sql_asig = "SELECT ID_curso, nombre, DNI_d FROM asignatura ORDER BY nombre";
-    
+
     	db.all(sql_asig, (err, rows)=>{
     		if (err){throw err;}
-//ESTO FALLA
-	    		let sql_asig = "SELECT nombre_d, apellido1_d, apellido2_d FROM docente WHERE DNI_d='"+rows.DNI_d+"'";
-	    
-		    	db.all(sql_asig, (err, rows)=>{
-		    		if (err){throw err;}
-		    		var nombre = rows.nombre_d.concat(apellido1_d,apellido2_d);
-		    		rows.forEach((row) => {
-		    			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+nombre);
-		  			});
-		  			console.log(arrayAsignaturas);
-		  			res.write(""+arrayAsignaturas);
-		    		res.end();
-		    	});
 
     		rows.forEach((row) => {
+
+    			elNombre=conDNIprofNombre(row.DNI_d);
+    			console.log(elNombre);
     			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+row.DNI_d);
   			});
-  			console.log(arrayAsignaturas);
+  			
   			res.write(""+arrayAsignaturas);
-    		res.end();
+  			res.end();
+    		
     	});
 	}); 	
 }
@@ -764,4 +757,67 @@ function introducirCurso(req,res){
     	});	
     });
 
+}
+
+function obtenerClasesProfesor(req,res){
+	arrayClases = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	var elDNI = "";
+
+		elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+		
+		//Creamos la consulta
+	 	let sql_class = "SELECT ID_curso, nombre FROM asignatura WHERE DNI_d='"+elDNI+"'";
+
+    	db.all(sql_class, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayClases.push(row.ID_curso+" - "+row.nombre+"\n");
+  			});
+  			console.log(arrayClases);
+  			res.write(""+arrayClases);
+  			res.end();
+    		
+    	});
+	});
+}
+
+/*
+Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
+function matriculaAlumnoConCurso(req, res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el usuario
+	      } catch (e) {
+	      }
+	    }
+	  }
+	var i = 1;
+	arrayAlumnos = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, email_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+    
+    	db.all(sql_alumnos, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayAlumnos.push(i+","+row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.email_a);
+    			i=i+1;
+  			});
+  			console.log(arrayAlumnos);
+  			res.write(""+arrayAlumnos);
+    		res.end();
+    	});
+	}); 	
 }

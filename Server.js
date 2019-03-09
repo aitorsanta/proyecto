@@ -107,4 +107,14 @@ app.get('/mostrarAsig', function(req, res) {
 	controller.dispatch(urlResponseHandlers.mostrarAsig, req, res);
 });
 
+app.get('/obtenerClasesProfesor', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.obtenerClasesProfesor, req, res);
+});
+
+app.get('/matriculaAlumnoConCurso', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.matriculaAlumnoConCurso, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
