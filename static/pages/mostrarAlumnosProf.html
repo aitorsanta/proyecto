@@ -43,6 +43,8 @@
   <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
     <script type="text/javascript">
 
+var rec = 0;
+
 $(function(){
     //Cargamos todas las clases del profesor logueado en el toolbox
     var url = "/obtenerClasesProfesor";
@@ -53,16 +55,41 @@ $(function(){
             //Con este bucle cargamos todos los profesores (nombre y dos apellidos) de la BD en la lista
             for (var i = 0; i< arrayDeCadenas.length; i++) {
                 opciones += '<option value="'+arrayDeCadenas[i]+'">' + arrayDeCadenas[i] +'</option>'
-                i=i+1;
             };
 
             $('#toolBox1').append($('<option></option>'));
             $('#toolBox1').append(opciones);
         });
+
+    
 })
 
-function mostrar(){
-        var cursoFull = document.getElementById("toolBox1").value;
+$(document).ready(function(){
+    $('#mostrar').click(function(){
+        if(rec==0){
+            rec="1";
+            mostrar(0);return false;
+        }else{
+            
+            location.reload(rec);
+            mostrar(1);
+        }         
+   });
+
+    
+});
+
+function mostrar(n){
+
+    var cursoFull = document.getElementById("toolBox1").value;
+
+    if(n==1){
+        window.alert();
+        location.reload();
+
+    }
+
+        
         var curso = cursoFull.substring(0,5);  
  
             var url = "/matriculaAlumnoConCurso?curso="+curso;
@@ -457,7 +484,11 @@ function mostrar(){
                                     <select class="form-control">
 
                                 </div>
-                                <button type="submit" class="btn btn-lg btn-success btn-block" onclick="mostrar();return false;">Mostrar</button>
+                                <!--onclick="mostrar();return false;"-->
+                                <div>
+                                <button id="mostrar" type="submit" class="btn btn-lg btn-success btn-block">Mostrar</button>
+                                <!--<button id="mostrar" type="submit" class="btn btn-lg btn-success btn-block">Ocultar</button>-->
+                            </div>
                             </fieldset>
                         </form>
                         
