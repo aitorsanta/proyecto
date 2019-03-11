@@ -437,9 +437,6 @@ function mostrarAsig(req, res){
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-
-    			elNombre=conDNIprofNombre(row.DNI_d);
-    			console.log(elNombre);
     			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+row.DNI_d);
   			});
   			
