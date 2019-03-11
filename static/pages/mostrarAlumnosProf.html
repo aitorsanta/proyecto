@@ -32,6 +32,9 @@
     <!-- Data Tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 
+    <!--Export DataTable-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.css"/>
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -41,9 +44,12 @@
 
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
   <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.js"></script>
+
     <script type="text/javascript">
 
 var rec = 0;
+var boton = 0;
 
 $(function(){
     //Cargamos todas las clases del profesor logueado en el toolbox
@@ -119,21 +125,68 @@ function mostrar(n){
 
             
             $('#tablaAlumnos').dataTable({
-
-              "data": resul,
+              
+              "data": resul,             
   
               "aoColumnDefs":[
                 { "data" : "Nombre" },
                 { "data" : "Apellido 1" },
                 { "data" : "Apellido 2" },
                 { "data" : "Email" }
-              ]
+              ],
+
+              dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
             });
         });
 
 }
 
+/*
+Función copiada literalmente de la siguiente fuente:
+https://programacion.net/articulo/exportar_la_informacion_de_una_tabla_a_excel_mediante_javascript_2014
+
+El día 11 de marzo del 2019, a las 12:55.
+
+*/
+function exportTableToExcel(tableID, filename=''){
+    var downloadLink;
+    var dataType = 'application/vnd.ms-excel';
+    var tableSelect = document.getElementById(tableID);
+    var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    
+    // Specify file name
+    filename = filename?filename+'.xls':'excel_data.xls';
+    
+    // Create download link element
+    downloadLink = document.createElement("a");
+    
+    document.body.appendChild(downloadLink);
+    
+    if(navigator.msSaveOrOpenBlob){
+        var blob = new Blob(['ufeff', tableHTML], {
+            type: dataType
+        });
+        navigator.msSaveOrOpenBlob( blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    
+        // Setting the file name
+        downloadLink.download = filename;
+        
+        //triggering the function
+        downloadLink.click();
+    }
+}
+
     </script>
+
 
 </head>
 
@@ -493,6 +546,7 @@ function mostrar(n){
                         </form>
                         
                     </div>
+
                     </div>
                 </div>
             <!-- /.row -->
@@ -520,8 +574,13 @@ function mostrar(n){
                     </div>
                     <!-- /.panel -->
                 </div>
+
                 <!-- /.col-lg-12 -->
             </div>
+            <div style="text-align: right">
+                <button id="mostrar" align="right" type="submit" class="btn btn-lg btn-primary" onclick="exportTableToExcel('tablaAlumnos')">Exportar</button>
+            </div>
+            
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->
