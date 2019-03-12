@@ -122,4 +122,9 @@ app.get('/introducirActividad', function(req, res) {
 	controller.dispatch(urlResponseHandlers.introducirActividad, req, res);
 });
 
+app.get('/mostrarActividades', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarActividades, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

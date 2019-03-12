@@ -29,6 +29,7 @@ exports.mostrarAsig = mostrarAsig;
 exports.obtenerClasesProfesor = obtenerClasesProfesor;
 exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
 exports.introducirActividad = introducirActividad;
+exports.mostrarActividades = mostrarActividades;
 
 /*
 Función para logearte en la aplicación
@@ -845,9 +846,7 @@ function introducirActividad(req, res){
     
     	db.all(sql_curso, (err, rows)=>{
     		if (err){throw err;}
-    		console.log(rows);
     		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el curso
-    		console.log(codigo);
 
     		//Introducimos actividad en la BD
 		    let query_insert_activity = "INSERT INTO actividad (cod_asig,nombre_act,peso,cod_trimestre) VALUES ('"+codigo+"','"+nombre+"',"+peso+",+"+trimestre+")";
@@ -857,6 +856,52 @@ function introducirActividad(req, res){
 				console.log("Actividad insertada correctamente.");
 				res.write("1");
 				res.end();
+    	});	
+
+    	});
+
+    		
+    });
+
+}
+
+function mostrarActividades(req, res){
+	arrayActiv = new Array();
+
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        curso = _url.query.curso;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_curso = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+    
+    	db.all(sql_curso, (err, rows)=>{
+    		if (err){throw err;}
+    		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el codigo del curso
+
+    		//Introducimos actividad en la BD
+		    let query_act = "SELECT cod_trimestre,nombre_act,peso FROM actividad WHERE cod_asig='"+codigo+"' ORDER BY cod_trimestre";
+			
+			db.all(query_act, (err, rows)=>{
+				if (err){throw err;}
+				
+				rows.forEach((row) => {
+	    			arrayActiv.push(row.cod_trimestre+","+row.nombre_act+","+row.peso*10);
+  				});
+	  			console.log(arrayActiv);
+	  			res.write(""+arrayActiv);
+	    		res.end();
     	});	
 
     	});
