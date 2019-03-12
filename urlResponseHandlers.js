@@ -28,6 +28,7 @@ exports.introducirCurso = introducirCurso;
 exports.mostrarAsig = mostrarAsig;
 exports.obtenerClasesProfesor = obtenerClasesProfesor;
 exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
+exports.introducirActividad = introducirActividad;
 
 /*
 Función para logearte en la aplicación
@@ -407,7 +408,7 @@ function matriculaAlumno(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno";
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
@@ -456,7 +457,7 @@ function matriculaAlumnoSinCurso(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno WHERE ID_curso='"+0+"'";
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno WHERE ID_curso='"+0+"' ORDER BY apellido1_a";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
@@ -528,7 +529,7 @@ function matriculaProfesor(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_profesores = "SELECT nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d FROM docente";
+    	let sql_profesores = "SELECT nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d FROM docente ORDER BY apellido1_d";
     
     	db.all(sql_profesores, (err, rows)=>{
     		if (err){throw err;}
@@ -553,7 +554,7 @@ function matriculaTutor(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_tutores = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, ID_familia FROM familia";
+    	let sql_tutores = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, ID_familia FROM familia ORDER BY apellido1_TL1";
     
     	db.all(sql_tutores, (err, rows)=>{
     		if (err){throw err;}
@@ -817,4 +818,50 @@ function matriculaAlumnoConCurso(req, res){
     		res.end();
     	});
 	}); 	
+}
+
+function introducirActividad(req, res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        curso = _url.query.curso;
+	        trimestre = _url.query.trimestre;
+	        nombre = _url.query.nombre;
+	        peso = _url.query.peso;
+	      } catch (e) {
+	      }
+	    }
+	}
+	console.log(asignatura+", "+curso+", "+trimestre+", "+nombre+", "+peso);
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_curso = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+    
+    	db.all(sql_curso, (err, rows)=>{
+    		if (err){throw err;}
+    		console.log(rows);
+    		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el curso
+    		console.log(codigo);
+
+    		//Introducimos actividad en la BD
+		    let query_insert_activity = "INSERT INTO actividad (cod_asig,nombre_act,peso,cod_trimestre) VALUES ('"+codigo+"','"+nombre+"',"+peso+",+"+trimestre+")";
+			
+			db.run(query_insert_activity, (err, row)=>{
+				if (err){throw err;}
+				console.log("Actividad insertada correctamente.");
+				res.write("1");
+				res.end();
+    	});	
+
+    	});
+
+    		
+    });
+
 }
