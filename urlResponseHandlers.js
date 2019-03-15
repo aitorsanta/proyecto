@@ -30,6 +30,7 @@ exports.obtenerClasesProfesor = obtenerClasesProfesor;
 exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
 exports.introducirActividad = introducirActividad;
 exports.mostrarActividades = mostrarActividades;
+exports.actividadesTrimestre = actividadesTrimestre;
 
 /*
 Función para logearte en la aplicación
@@ -909,4 +910,51 @@ function mostrarActividades(req, res){
     		
     });
 
+}
+
+function actividadesTrimestre(req, res){
+	arrayActiv = new Array();
+
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        curso = _url.query.curso;
+	        trimestre = _url.query.trimestre;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_curso = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+    
+    	db.all(sql_curso, (err, rows)=>{
+    		if (err){throw err;}
+    		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el codigo del curso
+
+    		//Introducimos actividad en la BD
+		    let query_act = "SELECT nombre_act,peso FROM actividad WHERE cod_asig='"+codigo+"' AND cod_trimestre='"+trimestre+"'";
+			
+			db.all(query_act, (err, rows)=>{
+				if (err){throw err;}
+				
+				rows.forEach((row) => {
+	    			arrayActiv.push(row.nombre_act+" ("+row.peso*10+"%)");
+  				});
+	  			console.log(arrayActiv);
+	  			res.write(""+arrayActiv);
+	    		res.end();
+    	});	
+
+    	});
+
+    		
+    });
+	
 }
