@@ -50,6 +50,8 @@
 
 var rec = 0;
 var boton = 0;
+var longit = 0;
+var alumnosNum = 0;
 
 $(function(){
     //Cargamos todas las clases del profesor logueado en el toolbox
@@ -86,9 +88,8 @@ $(document).ready(function(){
 
 function calificar(){
     document.getElementById('calificar').style.visibility = "hidden";
+    document.getElementById('button').style.visibility = "visible";
 
-
-    var longit=0;
 
     var cursoFull = document.getElementById("toolBox1").value;
 
@@ -116,73 +117,109 @@ function calificar(){
           
             var arrayDeCadenas = data.split(","); 
             var resul = [];
-            longit = arrayDeCadenas.length;
+            
             
             $('#tablaActividades').append('<th>'+"Número"+'</th>'); //La segunda columna es para los nombres de los estudiantes
             $('#tablaActividades').append('<th>'+"Nombre"+'</th>'); //La segunda columna es para los nombres de los estudiantes
     
             //Vamos metiendo en el nuevo array la información por líneas
             var i=0;
+
+            longit = arrayDeCadenas.length+2;
+
             while(i<arrayDeCadenas.length){
                 //resul.push([""+"\""+arrayDeCadenas[i]+"\""+""]);
                 $('#tablaActividades').append('<th>'+arrayDeCadenas[i]+'</th>');
                 i=i+1;
-            }
 
-        });
-
-
-//CARGAMOS LOS ALUMNOS EN LA TABLA
+                if(i==arrayDeCadenas.length){
+                    //CARGAMOS LOS ALUMNOS EN LA TABLA
         
- 
-            var url = "/matriculaAlumnoConCurso?curso="+curso;
+                    var url = "/matriculaAlumnoConCurso?curso="+curso;
 
-        $.get(url, {}, function(data){
-            /*
-            Si queremos meter más parámetros (de columnas):
-            1. Modificar el html de la tabla, para que aparezca otra columna.
-            2. En el URLResponseHandler añadimos en la select la nueva columna.
-            3. En el URLResponseHandler añadimos el nuevo dato al array que se pasa aquí.
-            4. Modificamos el bucle while para que inserte también el nuevo dato.
-            5. Le sumamos un número más a la i.
-            6. En la dataTable añadimos la columna.
-            */
+                    $.get(url, {}, function(data){
+                        /*
+                        Si queremos meter más parámetros (de columnas):
+                        1. Modificar el html de la tabla, para que aparezca otra columna.
+                        2. En el URLResponseHandler añadimos en la select la nueva columna.
+                        3. En el URLResponseHandler añadimos el nuevo dato al array que se pasa aquí.
+                        4. Modificamos el bucle while para que inserte también el nuevo dato.
+                        5. Le sumamos un número más a la i.
+                        6. En la dataTable añadimos la columna.
+                        */
 
-            //Separamos el array recibido y lo guardamos
-            
-            var arrayAlumnos = data.split(","); 
-            var alum = [];
+                        //Separamos el array recibido y lo guardamos
+                        
+                        var arrayAlumnos = data.split(","); 
+                        var alum = [];
+                        alumnosNum = arrayAlumnos.length;
 
-            
-            //Vamos metiendo en el nuevo array la información por líneas
-            var j=0;
-            var nombreFull="";
+                        
+                        //Vamos metiendo en el nuevo array la información por líneas
+                        var j=0;
+                        var nombreFull="";
 
-            while(j<arrayAlumnos.length){
+                        while(j<arrayAlumnos.length){
 
-                nombreFull=""+arrayAlumnos[j+1]+" "+arrayAlumnos[j+2]+" "+arrayAlumnos[j+3]+"";
-            
-            
-                alum.push([""+arrayAlumnos[j]+"",""+nombreFull+""]);
-                
-                //$('#tablaActividades').append('<td>'+arrayAlumnos[j]+'</td>');
-                //$('#tablaActividades').append('<td>'+nombreFull+'</td>');
+                            nombreFull=""+arrayAlumnos[j+1]+" "+arrayAlumnos[j+2]+" "+arrayAlumnos[j+3]+"";
+                        
+                        
+                            alum.push([""+arrayAlumnos[j]+"",""+nombreFull+""]);
+                            
+                            //$('#tablaActividades').append('<td>'+arrayAlumnos[j]+'</td>');
+                            //$('#tablaActividades').append('<td>'+nombreFull+'</td>');
 
-                j=j+5;
+                            j=j+5;
 
+                        }
+
+                        
+                        $('#tablaActividades').dataTable({
+                          
+                          //"data": alum
+
+                          "data": alum            
+
+                        });
+                    });
+                }
             }
 
-            
-            $('#tablaActividades').dataTable({
-              
-              //"data": alum
-
-              "data": alum            
-
-            });
         });
 
 
+
+
+
+}
+
+function guardar(){
+    /*
+    Coger información de tabla
+    Comparar array actual con inicial
+    Mandarlo al server
+    Actualizar información de la BD
+    */
+
+    arrayActualizado = new Array();
+    var a="";
+
+    for (var i = 0; i < alumnosNum; i++) { 
+        //Volcamos información actual en el array
+        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+
+    };
+    window.alert(arrayActualizado);
+
+    /*
+    //var url = "/actualizarMatricula?arrayActualizado="+arrayActualizado;
+    $.get(url, {}, function(data){
+        if(data=="1"){
+            window.alert("Información actualizada correctamente");
+            location.reload();
+        }
+    });
+*/
 }
 
     </script>
@@ -588,7 +625,9 @@ function calificar(){
                                     </body>
                                 </thead>
                             </table> 
+                            <button id="button" class="btn btn-success" onclick="guardar()" style="visibility:hidden">Guardar</button> 
                         </div>
+
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
