@@ -31,6 +31,7 @@ exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
 exports.introducirActividad = introducirActividad;
 exports.mostrarActividades = mostrarActividades;
 exports.actividadesTrimestre = actividadesTrimestre;
+exports.calificaciones = calificaciones;
 
 /*
 Función para logearte en la aplicación
@@ -956,5 +957,107 @@ function actividadesTrimestre(req, res){
 
     		
     });
+	
+}
+
+/*
+Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
+function calificaciones(req, res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el usuario
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el usuario
+	        trimestre = _url.query.trimestre; //Trimestre introducido por el usuario
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	 //Contamos el número de actividades que hay en el trimestre seleccionado
+
+	arrayAsigna = new Array();
+	arrayCalifs = new Array();
+	arrayCalifs2 = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//CONSEGUIMOS EL ID DE LA ASIGNATURA
+    	let sql_asig = "SELECT ID_asignatura FROM asignatura WHERE ID_curso='"+curso+"' AND nombre='"+asignatura+"'";
+    
+    	db.all(sql_asig, (err, rows)=>{
+    		if (err){throw err;}
+			rows.forEach((row) => {
+    			arrayAsigna.push(row.ID_asignatura);   
+    		}); 			
+  			console.log(arrayAsigna); //Aquí sale el código de la asignatura (el ID)
+
+  			//CONSEGUIMOS LOS IDS DE LAS ACTIVIDADES
+  			arrayActivs = new Array();
+    		let sql_activ = "SELECT cod_act FROM actividad WHERE cod_asig='"+arrayAsigna[0]+"' AND cod_trimestre='"+trimestre+"'";
+    
+    		db.all(sql_activ, (err, rows)=>{
+    			if (err){throw err;}
+
+    			rows.forEach((row) => {
+    				arrayActivs.push(row.cod_act);
+  				});
+  			console.log(arrayActivs); //Aquí salen los códigos de las actividades
+
+  				//CONSEGUIMOS LOS DNIS DE LOS ALUMNOS
+  				arrayAlumnos1 = new Array();
+  				let sql_alumnos = "SELECT DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+    
+		    	db.all(sql_alumnos, (err, rows)=>{
+		    		if (err){throw err;}
+
+		    		rows.forEach((row) => {
+		    			arrayAlumnos1.push(row.DNI_a);
+		  			});
+		  			console.log(arrayAlumnos1);
+
+		  			//CONSEGUIMOS LAS NOTAS DE LOS ALUMNOS
+			    	
+			    	var d;
+			    	var c;
+			    	var k;
+			    	for (var a = 0; a<arrayAlumnos1.length; a++) {
+			    		for (var b = 0; b<arrayActivs.length; b++) {
+			    			d = arrayAlumnos1[a];
+			    			c = arrayActivs[b];
+			    			let sql_alumnos2 = "SELECT calificacion FROM evaluacion WHERE DNI_a='"+d+"' AND cod_act='"+c+"'";
+
+					    	db.each(sql_alumnos2, (err, rows)=>{
+					    		if (err){throw err;}
+
+					    		arrayCalifs.push(rows.calificacion);
+								arrayCalifs[k] = arrayCalifs2[k];
+					  			console.log(arrayCalifs);
+
+					  			k=k+1;
+					    	});
+			    		};
+			    	};
+			    	
+
+		    	});
+
+			}); 
+
+			//TODO: HAY QUE CONSEGUIR QUE SE PASEN LAS CALIFICACIONES AL CLIENT-SIDE
+				console.log("******"+arrayCalifs2);	
+		    	res.write(""+arrayCalifs);	
+							res.end();
+
+    	});
+			
+			
+	});
+						
+	    					
 	
 }

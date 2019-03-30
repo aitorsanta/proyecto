@@ -119,7 +119,7 @@ function calificar(){
             var resul = [];
             
             
-            $('#tablaActividades').append('<th>'+"Número"+'</th>'); //La segunda columna es para los nombres de los estudiantes
+            $('#tablaActividades').append('<th>'+"Número"+'</th>'); //La primera columna es para el número
             $('#tablaActividades').append('<th>'+"Nombre"+'</th>'); //La segunda columna es para los nombres de los estudiantes
     
             //Vamos metiendo en el nuevo array la información por líneas
@@ -172,7 +172,7 @@ function calificar(){
                             j=j+5;
 
                         }
-
+                        window.alert(alum);
                         
                         $('#tablaActividades').dataTable({
                           
@@ -181,6 +181,12 @@ function calificar(){
                           "data": alum            
 
                         });
+                    });
+
+                    var url = "/calificaciones?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
+                        
+                    $.get(url, {}, function(data){
+                        window.alert(data);
                     });
                 }
             }
@@ -611,7 +617,7 @@ function guardar(){
                         <div class="panel-body" style="text-align:center">
                             <table id="tablaActividades" width="100%" class="table table-striped table-bordered table-hover" contenteditable='true'>
                                 <thead>
-                                   <tr> <!--Esto está puesto para que haya 7 actividades máximo por trimestre-->
+                                   <tr> <!--Esto está puesto para que haya 5 actividades máximo por trimestre-->
                                     <th></th>
                                     <th></th>
                                     <th></th>
