@@ -52,6 +52,9 @@ var rec = 0;
 var boton = 0;
 var longit = 0;
 var alumnosNum = 0;
+arrayAlumnosTodos = new Array();
+arrayCalificacionesTodas = new Array();
+arrayDeTodo = new Array();
 
 $(function(){
     //Cargamos todas las clases del profesor logueado en el toolbox
@@ -151,6 +154,8 @@ function calificar(){
                         //Separamos el array recibido y lo guardamos
                         
                         var arrayAlumnos = data.split(","); 
+                        arrayAlumnosTodos = data.split(",");
+                        
                         var alum = [];
                         alumnosNum = arrayAlumnos.length;
 
@@ -172,28 +177,78 @@ function calificar(){
                             j=j+5;
 
                         }
-                        window.alert(alum);
                         
-                        $('#tablaActividades').dataTable({
+                       /* $('#tablaActividades').dataTable({
                           
                           //"data": alum
 
                           "data": alum            
 
-                        });
+                        });*/
                     });
 
                     var url = "/calificaciones?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
                         
+                    window.alert("ESTO LLEGA: "+data);    
                     $.get(url, {}, function(data){
-                        window.alert(data);
+                        var arrayCalifs = data.split(","); 
+
+                        arrayCalificacionesTodas = data.split(",");
+
+                        var cal = [];
+                        var k=0;
+                        while(k<arrayCalifs.length){
+                                                
+                            cal.push([""+arrayCalifs[k]+""]);
+                            
+                            //$('#tablaActividades').append('<td>'+arrayAlumnos[j]+'</td>');
+                            //$('#tablaActividades').append('<td>'+nombreFull+'</td>');
+
+                            k=k+1;
+
+                        }
+
+                        /*$('#tablaActividades').dataTable({
+
+                          "data": alum, cal 
+
+                        });*/
+
+                    //AQUÍ HAY QUE PONER TODO EN COMÚN:
+
+                    var w=0;
+                    var n=0; //Alumnos
+                    var m=0; //Calificaciones
+                    window.alert("alumnosNum: "+alumnosNum.length);
+                    while(w<3){
+                        var m=0; //Calificaciones
+                        //window.alert("alumnosNum: "+alumnosNum.length);
+                        arrayDeTodo.push(arrayAlumnosTodos[n]); //Metemos el número
+                        //window.alert(arrayDeTodo);
+                        arrayDeTodo.push(arrayAlumnosTodos[n+1]+" "+arrayAlumnosTodos[n+2]+" "+arrayAlumnosTodos[n+3]); //Metemos el nombre
+                        //window.alert(arrayDeTodo);
+
+                        while(m<5){
+                            if(0<=arrayCalificacionesTodas[m]<=10) {                            
+                                //window.alert("Dentro, m= "+m);
+                                arrayDeTodo.push(arrayCalificacionesTodas[m]);
+                                m=m+1;
+                            };
+                        }
+                        
+                       // window.alert(arrayDeTodo);
+
+                        n = n+5; //Hacemos +5 para que no coja el email
+                        w = w+1;
+                    };
+
+
                     });
+
                 }
             }
 
         });
-
-
 
 
 

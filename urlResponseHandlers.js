@@ -982,7 +982,8 @@ function calificaciones(req, res){
 
 	arrayAsigna = new Array();
 	arrayCalifs = new Array();
-	arrayCalifs2 = new Array();
+	arrayDeNombres = new Array();
+	
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
@@ -1010,13 +1011,15 @@ function calificaciones(req, res){
 
   				//CONSEGUIMOS LOS DNIS DE LOS ALUMNOS
   				arrayAlumnos1 = new Array();
-  				let sql_alumnos = "SELECT DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+  				
+  				let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
     
 		    	db.all(sql_alumnos, (err, rows)=>{
 		    		if (err){throw err;}
 
 		    		rows.forEach((row) => {
 		    			arrayAlumnos1.push(row.DNI_a);
+		    			arrayDeNombres.push(row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a);
 		  			});
 		  			console.log(arrayAlumnos1);
 
@@ -1025,23 +1028,44 @@ function calificaciones(req, res){
 			    	var d;
 			    	var c;
 			    	var k;
-			    	for (var a = 0; a<arrayAlumnos1.length; a++) {
-			    		for (var b = 0; b<arrayActivs.length; b++) {
-			    			d = arrayAlumnos1[a];
-			    			c = arrayActivs[b];
-			    			let sql_alumnos2 = "SELECT calificacion FROM evaluacion WHERE DNI_a='"+d+"' AND cod_act='"+c+"'";
+			    	var f;
+			    	var k=0;
 
-					    	db.each(sql_alumnos2, (err, rows)=>{
-					    		if (err){throw err;}
+			    		while(k<arrayAlumnos1.length){			    			
+			    			d = arrayAlumnos1[k];
+			    			c = arrayActivs[k];
+			    			nombreEntero = arrayDeNombres[f];
 
-					    		arrayCalifs.push(rows.calificacion);
-								arrayCalifs[k] = arrayCalifs2[k];
-					  			console.log(arrayCalifs);
+			    			let sql_alumnos2 = "SELECT DNI_a, calificacion FROM evaluacion WHERE DNI_a='"+d+"' ORDER BY DNI_a";
 
-					  			k=k+1;
-					    	});
-			    		};
-			    	};
+
+			    			db.all(sql_alumnos2, (err, rows)=>{
+			    				rows.forEach((row) => {
+    								arrayCalifs.push(row.DNI_a+" "+row.calificacion);
+    								
+  								});
+  								
+									console.log(arrayCalifs);
+
+			    			});
+
+			    			/*db.each(sql_alumnos2, (err, rows)=>{
+			    				if (err){throw err;}
+			    				arrayCalifs.push(nombreEntero+" "+rows.calificacion);
+			    				console.log(arrayCalifs);
+			    				//res.write(""+arrayCalifs);	
+			    				
+								if ((arrayCalifs.length+1)==arrayActivs.length) {
+									res.write(""+arrayCalifs);	
+									console.log("MANDAMOS: "+arrayCalifs);
+									res.end();
+								};
+			    			});*/
+			    				
+
+			    			k=k+1;	
+			    			
+			    		}
 			    	
 
 		    	});
@@ -1049,9 +1073,8 @@ function calificaciones(req, res){
 			}); 
 
 			//TODO: HAY QUE CONSEGUIR QUE SE PASEN LAS CALIFICACIONES AL CLIENT-SIDE
-				console.log("******"+arrayCalifs2);	
-		    	res.write(""+arrayCalifs);	
-							res.end();
+				/*console.log("******"+arrayCalifs2);*/	
+		    	
 
     	});
 			
