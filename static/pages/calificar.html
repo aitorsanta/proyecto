@@ -189,8 +189,9 @@ function calificar(){
 
                     var url = "/calificaciones?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
                         
-                    window.alert("ESTO LLEGA: "+data);    
+                        
                     $.get(url, {}, function(data){
+
                         var arrayCalifs = data.split(","); 
 
                         arrayCalificacionesTodas = data.split(",");
@@ -198,21 +199,26 @@ function calificar(){
                         var cal = [];
                         var k=0;
                         while(k<arrayCalifs.length){
+
+                            /*resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+""]);
+                i=i+5;*/
                                                 
-                            cal.push([""+arrayCalifs[k]+""]);
+                            cal.push([""+arrayCalifs[k]+"",""+arrayCalifs[k+1]+"",""+arrayCalifs[k+2]+""]);
+                            //window.alert(cal);
                             
                             //$('#tablaActividades').append('<td>'+arrayAlumnos[j]+'</td>');
                             //$('#tablaActividades').append('<td>'+nombreFull+'</td>');
 
-                            k=k+1;
+                            k=k+3;
 
                         }
+                        
 
-                        /*$('#tablaActividades').dataTable({
+                        $('#tablaActividades').dataTable({
 
-                          "data": alum, cal 
+                          "data": cal 
 
-                        });*/
+                        });
 
                     //AQUÍ HAY QUE PONER TODO EN COMÚN:
 

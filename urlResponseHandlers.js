@@ -977,106 +977,26 @@ function calificaciones(req, res){
 	      }
 	    }
 	  }
-
+	  console.log("DENTRO");
 	 //Contamos el número de actividades que hay en el trimestre seleccionado
-
-	arrayAsigna = new Array();
 	arrayCalifs = new Array();
-	arrayDeNombres = new Array();
+	var k=0;
 	
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
-    	
-    	//CONSEGUIMOS EL ID DE LA ASIGNATURA
-    	let sql_asig = "SELECT ID_asignatura FROM asignatura WHERE ID_curso='"+curso+"' AND nombre='"+asignatura+"'";
-    
-    	db.all(sql_asig, (err, rows)=>{
-    		if (err){throw err;}
+
+		let sql_a = "SELECT nombre_a, apellido1_a, apellido2_a, calificacion FROM alumno a, evaluacion e, actividad s, asignatura g WHERE a.DNI_a=e.DNI_a AND e.cod_act=s.cod_act AND s.cod_asig=g.ID_asignatura AND g.ID_curso='"+curso+"' AND g.nombre='"+asignatura+"' AND s.cod_trimestre='"+trimestre+"' GROUP BY nombre_a, apellido1_a ORDER BY e.cod_act, a.apellido1_a";
+		db.all(sql_a, (err, rows)=>{
 			rows.forEach((row) => {
-    			arrayAsigna.push(row.ID_asignatura);   
-    		}); 			
-  			console.log(arrayAsigna); //Aquí sale el código de la asignatura (el ID)
+				arrayCalifs.push((k+1)+","+row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a+", "+row.calificacion);
+				k=k+1;	
+				
+				});
+					res.write(""+arrayCalifs);
+					res.end();
+				console.log(arrayCalifs);
 
-  			//CONSEGUIMOS LOS IDS DE LAS ACTIVIDADES
-  			arrayActivs = new Array();
-    		let sql_activ = "SELECT cod_act FROM actividad WHERE cod_asig='"+arrayAsigna[0]+"' AND cod_trimestre='"+trimestre+"'";
-    
-    		db.all(sql_activ, (err, rows)=>{
-    			if (err){throw err;}
-
-    			rows.forEach((row) => {
-    				arrayActivs.push(row.cod_act);
-  				});
-  			console.log(arrayActivs); //Aquí salen los códigos de las actividades
-
-  				//CONSEGUIMOS LOS DNIS DE LOS ALUMNOS
-  				arrayAlumnos1 = new Array();
-  				
-  				let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
-    
-		    	db.all(sql_alumnos, (err, rows)=>{
-		    		if (err){throw err;}
-
-		    		rows.forEach((row) => {
-		    			arrayAlumnos1.push(row.DNI_a);
-		    			arrayDeNombres.push(row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a);
-		  			});
-		  			console.log(arrayAlumnos1);
-
-		  			//CONSEGUIMOS LAS NOTAS DE LOS ALUMNOS
-			    	
-			    	var d;
-			    	var c;
-			    	var k;
-			    	var f;
-			    	var k=0;
-
-			    		while(k<arrayAlumnos1.length){			    			
-			    			d = arrayAlumnos1[k];
-			    			c = arrayActivs[k];
-			    			nombreEntero = arrayDeNombres[f];
-
-			    			let sql_alumnos2 = "SELECT DNI_a, calificacion FROM evaluacion WHERE DNI_a='"+d+"' ORDER BY DNI_a";
-
-
-			    			db.all(sql_alumnos2, (err, rows)=>{
-			    				rows.forEach((row) => {
-    								arrayCalifs.push(row.DNI_a+" "+row.calificacion);
-    								
-  								});
-  								
-									console.log(arrayCalifs);
-
-			    			});
-
-			    			/*db.each(sql_alumnos2, (err, rows)=>{
-			    				if (err){throw err;}
-			    				arrayCalifs.push(nombreEntero+" "+rows.calificacion);
-			    				console.log(arrayCalifs);
-			    				//res.write(""+arrayCalifs);	
-			    				
-								if ((arrayCalifs.length+1)==arrayActivs.length) {
-									res.write(""+arrayCalifs);	
-									console.log("MANDAMOS: "+arrayCalifs);
-									res.end();
-								};
-			    			});*/
-			    				
-
-			    			k=k+1;	
-			    			
-			    		}
-			    	
-
-		    	});
-
-			}); 
-
-			//TODO: HAY QUE CONSEGUIR QUE SE PASEN LAS CALIFICACIONES AL CLIENT-SIDE
-				/*console.log("******"+arrayCalifs2);*/	
-		    	
-
-    	});
+		});
 			
 			
 	});
