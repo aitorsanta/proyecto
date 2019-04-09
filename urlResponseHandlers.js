@@ -961,7 +961,7 @@ function actividadesTrimestre(req, res){
 }
 
 /*
-Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+INFORMACIÓN DE CALIFICACIONES
 */
 function calificaciones(req, res){
 	if (req.url != undefined) {
@@ -977,7 +977,7 @@ function calificaciones(req, res){
 	      }
 	    }
 	  }
-	  console.log("DENTRO");
+	  
 	 //Contamos el número de actividades que hay en el trimestre seleccionado
 	arrayCalifs = new Array();
 	var k=0;
