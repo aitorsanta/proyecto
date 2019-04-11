@@ -137,4 +137,29 @@ app.get('/calificaciones', function(req, res) {
 	controller.dispatch(urlResponseHandlers.calificaciones, req, res);
 });
 
+app.get('/mostrarAsigProf', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarAsigProf, req, res);
+});
+
+app.get('/mostrarAlumnosProf', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarAlumnosProf, req, res);
+});
+
+app.get('/mostrarActivProf', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarActivProf, req, res);
+});
+
+app.get('/mostrarIncidProf', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarIncidProf, req, res);
+});
+
+app.get('/guardarIncidencia', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.guardarIncidencia, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

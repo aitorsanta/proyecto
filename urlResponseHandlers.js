@@ -32,6 +32,11 @@ exports.introducirActividad = introducirActividad;
 exports.mostrarActividades = mostrarActividades;
 exports.actividadesTrimestre = actividadesTrimestre;
 exports.calificaciones = calificaciones;
+exports.mostrarAsigProf = mostrarAsigProf;
+exports.mostrarAlumnosProf = mostrarAlumnosProf;
+exports.mostrarActivProf = mostrarActivProf;
+exports.mostrarIncidProf = mostrarIncidProf;
+exports.guardarIncidencia = guardarIncidencia;
 
 /*
 Función para logearte en la aplicación
@@ -1004,3 +1009,157 @@ function calificaciones(req, res){
 	    					
 	
 }
+
+/*
+Todas las asignaturas del profesor
+*/
+function mostrarAsigProf(req, res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	arrayAsignaturas = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_asig = "SELECT nombre FROM asignatura WHERE DNI_d='"+elDNI+"' ORDER BY nombre";
+
+    	db.all(sql_asig, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayAsignaturas.push(row.nombre);
+  			});
+  			
+  			res.write(""+arrayAsignaturas);
+  			res.end();
+    		
+    	});
+	}); 	
+}
+
+/*
+Todos los alumnos del profesor
+*/
+function mostrarAlumnosProf(req, res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	arrayAlumnos = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT nombre_a, apellido1_a, apellido2_a FROM alumno a, curso c, asignatura g WHERE a.ID_curso = c.ID_curso AND c.ID_curso=g.ID_curso AND g.DNI_d='"+elDNI+"'";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayAlumnos.push(row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a);
+  			});
+  			
+  			res.write(""+arrayAlumnos);
+  			res.end();
+    		
+    	});
+	}); 	
+}
+
+/*
+Todas las actividades del profesor
+*/
+function mostrarActivProf(req, res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	arrayActivs = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT nombre_act FROM actividad a, asignatura g WHERE a.cod_asig = g.ID_asignatura AND g.DNI_d='"+elDNI+"'";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayActivs.push(row.nombre);
+  			});
+  			
+  			res.write(""+arrayActivs);
+  			res.end();
+    		
+    	});
+	}); 	
+}
+
+/*
+Todas las incidencias hechas por el profesor
+*/
+function mostrarIncidProf(req, res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	arrayIncid = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT fecha FROM incidencia WHERE DNI_p='"+elDNI+"'";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayIncid.push(row.fecha);	
+  			});
+
+			res.write(""+arrayIncid);
+  			res.end();
+    		
+    	});
+	}); 	
+}
+
+function guardarIncidencia(req, res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        alumno = _url.query.alumno;
+	        fecha = _url.query.fecha;
+	        concepto = _url.query.concepto;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	/*
+	SOLO FALTA COGER EL NOMBRE Y APELLIDOS DEL ALUMNO POR SEPARADO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	*/
+
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_alum = "SELECT DNI_a FROM alumno WHERE nombre_a='"+alumno+"'";
+    
+    	db.all(sql_alum, (err, rows)=>{
+    		if (err){throw err;}
+    		var dni_Alumno = JSON.stringify(rows).substring(18,20); //Cogemos el curso
+
+    		//Introducimos actividad en la BD
+		    let query_insert_activity = "INSERT INTO incidencia (DNI_a,DNI_p,fecha,asignatura,asunto) VALUES ('"+dni_Alumno+"','"+elDNI+"','"+fecha+"',+'"+asignatura+"'+'"+concepto+"')";
+			
+			db.run(query_insert_activity, (err, row)=>{
+				if (err){throw err;}
+				console.log("Actividad insertada correctamente.");
+				res.write("1");
+				res.end();
+    	});	
+
+    	
+
+    		
+    	});
+   	});
+
+}
+

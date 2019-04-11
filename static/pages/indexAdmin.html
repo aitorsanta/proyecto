@@ -37,6 +37,7 @@
 <script type="text/javascript">
 
     $(function(){
+        //NUMERO DE DOCENTES
         var url = "/matriculaProfesor";
             $.get(url, {}, function(data){
 
@@ -48,6 +49,7 @@
                 document.getElementById('profesores').innerHTML=arrayDeCadenas.length/5;
             });
 
+        //NUMERO DE ALUMNOS
         var url = "/matriculaAlumno";
             $.get(url, {}, function(data){
 
@@ -59,6 +61,7 @@
                 document.getElementById('alumnos').innerHTML=arrayDeCadenas.length/6;
             });
 
+        //NUMERO DE ASIGNATURAS
         var url = "/mostrarAsig";
             $.get(url, {}, function(data){
 
@@ -70,6 +73,7 @@
                 document.getElementById('asignaturas').innerHTML=arrayDeCadenas.length/3;
             });
 
+        //NUMERO DE CURSOS
         var url = "/obtenerCursos";
             $.get(url, {}, function(data){
 
