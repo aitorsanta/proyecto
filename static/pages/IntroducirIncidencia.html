@@ -92,22 +92,79 @@ function guardar(){
     var mes = document.getElementById("mes").value;
     var dia = document.getElementById("dia").value;
 
+    //Separamos el campo del nombre para enviar al servidor 3 campos
+    var nombreAlum = alumno.split(" ");
+
+    //elDNI = JSON.stringify(dniSave).substring(10,19);
+    var nombre_a="";
+    var apellido1_a="";
+    var apellido2_a="";
+    var i=0;
+    var stop=0;
+    var hoy = new Date(); 
+
+    //Pequeño ajuste para asegurar de que el día y el mes tienen 2 dígitos
+    dia=addZero(dia);
+    mes=addZero(mes);
+
     var fechaFull=anyo+"-"+mes+"-"+dia;
 
     if(asignatura=="" || alumno==""||concepto==""||anyo==""||mes==""||dia==""){
         window.alert("Datos incompletos");
     }else{
-        
-            var url = "/guardarIncidencia?asignatura="+asignatura+"&alumno="+alumno+"&fecha="+fechaFull+"&concepto="+concepto;
+        //Comprobaciones de fecha
+        if(anyo>hoy.getFullYear() || anyo<hoy.getFullYear()-1){
+            window.alert("ERROR! Año incorrecto");
+            document.getElementById("anyo").value="";
+        }else if(0>mes || mes>12){
+            window.alert("ERROR! Mes incorrecto");
+            document.getElementById("mes").value="";
+        }else if(0>dia || dia>31){
+            window.alert("ERROR! Día incorrecto");
+            document.getElementById("dia").value="";
+        }else{
+            var url = "/guardarIncidencia?asignatura="+asignatura+"&nombre="+nombreAlum[0]+"&apellido1="+nombreAlum[1]+"&apellido2="+nombreAlum[2]+"&fecha="+fechaFull+"&concepto="+concepto;
             $.get(url, {}, function(data){
                 if(data=="1"){
                     window.alert("Incidencia insertada correctamente");
-                    document.getElementById("nombre").value="";
-                    document.getElementById("peso").value="";
-                    document.getElementById("trimestre").value="";
+                    document.getElementById("toolBox1").value="";
+                    document.getElementById("toolBox2").value="";
+                    document.getElementById("concepto").value="";
+                    document.getElementById("anyo").value="";
+                    document.getElementById("mes").value="";
+                    document.getElementById("dia").value="";
                 }
             });
+        }
     }
+}
+
+/*
+Función obtenida directamente de la siguiente dirección web:
+https://ekiketa.es/obtener-la-fecha-actual-en-javascript/
+Autor: Kike Beltrán [info@kikebeltran.es]
+*/
+function addZero(i){
+    if(i < 10){
+        i = '0'+i;
+    }
+    return i;
+}
+
+function fechaActual(){
+    var hoy = new Date(); 
+    var dia = hoy.getDate();
+    var mes = hoy.getMonth()+1;
+    var anyo = hoy.getFullYear();
+
+    dia=addZero(dia);
+    mes=addZero(mes);
+
+
+    document.getElementById("anyo").value=anyo;
+    document.getElementById("mes").value=mes;
+    document.getElementById("dia").value=dia;
+
 }
 
 
@@ -216,17 +273,20 @@ function guardar(){
                                 <div>
                                 <label>Fecha:</label>
                                         <div class="form-group">
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <input class="form-control" placeholder="Año" id="anyo">
                                                 <div style="clear:both"></div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <input class="form-control" placeholder="Mes" id="mes">
                                                 <div style="clear:both"></div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <input class="form-control" placeholder="Día" id="dia">
                                                 <div style="clear:both"></div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <button type="button" class="btn btn-primary btn-lg" onclick="fechaActual()">Hoy</button>
                                             </div>
                                         </div>
                                 </div>

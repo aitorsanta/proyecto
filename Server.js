@@ -162,4 +162,10 @@ app.get('/guardarIncidencia', function(req, res) {
 	controller.dispatch(urlResponseHandlers.guardarIncidencia, req, res);
 });
 
+app.get('/obtenerIncidencias', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.obtenerIncidencias, req, res);
+});
+
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

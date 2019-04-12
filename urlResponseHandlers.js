@@ -37,6 +37,7 @@ exports.mostrarAlumnosProf = mostrarAlumnosProf;
 exports.mostrarActivProf = mostrarActivProf;
 exports.mostrarIncidProf = mostrarIncidProf;
 exports.guardarIncidencia = guardarIncidencia;
+exports.obtenerIncidencias = obtenerIncidencias;
 
 /*
 Función para logearte en la aplicación
@@ -812,13 +813,13 @@ function matriculaAlumnoConCurso(req, res){
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, email_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, DNI_a, email_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAlumnos.push(i+","+row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.email_a);
+    			arrayAlumnos.push(i+","+row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.DNI_a+","+row.email_a);
     			i=i+1;
   			});
   			console.log(arrayAlumnos);
@@ -1089,7 +1090,7 @@ function mostrarActivProf(req, res){
 }
 
 /*
-Todas las incidencias hechas por el profesor
+El número de incidencias hechas por el profesor
 */
 function mostrarIncidProf(req, res){
 	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
@@ -1122,7 +1123,9 @@ function guardarIncidencia(req, res){
 	    if(_url.query) {
 	      try {
 	        asignatura = _url.query.asignatura;
-	        alumno = _url.query.alumno;
+	        nombre = _url.query.nombre;
+	        apellido1 = _url.query.apellido1;
+	        apellido2 = _url.query.apellido2;
 	        fecha = _url.query.fecha;
 	        concepto = _url.query.concepto;
 	      } catch (e) {
@@ -1130,27 +1133,23 @@ function guardarIncidencia(req, res){
 	    }
 	}
 
-	/*
-	SOLO FALTA COGER EL NOMBRE Y APELLIDOS DEL ALUMNO POR SEPARADO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	*/
-
 	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
-		let sql_alum = "SELECT DNI_a FROM alumno WHERE nombre_a='"+alumno+"'";
+		let sql_alum = "SELECT DNI_a FROM alumno WHERE nombre_a='"+nombre+"' AND apellido1_a='"+apellido1+"' AND apellido2_a='"+apellido2+"'";
     
     	db.all(sql_alum, (err, rows)=>{
     		if (err){throw err;}
-    		var dni_Alumno = JSON.stringify(rows).substring(18,20); //Cogemos el curso
+    		var dni_Alumno = JSON.stringify(rows).substring(11,20); //Cogemos el dni del alumno
 
     		//Introducimos actividad en la BD
-		    let query_insert_activity = "INSERT INTO incidencia (DNI_a,DNI_p,fecha,asignatura,asunto) VALUES ('"+dni_Alumno+"','"+elDNI+"','"+fecha+"',+'"+asignatura+"'+'"+concepto+"')";
+		    let query_insert_activity = "INSERT INTO incidencia (DNI_a,DNI_p,fecha,asignatura,asunto) VALUES ('"+dni_Alumno+"','"+elDNI+"','"+fecha+"','"+asignatura+"','"+concepto+"')";
 			
 			db.run(query_insert_activity, (err, row)=>{
 				if (err){throw err;}
-				console.log("Actividad insertada correctamente.");
+				console.log("incidencia insertada correctamente.");
 				res.write("1");
 				res.end();
     	});	
@@ -1161,5 +1160,33 @@ function guardarIncidencia(req, res){
     	});
    	});
 
+}
+
+/*
+Las incidencias del profesor detalladas
+*/
+function obtenerIncidencias(req,res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+	var i=1;
+
+	arrayIncid = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT DNI_a,fecha,asignatura,asunto FROM incidencia WHERE DNI_p='"+elDNI+"' ORDER BY fecha";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.DNI_a+", "+row.asunto);
+    			i=i+1;
+  			});
+
+			res.write(""+arrayIncid);
+  			res.end();
+    		
+    	});
+	});
 }
 
