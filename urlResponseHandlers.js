@@ -6,6 +6,9 @@ const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
 var people = ""; //Variable que registra de qué tipo ha sido la última inserción
+var n = 153;
+var e = 3;
+var d = 43;
 
 
 exports.loginApp = loginApp;
@@ -57,6 +60,10 @@ function loginApp(req, res){
 	      }
 	    }
 	  }
+
+	  //Convertimos la contraseña en un número decimal, gracias a la tabla ASCII
+	  var passEncrypted = contr.charCodeAt(0); 
+	  console.log(passEncrypted);
 
 	    /*
 		Index de números
@@ -160,7 +167,48 @@ Función para generar una contraseña preliminar
 function generatePass(fecha, nombre){
 	var pass = ""+fecha+nombre.substring(0,1);
 	oldPass = pass;
+
+	//AQUÍ TENEMOS QUE CIFRAR LA CONTRASEÑA, PARA QUE SE GUARDE DE FORMA SEGURA
+	/* PASOS:
+	1. Convertimos el texto en número, gracias al Código ASCII
+	2. Lo ciframos siguiendo el algoritmo de RSA
+	3. Devolvemos el valor cifrado
+	*/
+
+	//Primer paso
+	/*var passEncrypted = "";
+	for (var i = 0; i< pass.length; i++) {
+		passEncrypted = passEncrypted + pass.charCodeAt(i);
+	};
+
+	passEncrypted = 3;
+
+	console.log("SIN PARSEO: "+pass);
+	console.log("PARSEADO: "+passEncrypted);
+	console.log("E: "+e);
+	console.log("N: "+n);
+
+	//Ciframos
+	console.log("Solo potencia: "+Math.pow(passEncrypted,e));
+	console.log("Prueba de módulo: 2%5: "+(2%5));
+	console.log("Prueba de módulo: 21%5: "+(21%5));
+	console.log("A ver si funciona: "+Math.pow(passEncrypted,e)%n);
+
+	var criptograma = (Math.pow(passEncrypted,e))%n;
+
+	console.log("LA CONTRASEÑA ES: "+criptograma);
+
+	return criptograma;*/
+
 	return pass;
+}
+
+function desencriptar(password){
+	var mensaje = password^(d)%n;
+
+	var texto = mensaje.fromCharCode();
+
+	return texto;
 }
 
 /*
