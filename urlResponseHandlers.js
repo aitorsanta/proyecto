@@ -1,4 +1,5 @@
 var url = require("url");
+var bigInt = require("big-integer"); //External library to work with big numbers
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoAitor.db') //Path de la base de datos
@@ -6,9 +7,10 @@ const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
 var people = ""; //Variable que registra de qué tipo ha sido la última inserción
-var n = 153;
+//VALORES PARA EL CIFRADO DE CONTRASEÑAS --> Procedencia: Ver apartado correspondiente de la memoria
+var n = 253;
 var e = 3;
-var d = 43;
+var d = 147;
 
 
 exports.loginApp = loginApp;
@@ -61,10 +63,6 @@ function loginApp(req, res){
 	    }
 	  }
 
-	  //Convertimos la contraseña en un número decimal, gracias a la tabla ASCII
-	  var passEncrypted = contr.charCodeAt(0); 
-	  console.log(passEncrypted);
-
 	    /*
 		Index de números
 		1 - Administrador
@@ -80,13 +78,15 @@ function loginApp(req, res){
 	    	console.log(res.write(""+1)); //Devolvemos un 1 si el login es satisfactorio
 	    	res.end();
 	    }else{	
+	    	//Tenemos que cifrar la contraseña para que haga la comparación con la base de datos
+	    	var contraCifrado = rsa(contr);
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}
 
 	    		if(check != 1){
 		    	//Creamos la consulta de buscar el email y pass introducido ALUMNO
-		    	let sql_usuPass_alum = "SELECT email_a, contra_usu_a FROM alumno WHERE email_a ='"+em+"' AND contra_usu_a='"+contr+"'";
+		    	let sql_usuPass_alum = "SELECT email_a, contra_usu_a FROM alumno WHERE email_a ='"+em+"' AND contra_usu_a='"+contraCifrado+"'";
 		    	db.each(sql_usuPass_alum, (err, row)=>{
 		    		if (err){throw err;}
 		    		//db.close();
@@ -100,7 +100,7 @@ function loginApp(req, res){
 		    	
 		    	}if(check != 1){
 			    	//Creamos la consulta de buscar el email y pass introducido DOCENTE
-			    	let sql_usuPass_doc = "SELECT email_d, contra_usu_d FROM docente WHERE email_d ='"+em+"' AND contra_usu_d='"+contr+"'";
+			    	let sql_usuPass_doc = "SELECT email_d, contra_usu_d FROM docente WHERE email_d ='"+em+"' AND contra_usu_d='"+contraCifrado+"'";
 			    
 			    	db.each(sql_usuPass_doc, (err, row)=>{
 			    		if (err){throw err;}
@@ -118,7 +118,7 @@ function loginApp(req, res){
 
 		    	if(check != 1){
 			    	//Creamos la consulta de buscar el email y pass introducido FAMILIA
-			    	let sql_usuPass_fam = "SELECT email_TL1, contr_usu_TL1 FROM familia WHERE email_TL1 ='"+em+"' AND contr_usu_TL1='"+contr+"'";
+			    	let sql_usuPass_fam = "SELECT email_TL1, contr_usu_TL1 FROM familia WHERE email_TL1 ='"+em+"' AND contr_usu_TL1='"+contraCifrado+"'";
 			    
 			    	db.each(sql_usuPass_fam, (err, row)=>{
 			    		if (err){throw err;}
@@ -134,7 +134,7 @@ function loginApp(req, res){
 
 		    	if(check != 1){
 			    	//Creamos la consulta de buscar el email y pass introducido FAMILIA
-			    	let sql_usuPass_fam2 = "SELECT email_TL2, contr_usu_TL2 FROM familia WHERE email_TL2 ='"+em+"' AND contr_usu_TL2='"+contr+"'";
+			    	let sql_usuPass_fam2 = "SELECT email_TL2, contr_usu_TL2 FROM familia WHERE email_TL2 ='"+em+"' AND contr_usu_TL2='"+contraCifrado+"'";
 			    	
 			    	db.each(sql_usuPass_fam2, (err, row)=>{
 			    		if (err){throw err;}
@@ -165,42 +165,44 @@ function loginApp(req, res){
 Función para generar una contraseña preliminar
 */
 function generatePass(fecha, nombre){
+	var criptograma;
 	var pass = ""+fecha+nombre.substring(0,1);
 	oldPass = pass;
 
-	//AQUÍ TENEMOS QUE CIFRAR LA CONTRASEÑA, PARA QUE SE GUARDE DE FORMA SEGURA
+	criptograma = rsa(pass);
+	console.log("ESTA ES LA CONTRASENIA: "+criptograma);
+
+	return criptograma;
+
+}
+/*
+FUNCION QUE DADO UN TEXTO PLANO CIFRA EL CONTENIDO APLICANDO EL ALGORITMO DE RSA
+*/
+function rsa(pass){	
 	/* PASOS:
 	1. Convertimos el texto en número, gracias al Código ASCII
 	2. Lo ciframos siguiendo el algoritmo de RSA
 	3. Devolvemos el valor cifrado
 	*/
 
-	//Primer paso
-	/*var passEncrypted = "";
+	//Primer paso: Convertimos el texto en número, gracias al Código ASCII
+	var passEncrypted = "";
 	for (var i = 0; i< pass.length; i++) {
 		passEncrypted = passEncrypted + pass.charCodeAt(i);
 	};
 
-	passEncrypted = 3;
 
-	console.log("SIN PARSEO: "+pass);
-	console.log("PARSEADO: "+passEncrypted);
-	console.log("E: "+e);
-	console.log("N: "+n);
+	//Lo ciframos siguiendo el algoritmo de RSA --> BIG NUMBERS !!
+	var passPower = 1;
+	for (var i = 0; i < e; i++) {
+			passPower = BigInt(passPower) * BigInt(passEncrypted);
+	};
+	
+	//Generamos el criptograma siguiendo la fórmula de cifrado de mensaje: C=M^e mod(n)
+	var criptograma = BigInt(passPower) % BigInt(n);
 
-	//Ciframos
-	console.log("Solo potencia: "+Math.pow(passEncrypted,e));
-	console.log("Prueba de módulo: 2%5: "+(2%5));
-	console.log("Prueba de módulo: 21%5: "+(21%5));
-	console.log("A ver si funciona: "+Math.pow(passEncrypted,e)%n);
-
-	var criptograma = (Math.pow(passEncrypted,e))%n;
-
-	console.log("LA CONTRASEÑA ES: "+criptograma);
-
-	return criptograma;*/
-
-	return pass;
+	//Devolvemos el texto cifrado
+	return criptograma;
 }
 
 function desencriptar(password){

@@ -2,6 +2,7 @@
   "name": "Sande",
   "version": "0.0.1",
   "dependencies": {
+    "big-integer": "^1.6.43",
     "datatables.net": "^1.10.19",
     "datatables.net-dt": "^1.10.19",
     "express": "4.16.2",
