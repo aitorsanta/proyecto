@@ -192,10 +192,10 @@ function rsa(pass){
 	};
 
 
-	//Lo ciframos siguiendo el algoritmo de RSA --> BIG NUMBERS !!
+	//Segundo paso: Lo ciframos siguiendo el algoritmo de RSA --> BIG NUMBERS !!
 	var passPower = 1;
 	for (var i = 0; i < e; i++) {
-			passPower = BigInt(passPower) * BigInt(passEncrypted);
+		passPower = BigInt(passPower) * BigInt(passEncrypted);
 	};
 	
 	//Generamos el criptograma siguiendo la fórmula de cifrado de mensaje: C=M^e mod(n)
@@ -205,13 +205,6 @@ function rsa(pass){
 	return criptograma;
 }
 
-function desencriptar(password){
-	var mensaje = password^(d)%n;
-
-	var texto = mensaje.fromCharCode();
-
-	return texto;
-}
 
 /*
 Función para obtener el DNI del usuario conectado
@@ -428,12 +421,14 @@ function changePassword(req, res){
 
 	  elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
 
+	  //Tenemos que cifrar la contraseña
+	  var contraCifrado = rsa(pass);
 
 	if(people=="alumno"){
 		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
-		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+pass+"' WHERE DNI_a ='"+elDNI+"'";
+		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+contraCifrado+"' WHERE DNI_a ='"+elDNI+"'";
 	    	db.run(sql_passUpdate, (err, row)=>{
 	    		if (err){throw err;}
 	    		console.log("Contraseña actualizada");
@@ -445,7 +440,7 @@ function changePassword(req, res){
 		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
-			let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+pass+"' WHERE DNI_d ='"+elDNI+"'";
+			let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+contraCifrado+"' WHERE DNI_d ='"+elDNI+"'";
 		    	db.run(sql_passUpdate, (err, row)=>{
 		    		if (err){throw err;}
 		    		console.log("Contraseña actualizada");
