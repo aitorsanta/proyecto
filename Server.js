@@ -167,5 +167,14 @@ app.get('/obtenerIncidencias', function(req, res) {
 	controller.dispatch(urlResponseHandlers.obtenerIncidencias, req, res);
 });
 
+app.get('/mostrarAsigAlum', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarAsigAlum, req, res);
+});
+
+app.get('/mostrarIncidAlum', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.mostrarIncidAlum, req, res);
+});
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
