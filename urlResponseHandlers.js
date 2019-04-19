@@ -45,6 +45,7 @@ exports.guardarIncidencia = guardarIncidencia;
 exports.obtenerIncidencias = obtenerIncidencias;
 exports.mostrarAsigAlum = mostrarAsigAlum;
 exports.mostrarIncidAlum = mostrarIncidAlum;
+exports.obtenerIncidenciasAlum = obtenerIncidenciasAlum;
 
 /*
 Función para logearte en la aplicación
@@ -82,7 +83,7 @@ function loginApp(req, res){
 	    }else{	
 	    	//Tenemos que cifrar la contraseña para que haga la comparación con la base de datos
 	    	var contraCifrado = rsa(contr);
-	    	console.log(contraCifrado);
+	    	
 	    	//Si es un usuario normal
 	    	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 	    		if(err){return console.error(err.message);}
@@ -1283,6 +1284,34 @@ function obtenerIncidencias(req,res){
 
     		rows.forEach((row) => {
     			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.DNI_a+", "+row.asunto);
+    			i=i+1;
+  			});
+
+			res.write(""+arrayIncid);
+  			res.end();
+    		
+    	});
+	});
+}
+
+/*
+Las incidencias del alumno detalladas
+*/
+function obtenerIncidenciasAlum(req,res){
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+	var i=1;
+
+	arrayIncid = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT fecha,asignatura,asunto FROM incidencia WHERE DNI_a='"+elDNI+"' ORDER BY fecha";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.asunto);
     			i=i+1;
   			});
 
