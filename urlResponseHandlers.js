@@ -1411,6 +1411,7 @@ function calif(req,res){
 
 	var k=1;
 	var indiceNotas = 0;
+	var b = 0;
 	var blanco = " ";
 	arrayDNIs = new Array();
 	arrayID = new Array();
@@ -1420,11 +1421,12 @@ function calif(req,res){
 	arrayFinal = new Array();
 	arrayNotas = new Array();
 	arrayCodigoActiv = new Array();
+	
 	 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
     	//Aquí tenemos todos los usuarios YA calificados
-    	let sql_a1 = "SELECT DNI_a,a.cod_act FROM actividad a, evaluacion e WHERE a.cod_act=e.cod_act AND a.nombre_act='"+actividad+"'";
+    	let sql_a1 = "SELECT e.DNI_a,a.cod_act FROM actividad a, evaluacion e, alumno l WHERE a.cod_act=e.cod_act AND e.DNI_a=l.DNI_a AND a.nombre_act='"+actividad+"' ORDER BY l.apellido1_a";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1432,7 +1434,7 @@ function calif(req,res){
     		rows.forEach((row) => {
     			arrayDNIs.push(row.DNI_a); //Los DNIs que tienen calificación en la actividad actual
     			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
-  			});	
+  			});		
 
     		//Todos los usuarios
 
@@ -1448,7 +1450,9 @@ function calif(req,res){
 	    			arrayApe2s.push(row.apellido2_a);
 	  			});
 
-	  			let sql_b = "SELECT calificacion FROM alumno a, evaluacion e WHERE a.DNI_a = e.DNI_a AND e.DNI_a='"+arrayDNIs+"' AND e.cod_act='"+arrayCodigoActiv+"' ORDER BY a.apellido1_a";
+	  			var ac = arrayCodigoActiv[0];
+
+	  			let sql_b = "SELECT calificacion FROM alumno a, evaluacion e WHERE a.DNI_a = e.DNI_a AND e.cod_act="+ac+" ORDER BY a.apellido1_a";
 
 	  			db.all(sql_b, (err, rows)=>{
 	  				if (err){throw err;}
@@ -1458,15 +1462,19 @@ function calif(req,res){
 
 	  			var w = 0;
 	    			for (var i = 0; i < arrayID.length; i++) {
+	    				console.log("1");
 	    				for (var j = 0; j < arrayDNIs.length; j++) {
+
 	    					if(arrayID[i]==arrayDNIs[j]){ //Esto significa que ya tiene una calificación
+	    						
 	    						arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+", "+arrayNotas[indiceNotas]);
 	    						indiceNotas = indiceNotas+1;
 	    						k=k+1;
 	    						j = arrayDNIs.length+1;
 	    						w=1;
 	    					}
-	    					if(j = arrayDNIs.length && w==0){
+	    					if((j == arrayDNIs.length-1) && (w==0)){
+	    						
 								arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+","+"\u00a0");
 	    						k=k+1;
 	    					}
@@ -1478,10 +1486,13 @@ function calif(req,res){
 
 	    		res.write(""+arrayFinal);
 	    		res.end();
-	    		});
+
+	  			
 	    	});
     		
     	});
+
+	});
 
     	
 	});
