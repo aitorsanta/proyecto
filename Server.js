@@ -197,4 +197,9 @@ app.get('/calif', function(req, res) {
 	controller.dispatch(urlResponseHandlers.calif, req, res);
 });
 
+app.get('/actualizarNotas', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.actualizarNotas, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

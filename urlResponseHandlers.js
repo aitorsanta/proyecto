@@ -49,6 +49,7 @@ exports.mostrarIncidAlum = mostrarIncidAlum;
 exports.obtenerIncidenciasAlum = obtenerIncidenciasAlum;
 exports.obtenerTutores1 = obtenerTutores1;
 exports.calif = calif;
+exports.actualizarNotas = actualizarNotas;
 
 /*
 Función para logearte en la aplicación
@@ -1421,10 +1422,20 @@ function calif(req,res){
 	arrayFinal = new Array();
 	arrayNotas = new Array();
 	arrayCodigoActiv = new Array();
-	
+
 	 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
+		//Codigo asignatura
+    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+    		
+    		rows.forEach((row) => {
+    			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
+  			});	
+
     	//Aquí tenemos todos los usuarios YA calificados
     	let sql_a1 = "SELECT e.DNI_a,a.cod_act FROM actividad a, evaluacion e, alumno l WHERE a.cod_act=e.cod_act AND e.DNI_a=l.DNI_a AND a.nombre_act='"+actividad+"' ORDER BY l.apellido1_a";
 
@@ -1433,7 +1444,6 @@ function calif(req,res){
     		
     		rows.forEach((row) => {
     			arrayDNIs.push(row.DNI_a); //Los DNIs que tienen calificación en la actividad actual
-    			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
   			});		
 
     		//Todos los usuarios
@@ -1461,12 +1471,13 @@ function calif(req,res){
 	  				});
 
 	  			var w = 0;
+	  			var c = 0;
 	    			for (var i = 0; i < arrayID.length; i++) {
-	    				console.log("1");
+	    				
 	    				for (var j = 0; j < arrayDNIs.length; j++) {
-
+	    					c = 1;
 	    					if(arrayID[i]==arrayDNIs[j]){ //Esto significa que ya tiene una calificación
-	    						
+
 	    						arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+", "+arrayNotas[indiceNotas]);
 	    						indiceNotas = indiceNotas+1;
 	    						k=k+1;
@@ -1481,13 +1492,18 @@ function calif(req,res){
 	    					w=0;
 	    					
 	    				};
+	    				if(c==0){ //Si la tabla está vacía la cargamos con los nombres
+							for (var i = 0; i < arrayID.length; i++) {
+								arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+","+"\u00a0");
+								k=k+1;
+							}
+	    				}
 	    				
 	    			};
-
 	    		res.write(""+arrayFinal);
 	    		res.end();
 
-	  			
+	  			});
 	    	});
     		
     	});
@@ -1498,5 +1514,86 @@ function calif(req,res){
 	});
 
 
+}
+
+/*
+Método que recibe el array de los campos de notas alumno y los vuelca a la Base de Datos
+*/
+function actualizarNotas(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    arrayActualizado = new Array();
+	    if(_url.query) {
+	      try {
+	      	curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        actividad = _url.query.actividad; //Actividad introducida por el docente
+	        arrayActualizado = _url.query.arrayActualizado; //Array enviado
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	var indiceAlumno = 0;
+
+	//Separamos los campos por el separador , y lo guardamos en un array
+	var arrayDeCadenas = arrayActualizado.split(",");
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		//Codigo actividad
+    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+    		
+    		rows.forEach((row) => {
+    			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
+  			});	
+
+    	var ac = arrayCodigoActiv[0];
+
+    	//Cogemos los alumnos
+    	let sql_a = "SELECT nombre_a,apellido1_a,apellido2_a,DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+
+	    	db.all(sql_a, (err, rows)=>{
+	    		if (err){throw err;}
+	    		
+	    		rows.forEach((row) => {
+	    			arrayID.push(row.DNI_a);
+	    			arrayNoms.push(row.nombre_a);
+	    			arrayApe1s.push(row.apellido1_a);
+	    			arrayApe2s.push(row.apellido2_a);
+	  			});
+
+
+
+		var i = 0;
+		
+		//Eliminamos completamente la tabla de la base de datos y la volvemos a cargar
+		let query_drop_evaluacion = "DELETE FROM evaluacion WHERE cod_act='"+ac+"'";
+		db.run(query_drop_evaluacion, (err, row)=>{
+				if (err){throw err;}
+		  	});
+
+		while(i<arrayDeCadenas.length){
+			var eld = arrayID[indiceAlumno];
+
+			let query_insert_results = "INSERT INTO evaluacion (DNI_a, cod_act, calificacion) VALUES ('"+eld+"','"+ac+"','"+arrayDeCadenas[i+2]+"')";
+		
+			db.run(query_insert_results, (err, row)=>{
+				if (err){throw err;}
+		  	});	
+
+		   	i=i+3;
+		   	indiceAlumno = indiceAlumno +1;
+		}
+		console.log(res.write("1"));
+		res.end();
+		});	
+    });
+    });	
 }
 
