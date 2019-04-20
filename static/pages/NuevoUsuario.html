@@ -29,7 +29,26 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
     <script type="text/javascript">
+
+    $(function(){
+        var url = "/obtenerTutores1";
+            $.get(url, {}, function(data){
+                var opciones = '';
+                var arrayDeCadenas = data.split(",");
+
+                //Con este bucle cargamos todos los profesores (nombre y dos apellidos) de la BD en la lista
+                for (var i = 0; i< arrayDeCadenas.length; i++) {
+                    opciones += '<option value="'+arrayDeCadenas[i]+" "+arrayDeCadenas[i+1]+" "+arrayDeCadenas[i+2]+'">' + arrayDeCadenas[i] +" "+arrayDeCadenas[i+1] +" "+arrayDeCadenas[i+2] +'</option>'
+                    i=i+2;
+                };
+
+                $('#tut').append($('<option></option>'));
+                $('#tut').append(opciones);
+            });
+
+  });
 
     function saveData(){
         var okey=1;
@@ -43,6 +62,7 @@
         var fechaNacimiento = anyo.concat('-',mes,'-',dia);
         var dni = document.getElementById("dni").value;
         var email = document.getElementById("email").value;
+        var tut = document.getElementById("tut").value;
         //Inicializamos los siguientes valores porque no todos los usuarios los tienen
         var telf1=1; 
         var nombre2 = "a";
@@ -62,9 +82,11 @@
         var ciudad = "a";
         var mun = "a";
         var pais = "a";
+        
 
         if(perfil == "Docente"){
                 telf1 = document.getElementById("tel2").value;   
+                tut = "a";
         }
         if(perfil == "Familia"){
             telf1 = document.getElementById("tel2").value;   
@@ -86,12 +108,13 @@
             ciudad = document.getElementById("ciudad2").value;
             mun = document.getElementById("mun2").value;
             pais = document.getElementById("pais2").value;
+            tut = "a";
         }
 
         
         //COMPROBACIONES
         //Campo en blanco
-        if (nombre == "" || apellido1 == "" || apellido2 == "" || anyo == "" || mes == "" || dia == "" || dni =="" || email == ""||telf1 == "" || nombre2 == "" || apellido12 == "" || apellido22 == "" || anyo2 == "" || mes2 == "" || dia2 == "" || dni2 =="" || email2 == ""|| telf2 == "" || calle == "" || portal == "" ||piso == "" || mano == "" || cp == "" || ciudad == "" || mun == "" || pais == "") {
+        if (nombre == "" || apellido1 == "" || apellido2 == "" || anyo == "" || mes == "" || dia == "" || dni =="" || email == ""|| tut == "" ||telf1 == "" || nombre2 == "" || apellido12 == "" || apellido22 == "" || anyo2 == "" || mes2 == "" || dia2 == "" || dni2 =="" || email2 == ""|| telf2 == "" || calle == "" || portal == "" ||piso == "" || mano == "" || cp == "" || ciudad == "" || mun == "" || pais == "") {
             window.alert("Campos en blanco");
         }else{
             //Fecha
@@ -180,7 +203,9 @@
             if(okey==1){
                 //ENVIAMOS LOS DATOS AL URLRESPONSEHANDLER
                 if(perfil == "Alumno"){
-                    var url = "/introNewStudent?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email;      
+                    var tutores = tut.split(" "); 
+
+                    var url = "/introNewStudent?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&nom_tut="+tutores[0]+"&ap1_tut="+tutores[1]+"&ap2_tut="+tutores[2];      
                     $.get(url, {}, function(data){
                       
                     });    
@@ -217,6 +242,7 @@
         document.getElementById("portal2").value="";
         document.getElementById("piso2").value="";
         document.getElementById("mano2").value="";
+        document.getElementById("tut").value="";
 
         document.getElementById("nombre2").value="";
         document.getElementById("apellido12").value="";
@@ -261,6 +287,8 @@
             document.getElementById('mun2').style.visibility = "hidden";
             document.getElementById('pais1').style.visibility = "hidden";
             document.getElementById('pais2').style.visibility = "hidden";
+            document.getElementById("tut").style.visibility = "hidden";
+            document.getElementById("tut1").style.visibility = "hidden";
         }else if(perfil == "Alumno"){
             document.getElementById('familias').style.visibility = "hidden";
             document.getElementById('tel1').style.visibility = "hidden"; 
@@ -285,7 +313,9 @@
             document.getElementById('mun1').style.visibility = "hidden";
             document.getElementById('mun2').style.visibility = "hidden";
             document.getElementById('pais1').style.visibility = "hidden";
-            document.getElementById('pais2').style.visibility = "hidden";  
+            document.getElementById('pais2').style.visibility = "hidden"; 
+            document.getElementById("tut").style.visibility = "visible";
+            document.getElementById("tut1").style.visibility = "visible"; 
         }else if(perfil == "Familia"){
             document.getElementById('familias').style.visibility = "visible";
             document.getElementById('tel1').style.visibility = "visible"; 
@@ -311,6 +341,9 @@
             document.getElementById('mun2').style.visibility = "visible";
             document.getElementById('pais1').style.visibility = "visible";
             document.getElementById('pais2').style.visibility = "visible";
+            document.getElementById("tut").style.visibility = "hidden";
+            document.getElementById("tut1").style.visibility = "hidden";
+            document.getElementById("nombre21").style.visibility = "visible";
         }
         
     }
@@ -372,9 +405,6 @@
                             <a href="NuevoUsuario.html"><i class="fa fa-edit fa-fw"></i> Nuevo usuario</a>
                         </li>
                         <li>
-                            <a href="EmparejarFamilia.html"><i class="fa fa-edit fa-fw"></i> Emparejar familia</a>
-                        </li>
-                        <li>
                             <a href="MatricularAlumnos.html"><i class="fa fa-edit fa-fw"></i> Matricular alumnos</a>
                         </li>
                         <li>
@@ -411,7 +441,7 @@
                         <div class="panel-heading">
                            <label>Todos los campos son obligatorios</label> 
                         </div>
-                        <div>
+                    <div>
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-6">
@@ -494,14 +524,12 @@
                                 <div class="col-lg-6" id="familias" style="visibility:hidden">
                                     <form role="form">
                                         <div class="form-group">
-                                            <label></label>
+                                            <label id="tut1" style="visibility:visible">Tutor Legal:</label>
+                                            <select class="form-control" id="tut" style="visibility:visible">
                                         </div>
                                         <div class="form-group">
-                                            <label></label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Nombre (2)</label>
-                                            <input class="form-control" id="nombre2">
+                                            <label id="nombre21" style="visibility:visible">Nombre (2)</label>
+                                            <input class="form-control" id="nombre2" placeholder="Nombre (2)">
                                         </div>
                                         <div class="form-group">
                                             <label>Primer apellido (2)</label>
@@ -570,183 +598,6 @@
                             </div>
                         </div>
                         </div>
-                        <!-- <div class="panel-body">
-                            <div class="row" style="visibility:hidden">
-                                <div class="col-lg-6">
-                                    <form role="form">
-                                        <div class="form-group">
-                                            <label>Text Input</label>
-                                            <input class="form-control">
-                                            <p class="help-block">Example block-level help text here.</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Text Input with Placeholder</label>
-                                            <input class="form-control" placeholder="Enter text">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Static Control</label>
-                                            <p class="form-control-static">email@example.com</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>File input</label>
-                                            <input type="file">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Text area</label>
-                                            <textarea class="form-control" rows="3"></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Checkboxes</label>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" value="">Checkbox 1
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" value="">Checkbox 2
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" value="">Checkbox 3
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Inline Checkboxes</label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox">1
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox">2
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox">3
-                                            </label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Radio Buttons</label>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Radio 1
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">Radio 2
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Radio 3
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Inline Radio Buttons</label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="option1" checked>1
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="option2">2
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="option3">3
-                                            </label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Selects</label>
-                                            <select class="form-control">
-                                                <option>1</option>
-                                                <option>2</option>
-                                                <option>3</option>
-                                                <option>4</option>
-                                                <option>5</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Multiple Selects</label>
-                                            <select multiple class="form-control">
-                                                <option>1</option>
-                                                <option>2</option>
-                                                <option>3</option>
-                                                <option>4</option>
-                                                <option>5</option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn btn-default">Submit Button</button>
-                                        <button type="reset" class="btn btn-default">Reset Button</button>
-                                    </form>
-                                </div>-->
-                                <!-- /.col-lg-6 (nested) -->
-                            <!--    <div class="col-lg-6">
-                                    <h1>Disabled Form States</h1>
-                                    <form role="form">
-                                        <fieldset disabled>
-                                            <div class="form-group">
-                                                <label for="disabledSelect">Disabled input</label>
-                                                <input class="form-control" id="disabledInput" type="text" placeholder="Disabled input" disabled>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="disabledSelect">Disabled select menu</label>
-                                                <select id="disabledSelect" class="form-control">
-                                                    <option>Disabled select</option>
-                                                </select>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox">Disabled Checkbox
-                                                </label>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Disabled Button</button>
-                                        </fieldset>
-                                    </form>
-                                    <h1>Form Validation States</h1>
-                                    <form role="form">
-                                        <div class="form-group has-success">
-                                            <label class="control-label" for="inputSuccess">Input with success</label>
-                                            <input type="text" class="form-control" id="inputSuccess">
-                                        </div>
-                                        <div class="form-group has-warning">
-                                            <label class="control-label" for="inputWarning">Input with warning</label>
-                                            <input type="text" class="form-control" id="inputWarning">
-                                        </div>
-                                        <div class="form-group has-error">
-                                            <label class="control-label" for="inputError">Input with error</label>
-                                            <input type="text" class="form-control" id="inputError">
-                                        </div>
-                                    </form>
-                                    <h1>Input Groups</h1>
-                                    <form role="form">
-                                        <div class="form-group input-group">
-                                            <span class="input-group-addon">@</span>
-                                            <input type="text" class="form-control" placeholder="Username">
-                                        </div>
-                                        <div class="form-group input-group">
-                                            <input type="text" class="form-control">
-                                            <span class="input-group-addon">.00</span>
-                                        </div>
-                                        <div class="form-group input-group">
-                                            <span class="input-group-addon"><i class="fa fa-eur"></i>
-                                            </span>
-                                            <input type="text" class="form-control" placeholder="Font Awesome Icon">
-                                        </div>
-                                        <div class="form-group input-group">
-                                            <span class="input-group-addon">$</span>
-                                            <input type="text" class="form-control">
-                                            <span class="input-group-addon">.00</span>
-                                        </div>
-                                        <div class="form-group input-group">
-                                            <input type="text" class="form-control">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                                <!-- /.col-lg-6 (nested) -->
                             </form>
                                 <button type="submit" class="btn btn-guardar" onclick="saveData()">Guardar</button>
                                 <!--<button type="reset" class="btn btn-default">Reset Button</button> -->

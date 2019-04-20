@@ -132,6 +132,11 @@ app.get('/actividadesTrimestre', function(req, res) {
 	controller.dispatch(urlResponseHandlers.actividadesTrimestre, req, res);
 });
 
+app.get('/actividadesTrimestreSinPeso', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.actividadesTrimestreSinPeso, req, res);
+});
+
 app.get('/calificaciones', function(req, res) {
 	//console.log("Introduciendo nuevo curso");
 	controller.dispatch(urlResponseHandlers.calificaciones, req, res);
@@ -180,6 +185,16 @@ app.get('/mostrarIncidAlum', function(req, res) {
 app.get('/obtenerIncidenciasAlum', function(req, res) {
 	//console.log("Introduciendo nuevo curso");
 	controller.dispatch(urlResponseHandlers.obtenerIncidenciasAlum, req, res);
+});
+
+app.get('/obtenerTutores1', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.obtenerTutores1, req, res);
+});
+
+app.get('/calif', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.calif, req, res);
 });
 
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

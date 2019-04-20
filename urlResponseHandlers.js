@@ -36,6 +36,7 @@ exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
 exports.introducirActividad = introducirActividad;
 exports.mostrarActividades = mostrarActividades;
 exports.actividadesTrimestre = actividadesTrimestre;
+exports.actividadesTrimestreSinPeso = actividadesTrimestreSinPeso;
 exports.calificaciones = calificaciones;
 exports.mostrarAsigProf = mostrarAsigProf;
 exports.mostrarAlumnosProf = mostrarAlumnosProf;
@@ -46,6 +47,8 @@ exports.obtenerIncidencias = obtenerIncidencias;
 exports.mostrarAsigAlum = mostrarAsigAlum;
 exports.mostrarIncidAlum = mostrarIncidAlum;
 exports.obtenerIncidenciasAlum = obtenerIncidenciasAlum;
+exports.obtenerTutores1 = obtenerTutores1;
+exports.calif = calif;
 
 /*
 Función para logearte en la aplicación
@@ -261,6 +264,9 @@ function introNewStudent(req,res){
 	        fechaNacimiento = _url.query.fechaNacimiento;
 	        dni = _url.query.dni;
 	        email = _url.query.email;
+	        nom_tut = _url.query.nom_tut;
+	        ap1_tut = _url.query.ap1_tut;
+	        ap2_tut = _url.query.ap2_tut;
 	      } catch (e) {
 	      }
 	    }
@@ -273,8 +279,13 @@ function introNewStudent(req,res){
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
+		let query_tut1 = "SELECT ID_familia FROM familia WHERE nombre_TL1='"+nom_tut+"' AND apellido1_TL1='"+ap1_tut+"' AND apellido2_TL1='"+ap2_tut+"'";
+		db.all(query_tut1, (err, rows)=>{
+    		if (err){throw err;}
+    		var ID_familia = JSON.stringify(rows).substring(15,16); //Cogemos el ID de familia
+
 		//Creamos la consulta de insertar el nuevo alumno
-		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_curso) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"','"+fechaNacimiento+"','"+email+"','"+con+"','"+0+"')";
+		let query_insert_alumno = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_familia, ID_curso) VALUES ('"+dni+"','"+nombre+"','"+apellido1+"','"+apellido2+"','"+fechaNacimiento+"','"+email+"','"+con+"','"+ID_familia+"','"+0+"')";
 		
 		db.run(query_insert_alumno, (err, row)=>{
 			if (err){throw err;}
@@ -283,6 +294,7 @@ function introNewStudent(req,res){
 			dniSave = dni;
 	  	});	
 
+		});	
 	  	//db.close();
 	});
 	    
@@ -372,12 +384,7 @@ function introNewFamily(req,res){
 	      }
 	    }
 	  }
-	    //Parametros
-	    	console.log("TL1 "+perfil+","+nombre+","+apellido1+","+apellido2+","+fechaNacimiento+","+dni+","+email+","+telf);
-	    	console.log("TL2 "+perfil+","+nombre2+","+apellido12+","+apellido22+","+fechaNacimiento2+","+dni2+","+email2+","+telf2);
-	    	console.log(calle+", "+portal+", "+piso+", "+mano+", "+cp+", "+ciudad+", "+mun+", "+pais);
-
-
+	    
 	//Contraseña generada a partir del nombre y la fecha de nacimiento
 	  var con1 = generatePass(fechaNacimiento, nombre);
 	  var con2 = generatePass(fechaNacimiento2, nombre2);
@@ -433,7 +440,6 @@ function changePassword(req, res){
 		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+contraCifrado+"' WHERE DNI_a ='"+elDNI+"'";
 	    	db.run(sql_passUpdate, (err, row)=>{
 	    		if (err){throw err;}
-	    		console.log("Contraseña actualizada");
 	    		res.write(""+"confirmarPassA.html");
 	    		//db.close();
 	    	});	
@@ -445,7 +451,6 @@ function changePassword(req, res){
 			let sql_passUpdate = "UPDATE docente SET contra_usu_d ='"+contraCifrado+"' WHERE DNI_d ='"+elDNI+"'";
 		    	db.run(sql_passUpdate, (err, row)=>{
 		    		if (err){throw err;}
-		    		console.log("Contraseña actualizada");
 		    		res.write(""+1);
 		    		//db.close();
 		    	});	
@@ -472,7 +477,6 @@ function matriculaAlumno(req, res){
     		rows.forEach((row) => {
     			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
   			});
-  			console.log(arrayAlumnos);
   			res.write(""+arrayAlumnos);
     		res.end();
     	});
@@ -521,7 +525,6 @@ function matriculaAlumnoSinCurso(req, res){
     		rows.forEach((row) => {
     			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
   			});
-  			console.log(arrayAlumnos);
   			res.write(""+arrayAlumnos);
     		res.end();
     	});
@@ -544,7 +547,7 @@ function obtenerCursos(req, res){
     		rows.forEach((row) => {
     			arrayCursos.push(row.ID_curso);
   			});
-    		console.log(arrayCursos);
+    		
   			res.write(""+arrayCursos);
     		res.end();
     	});
@@ -568,8 +571,31 @@ function obtenerProfesores(req, res){
     		rows.forEach((row) => {
     			arrayProfes.push(row.nombre_d+","+row.apellido1_d+","+row.apellido2_d);
   			});
-    		console.log(arrayProfes);
   			res.write(""+arrayProfes);
+    		res.end();
+    	});
+	});
+}
+
+/*
+Obtiene la lista de todos los tutores 1 guardados en la base de datos.
+*/
+function obtenerTutores1(req, res){
+	arrayTut = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_tut = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1 FROM familia ORDER BY apellido1_TL1";
+    
+    	db.all(sql_tut, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayTut.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1);
+  			});
+  			
+  			res.write(""+arrayTut);
     		res.end();
     	});
 	});
@@ -593,7 +619,7 @@ function matriculaProfesor(req, res){
     		rows.forEach((row) => {
     			arrayProfesores.push(row.nombre_d+","+row.apellido1_d+","+row.apellido2_d+","+row.fecha_nac_d+","+row.email_d);
   			});
-  			console.log(arrayProfesores);
+  			
   			res.write(""+arrayProfesores);
     		res.end();
     	});
@@ -618,7 +644,7 @@ function matriculaTutor(req, res){
     		rows.forEach((row) => {
     			arrayTutores.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1+","+row.fecha_nac_TL1+","+row.email_TL1+","+row.ID_familia+","+row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2+","+row.fecha_nac_TL2+","+row.email_TL2+","+row.ID_familia);
   			});
-  			console.log(arrayTutores);
+  			
   			res.write(""+arrayTutores);
     		res.end();
     	});
@@ -757,7 +783,7 @@ function introducirAsig(req, res){
 	      }
 	    }
 	  }	
-	console.log(curso+", "+nombre+", "+doc_nom+", "+doc_ap1+", "+doc_ap2);
+
 	
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
@@ -831,7 +857,6 @@ function obtenerClasesProfesor(req,res){
     		rows.forEach((row) => {
     			arrayClases.push(row.ID_curso+" - "+row.nombre+"\n");
   			});
-  			console.log(arrayClases);
   			res.write(""+arrayClases);
   			res.end();
     		
@@ -869,7 +894,7 @@ function matriculaAlumnoConCurso(req, res){
     			arrayAlumnos.push(i+","+row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.DNI_a+","+row.email_a);
     			i=i+1;
   			});
-  			console.log(arrayAlumnos);
+  			
   			res.write(""+arrayAlumnos);
     		res.end();
     	});
@@ -892,7 +917,7 @@ function introducirActividad(req, res){
 	      }
 	    }
 	}
-	console.log(asignatura+", "+curso+", "+trimestre+", "+nombre+", "+peso);
+	
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
@@ -954,7 +979,7 @@ function mostrarActividades(req, res){
 				rows.forEach((row) => {
 	    			arrayActiv.push(row.cod_trimestre+","+row.nombre_act+","+row.peso*10);
   				});
-	  			console.log(arrayActiv);
+	  			
 	  			res.write(""+arrayActiv);
 	    		res.end();
     	});	
@@ -1001,7 +1026,54 @@ function actividadesTrimestre(req, res){
 				rows.forEach((row) => {
 	    			arrayActiv.push(row.nombre_act+" ("+row.peso*10+"%)");
   				});
-	  			console.log(arrayActiv);
+	  			
+	  			res.write(""+arrayActiv);
+	    		res.end();
+    	});	
+
+    	});
+
+    		
+    });
+	
+}
+
+function actividadesTrimestreSinPeso(req, res){
+	arrayActiv = new Array();
+
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        curso = _url.query.curso;
+	        trimestre = _url.query.trimestre;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		let sql_curso = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+    
+    	db.all(sql_curso, (err, rows)=>{
+    		if (err){throw err;}
+    		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el codigo del curso
+
+    		//Introducimos actividad en la BD
+		    let query_act = "SELECT nombre_act,peso FROM actividad WHERE cod_asig='"+codigo+"' AND cod_trimestre='"+trimestre+"'";
+			
+			db.all(query_act, (err, rows)=>{
+				if (err){throw err;}
+				
+				rows.forEach((row) => {
+	    			arrayActiv.push(row.nombre_act);
+  				});
+	  			
 	  			res.write(""+arrayActiv);
 	    		res.end();
     	});	
@@ -1047,7 +1119,7 @@ function calificaciones(req, res){
 				});
 					res.write(""+arrayCalifs);
 					res.end();
-				console.log(arrayCalifs);
+				
 
 		});
 			
@@ -1320,5 +1392,100 @@ function obtenerIncidenciasAlum(req,res){
     		
     	});
 	});
+}
+
+function calif(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        actividad = _url.query.actividad; //Actividad introducida por el docente
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	var k=1;
+	var indiceNotas = 0;
+	var blanco = " ";
+	arrayDNIs = new Array();
+	arrayID = new Array();
+	arrayNoms = new Array();
+	arrayApe1s = new Array();
+	arrayApe2s = new Array();
+	arrayFinal = new Array();
+	arrayNotas = new Array();
+	arrayCodigoActiv = new Array();
+	 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Aquí tenemos todos los usuarios YA calificados
+    	let sql_a1 = "SELECT DNI_a,a.cod_act FROM actividad a, evaluacion e WHERE a.cod_act=e.cod_act AND a.nombre_act='"+actividad+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+    		
+    		rows.forEach((row) => {
+    			arrayDNIs.push(row.DNI_a); //Los DNIs que tienen calificación en la actividad actual
+    			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
+  			});	
+
+    		//Todos los usuarios
+
+    		let sql_a = "SELECT nombre_a,apellido1_a,apellido2_a,DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+
+	    	db.all(sql_a, (err, rows)=>{
+	    		if (err){throw err;}
+	    		
+	    		rows.forEach((row) => {
+	    			arrayID.push(row.DNI_a);
+	    			arrayNoms.push(row.nombre_a);
+	    			arrayApe1s.push(row.apellido1_a);
+	    			arrayApe2s.push(row.apellido2_a);
+	  			});
+
+	  			let sql_b = "SELECT calificacion FROM alumno a, evaluacion e WHERE a.DNI_a = e.DNI_a AND e.DNI_a='"+arrayDNIs+"' AND e.cod_act='"+arrayCodigoActiv+"' ORDER BY a.apellido1_a";
+
+	  			db.all(sql_b, (err, rows)=>{
+	  				if (err){throw err;}
+	  				rows.forEach((row) => {
+		    			arrayNotas.push(row.calificacion);
+	  				});
+
+	  			var w = 0;
+	    			for (var i = 0; i < arrayID.length; i++) {
+	    				for (var j = 0; j < arrayDNIs.length; j++) {
+	    					if(arrayID[i]==arrayDNIs[j]){ //Esto significa que ya tiene una calificación
+	    						arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+", "+arrayNotas[indiceNotas]);
+	    						indiceNotas = indiceNotas+1;
+	    						k=k+1;
+	    						j = arrayDNIs.length+1;
+	    						w=1;
+	    					}
+	    					if(j = arrayDNIs.length && w==0){
+								arrayFinal.push(k+", "+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]+","+"\u00a0");
+	    						k=k+1;
+	    					}
+	    					w=0;
+	    					
+	    				};
+	    				
+	    			};
+
+	    		res.write(""+arrayFinal);
+	    		res.end();
+	    		});
+	    	});
+    		
+    	});
+
+    	
+	});
+
+
 }
 
