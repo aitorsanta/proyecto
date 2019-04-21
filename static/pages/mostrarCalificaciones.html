@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Sande</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link href="../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Data Tables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+    <!--Export DataTable-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.css"/>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.js"></script>
+    <script type="text/javascript">
+
+var numAlumnos = 0;
+
+$(function(){
+    //Cargamos todas las clases del profesor logueado en el toolbox
+    var url = "/obtenerClasesProfesor";
+        $.get(url, {}, function(data){
+            var opciones = '';
+            var arrayDeCadenas = data.split(",");
+
+            //Con este bucle cargamos todos los profesores (nombre y dos apellidos) de la BD en la lista
+            for (var i = 0; i< arrayDeCadenas.length; i++) {
+                opciones += '<option value="'+arrayDeCadenas[i]+'">' + arrayDeCadenas[i] +'</option>'
+            };
+
+            $('#toolBox1').append($('<option></option>'));
+            $('#toolBox1').append(opciones);
+        });
+
+        var opc = '';
+
+        for (var i = 1; i< 4; i++) {
+            opc += '<option value="'+i+'">' + i +'</option>'
+        };
+
+        $('#toolBox2').append($('<option></option>'));
+        $('#toolBox2').append(opc);
+    
+})
+
+
+function califs(){
+    document.getElementById("panelNotas").style.visibility="visible";
+    document.getElementById("cargarAct").style.visibility="hidden";
+
+    var cursoFull = document.getElementById("toolBox1").value;
+
+    var curso = cursoFull.substring(0,5);  
+    var asignatura = cursoFull.substring(8,cursoFull.length+1);
+    var trimestre = document.getElementById("toolBox2").value; 
+    
+
+    var url = "/actividadesTrimestreSinPeso?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
+        $.get(url, {}, function(data){
+            var opciones = '';
+            var arrayDeCadenas = data.split(",");
+
+            appendColumn(arrayDeCadenas.length, arrayDeCadenas);
+
+            var numCol = arrayDeCadenas.length+2; //Por la columna de nombre y número
+
+
+            var url = "/verNotas?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre+"&actividades="+arrayDeCadenas;
+            $.get(url, {}, function(data){ 
+                var arrayDeCadenas = data.split(","); 
+                var resul = [];
+
+                //Vamos metiendo en el nuevo array la información por líneas
+                var i=0;
+                var j=0;
+                var indice=0;
+                while(i<arrayDeCadenas.length){          
+                    j=0;
+                    while(j<numCol){
+                        if(j==0){
+                            resul.push(""+arrayDeCadenas[indice]+"",);
+                        }else{
+                            resul.push(""+arrayDeCadenas[indice]+"",);
+                            if(j==(numCol-1)){
+                                resul.push(""+arrayDeCadenas[indice]+"",);
+                            }
+                        }
+                        
+                        indice = indice+1;
+                        j=j+1;
+                    }
+                    
+
+
+                    i=i+numCol;
+                }
+
+        
+            $('#tablaCalificaciones').dataTable({
+              
+              "data": [
+                resul
+
+              ]
+
+              
+            });
+
+        });
+
+        });
+
+
+
+
+}
+
+/* Este método y el siguiente han sido extraidos desde la página https://www.redips.net/javascript/adding-table-rows-and-columns/ y adaptados por Aitor Santamaria Zuluaga el día 21/04/2019.
+*/
+function appendColumn(n, arrayDeCadenas) {
+    var cont = 0;
+    var tbl = document.getElementById('tablaCalificaciones'), // table reference
+        i;
+
+    // open loop for each row and append cell
+    while(cont<n){
+    for (i = 0; i < tbl.rows.length; i++) {
+        createCell(tbl.rows[i].insertCell(tbl.rows[i].cells.length), arrayDeCadenas[cont], 'col');
+    }
+    cont = cont+1;
+    }
+    
+}
+
+function createCell(cell, text, style) {
+    var div = document.createElement('div'), // create DIV element
+        txt = document.createTextNode(text); // create text node
+    div.appendChild(txt);                    // append text node to the DIV
+    div.setAttribute('class', style);        // set DIV class attribute
+    div.setAttribute('className', style);    // set DIV class attribute for IE (?!)
+    cell.appendChild(div);                   // append DIV to the table cell
+}
+
+
+function calificarAlumnos(){
+    document.getElementById("panelNotas").style.visibility="visible";
+    document.getElementById("cargarAct").style.visibility="hidden";
+
+    var cursoFull = document.getElementById("toolBox1").value;
+    var curso = cursoFull.substring(0,5);  
+    var asignatura = cursoFull.substring(8,cursoFull.length+1);
+    var actividad = document.getElementById("toolBox3").value; 
+
+    var url = "/calif?curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
+        $.get(url, {}, function(data){
+            
+            //Separamos el array recibido y lo guardamos
+            
+            var arrayDeCadenas = data.split(","); 
+            numAlumnos = arrayDeCadenas.length;
+            var resul = [];
+            
+            //Vamos metiendo en el nuevo array la información por líneas
+            var i=0;
+            while(i<arrayDeCadenas.length){
+                if(arrayDeCadenas[i+2]=="\u00a0"){
+                    resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+" "+""]);
+                }else{
+                    resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+""]);   
+                }
+               
+                i=i+3;
+            }
+
+            
+            $('#tablaCalificaciones').dataTable({
+              
+              "data": resul,             
+  
+              "aoColumnDefs":[
+                { "data" : "Número" },
+                { "data" : "Nombre" },
+                { "data" : "Calificación" }
+              ]
+
+            });
+
+        });
+}
+
+function guardar(){
+    /*
+    Coger información de tabla
+    Comparar array actual con inicial
+    Mandarlo al server
+    Actualizar información de la BD
+    */
+
+    var cursoFull = document.getElementById("toolBox1").value;
+    var curso = cursoFull.substring(0,5);  
+    var asignatura = cursoFull.substring(8,cursoFull.length+1);
+    var actividad = document.getElementById("toolBox3").value; 
+
+    arrayActualizado = new Array();
+    
+    for (var i = 0; i < numAlumnos; i++) {
+        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+    }; 
+
+    var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
+    $.get(url, {}, function(data){
+        if(data=="1"){
+            window.alert("Información actualizada correctamente");
+            location.reload();
+        }
+    });
+
+
+}
+function recargar(){
+    location.reload();
+}
+
+    </script>
+
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Sande</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Salir</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                            </div>
+                            <!-- /input-group -->
+                        </li>
+                        <li>
+                            <a href="indexProf.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
+                        </li>
+                        <li>
+                            <a href="mostrarAlumnosProf.html"><i class="fa fa-table fa-fw"></i> Lista de alumnos</a>
+                        </li>
+                        <li>
+                            <a href="introducirActividad.html"><i class="fa fa-edit fa-fw"></i> Introducir actividad</a>
+                        </li>
+                        <li>
+                            <a href="mostrarActividades.html"><i class="fa fa-table fa-fw"></i> Mostrar actividades</a>
+                        </li>
+                        <li>
+                            <a href="calificar.html"><i class="fa fa-edit fa-fw"></i> Calificar</a>
+                        </li>
+                        <li>
+                            <a href="introducirIncidencia.html"><i class="fa fa-edit fa-fw"></i> Introducir incidencia</a>
+                        </li>
+                       <li>
+                            <a href="mostrarIncidencias.html"><i class="fa fa-table fa-fw"></i> Mostrar incidencias</a>
+                        </li>
+                        <li>
+                            <a href="cambiarContraseniaD.html"><i class="fa fa-edit fa-fw"></i> Cambiar contraseña</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Mostrar calificaciones</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                        <form role="form">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label>Asignatura:</label>
+                                    <select class="form-control" id="toolBox1">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Trimestre:</label>
+                                    <select class="form-control" id="toolBox2">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control">
+                                </div>
+                                
+                                <div>
+                                    <button id="cargarAct" onclick="califs();return false;" type="submit" class="btn btn-lg btn-primary btn-block">Mostrar calificaciones</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                        
+                    </div>
+
+                    </div>
+                </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="panelNotas" class="panel panel-default"  style="visibility:hidden">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body" style="text-align:center">
+                            <table id="tablaCalificaciones" width="100%" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <th>Número</th>
+                                    <th>Nombre</th>
+                                    <tbody></tbody>
+                                </thead>
+                            </table> 
+                            <!--<button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar</button> 
+                            <button id="button" class="btn btn-success btn-lg" onclick="guardar();return false;" style="visibility:hidden">Guardar</button> -->
+                        </div>
+
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../dist/js/sb-admin-2.js"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    $(document).ready(function() {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+    </script>
+
+</body>
+
+</html>

@@ -50,6 +50,7 @@ exports.obtenerIncidenciasAlum = obtenerIncidenciasAlum;
 exports.obtenerTutores1 = obtenerTutores1;
 exports.calif = calif;
 exports.actualizarNotas = actualizarNotas;
+exports.verNotas = verNotas;
 
 /*
 Función para logearte en la aplicación
@@ -1066,7 +1067,7 @@ function actividadesTrimestreSinPeso(req, res){
     		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el codigo del curso
 
     		//Introducimos actividad en la BD
-		    let query_act = "SELECT nombre_act,peso FROM actividad WHERE cod_asig='"+codigo+"' AND cod_trimestre='"+trimestre+"'";
+		    let query_act = "SELECT nombre_act FROM actividad WHERE cod_asig='"+codigo+"' AND cod_trimestre='"+trimestre+"'";
 			
 			db.all(query_act, (err, rows)=>{
 				if (err){throw err;}
@@ -1426,7 +1427,7 @@ function calif(req,res){
 	 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
-		//Codigo asignatura
+		//Codigo actividad
     	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"'";
 
     	db.all(sql_a1, (err, rows)=>{
@@ -1595,5 +1596,135 @@ function actualizarNotas(req,res){
 		});	
     });
     });	
+}
+
+function verNotas(req,res){
+		if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        trimestre = _url.query.trimestre;
+	        actividades = _url.query.actividades; //Array de actividades
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	 
+	var codi =0;
+	arrayActivCodigo = new Array();
+
+	arrayDNIs = new Array();
+	arrayID = new Array();
+	arrayNoms = new Array();
+	arrayApe1s = new Array();
+	arrayApe2s = new Array();
+	arrayFinal = new Array();
+	arrayNotas = new Array();
+	arrayCodigoActiv = new Array();
+	var k=1;
+	var indiceNotas = 0;
+	numAsigCalif = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		//Codigo actividad
+    	let sql_a1 = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			codi = row.ID_asignatura;
+  			});
+
+    		console.log("El codigo de la asignatura: "+codi);
+
+    		let sql_a = "SELECT nombre_a,apellido1_a,apellido2_a,DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
+
+			    db.all(sql_a, (err, rows)=>{
+		    		if (err){throw err;}
+		    		
+		    		rows.forEach((row) => {
+		    			arrayID.push(row.DNI_a);
+		    			arrayNoms.push(row.nombre_a);
+		    			arrayApe1s.push(row.apellido1_a);
+		    			arrayApe2s.push(row.apellido2_a);
+		  			});
+
+    				let sql_a2 = "SELECT cod_act FROM actividad WHERE cod_asig='"+codi+"' AND cod_trimestre='"+trimestre+"' ORDER BY cod_act";
+
+					db.all(sql_a2, (err, rows)=>{
+	    			if (err){throw err;}
+
+		    		rows.forEach((row) => {
+						arrayActivCodigo.push(row.cod_act);
+			  		});
+
+		    		console.log("El codigo de la asignatura: "+codi);
+		    		console.log("Alumnos: "+arrayID);
+		    		console.log("Actividades: "+arrayActivCodigo);
+
+		    		let sql_a3 = "SELECT calificacion, e.cod_act FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' ORDER BY l.apellido1_a, a.cod_asig";
+					db.all(sql_a3, (err, rows)=>{
+	    			if (err){throw err;}
+		    			rows.forEach((row) => {
+							arrayNotas.push(row.calificacion);
+							numAsigCalif.push(row.cod_act);
+				  		});
+
+
+
+				  		var numFin = (numAsigCalif.length)/(arrayNoms.length);
+
+				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
+				  		if(numFin == arrayActivCodigo.length){
+					  		for (var i = 0; i < arrayID.length; i++) {
+					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+						  			for (var j = 0; j < numFin; j++) {
+			    						arrayFinal.push(arrayNotas[indiceNotas]);
+			    						indiceNotas= indiceNotas+1;
+			    					};
+		    				};
+	    				}else{
+	    					indiceNotas =0;
+
+	    					for (var i = 0; i < arrayID.length; i++) {
+	    						arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+	    						//AGREGAR CALIFICACIONES
+	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
+	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
+	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
+					    						arrayFinal.push(arrayNotas[indiceNotas]);
+					    						indiceNotas= indiceNotas+1;
+					    						b=numAsigCalif;
+	    									}else if(a==b){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
+	    									}
+	    							}
+	    						};
+	    					};
+
+
+	    				}
+						res.write(""+arrayFinal);
+						res.end();
+	    			});
+
+	  			});
+			
+			
+			//arrayActivCodigo = actividadesCodigo(actividades, codi,trimestre); 
+			//console.log(arrayActivCodigo);
+			});
+    	});	
+	
+	});		  
 }
 
