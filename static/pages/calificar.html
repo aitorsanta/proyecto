@@ -177,7 +177,6 @@ function guardar(){
             arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
     }; 
 
-    window.alert(arrayActualizado);
 
     var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad+"&trimestre="+trimestre;
     $.get(url, {}, function(data){
