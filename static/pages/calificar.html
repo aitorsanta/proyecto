@@ -117,9 +117,10 @@ function calificarAlumnos(){
     var cursoFull = document.getElementById("toolBox1").value;
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
-    var actividad = document.getElementById("toolBox3").value; 
+    var actividad = document.getElementById("toolBox3").value;
+    var trimestre = document.getElementById("toolBox2").value;  
 
-    var url = "/calif?curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
+    var url = "/calif?curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad+"&trimestre="+trimestre;
         $.get(url, {}, function(data){
             
             //Separamos el array recibido y lo guardamos
@@ -168,6 +169,7 @@ function guardar(){
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
     var actividad = document.getElementById("toolBox3").value; 
+    var trimestre = document.getElementById("toolBox2").value; 
 
     arrayActualizado = new Array();
     
@@ -175,7 +177,7 @@ function guardar(){
         arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
     }; 
 
-    var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
+    var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad+"&trimestre="+trimestre;
     $.get(url, {}, function(data){
         if(data=="1"){
             window.alert("Información actualizada correctamente");

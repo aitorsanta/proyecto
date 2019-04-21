@@ -107,34 +107,57 @@ function califs(){
                 var i=0;
                 var j=0;
                 var indice=0;
-                while(i<arrayDeCadenas.length){          
-                    j=0;
-                    while(j<numCol){
-                        if(j==0){
-                            resul.push(""+arrayDeCadenas[indice]+"",);
-                        }else{
-                            resul.push(""+arrayDeCadenas[indice]+"",);
-                            if(j==(numCol-1)){
-                                resul.push(""+arrayDeCadenas[indice]+"",);
-                            }
-                        }
+                while(i<arrayDeCadenas.length){
+                    if(numCol==2){
+                        resul.push("");
+                    }else if(numCol==3){
+                        resul.push([""+arrayDeCadenas[indice]+"",""+arrayDeCadenas[indice+1]+"",""+arrayDeCadenas[indice+2]+""]);
+
+                    }else if(numCol==4){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+""]);
                         
-                        indice = indice+1;
-                        j=j+1;
+                    }else if(numCol==5){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+""]);
+                        
+                    }else if(numCol==6){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+""]);
+                        
+                    }else if(numCol==7){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+""]);
+                        
+                    }else if(numCol==8){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+""]);
+                        
+                    }else if(numCol==9){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+""]);
+                        
+                    }else if(numCol==10){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+""]);
+                        
+                    }else if(numCol==11){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+"",""+arrayDeCadenas[i+10]+""]);
+                        
+                    }else if(numCol==12){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+"",""+arrayDeCadenas[i+10]+"",""+arrayDeCadenas[i+11]+""]);
+                        
+                    }else if(numCol==13){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+"",""+arrayDeCadenas[i+10]+"",""+arrayDeCadenas[i+11]+"",""+arrayDeCadenas[i+12]+""]);
+                        
+                    }else if(numCol==14){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+"",""+arrayDeCadenas[i+10]+"",""+arrayDeCadenas[i+11]+"",""+arrayDeCadenas[i+12]+"",""+arrayDeCadenas[i+13]+""]);
+                        
+                    }else if(numCol==15){
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+"",""+arrayDeCadenas[i+4]+"",""+arrayDeCadenas[i+5]+"",""+arrayDeCadenas[i+6]+"",""+arrayDeCadenas[i+7]+"",""+arrayDeCadenas[i+8]+"",""+arrayDeCadenas[i+9]+"",""+arrayDeCadenas[i+10]+"",""+arrayDeCadenas[i+11]+"",""+arrayDeCadenas[i+12]+"",""+arrayDeCadenas[i+13]+"",""+arrayDeCadenas[i+14]+""]);
+                        
                     }
-                    
-
-
+  
                     i=i+numCol;
                 }
 
-        
+
             $('#tablaCalificaciones').dataTable({
               
-              "data": [
-                resul
-
-              ]
+              "data": resul,
 
               
             });

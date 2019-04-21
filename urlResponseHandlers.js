@@ -1406,6 +1406,7 @@ function calif(req,res){
 	        curso = _url.query.curso; //Curso introducido por el docente
 	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
 	        actividad = _url.query.actividad; //Actividad introducida por el docente
+	        trimestre = _url.query.trimestre; //Trimestre
 	      } catch (e) {
 	      }
 	    }
@@ -1428,7 +1429,7 @@ function calif(req,res){
 		if(err){return console.error(err.message);}
     	
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1436,6 +1437,7 @@ function calif(req,res){
     		rows.forEach((row) => {
     			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
   			});	
+  		console.log(arrayCodigoActiv);
 
     	//Aquí tenemos todos los usuarios YA calificados
     	let sql_a1 = "SELECT e.DNI_a,a.cod_act FROM actividad a, evaluacion e, alumno l WHERE a.cod_act=e.cod_act AND e.DNI_a=l.DNI_a AND a.nombre_act='"+actividad+"' ORDER BY l.apellido1_a";
@@ -1531,6 +1533,7 @@ function actualizarNotas(req,res){
 	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
 	        actividad = _url.query.actividad; //Actividad introducida por el docente
 	        arrayActualizado = _url.query.arrayActualizado; //Array enviado
+	        trimestre = _url.query.trimestre; //Trimestre
 	      } catch (e) {
 	      }
 	    }
@@ -1545,7 +1548,7 @@ function actualizarNotas(req,res){
 		if(err){return console.error(err.message);}
 
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1629,12 +1632,15 @@ function verNotas(req,res){
 	var k=1;
 	var indiceNotas = 0;
 	numAsigCalif = new Array();
+	arrayFinal = [];
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
-		//Codigo actividad
-    	let sql_a1 = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"'";
+
+
+		//Codigo asignatura
+    	let sql_a1 = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1642,8 +1648,6 @@ function verNotas(req,res){
     		rows.forEach((row) => {
     			codi = row.ID_asignatura;
   			});
-
-    		console.log("El codigo de la asignatura: "+codi);
 
     		let sql_a = "SELECT nombre_a,apellido1_a,apellido2_a,DNI_a FROM alumno WHERE ID_curso='"+curso+"' ORDER BY apellido1_a";
 
@@ -1666,11 +1670,8 @@ function verNotas(req,res){
 						arrayActivCodigo.push(row.cod_act);
 			  		});
 
-		    		console.log("El codigo de la asignatura: "+codi);
-		    		console.log("Alumnos: "+arrayID);
-		    		console.log("Actividades: "+arrayActivCodigo);
 
-		    		let sql_a3 = "SELECT calificacion, e.cod_act FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' ORDER BY l.apellido1_a, a.cod_asig";
+		    		let sql_a3 = "SELECT calificacion, e.cod_act FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' ORDER BY l.apellido1_a, a.cod_asig, e.cod_act";
 					db.all(sql_a3, (err, rows)=>{
 	    			if (err){throw err;}
 		    			rows.forEach((row) => {
@@ -1678,12 +1679,11 @@ function verNotas(req,res){
 							numAsigCalif.push(row.cod_act);
 				  		});
 
-
-
 				  		var numFin = (numAsigCalif.length)/(arrayNoms.length);
 
+
 				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
-				  		if(numFin == arrayActivCodigo.length){
+				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
 					  		for (var i = 0; i < arrayID.length; i++) {
 					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 						  			for (var j = 0; j < numFin; j++) {
@@ -1691,7 +1691,7 @@ function verNotas(req,res){
 			    						indiceNotas= indiceNotas+1;
 			    					};
 		    				};
-	    				}else{
+	    				}else if(arrayNotas.length!=0){
 	    					indiceNotas =0;
 
 	    					for (var i = 0; i < arrayID.length; i++) {
