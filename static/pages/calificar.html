@@ -174,8 +174,10 @@ function guardar(){
     arrayActualizado = new Array();
     
     for (var i = 0; i < numAlumnos; i++) {
-        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+            arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
     }; 
+
+    window.alert(arrayActualizado);
 
     var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad+"&trimestre="+trimestre;
     $.get(url, {}, function(data){
@@ -259,6 +261,9 @@ function recargar(){
                         </li>
                         <li>
                             <a href="calificar.html"><i class="fa fa-edit fa-fw"></i> Calificar</a>
+                        </li>
+                        <li>
+                            <a href="mostrarCalificaciones.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
                         </li>
                         <li>
                             <a href="introducirIncidencia.html"><i class="fa fa-edit fa-fw"></i> Introducir incidencia</a>

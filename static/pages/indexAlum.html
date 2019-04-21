@@ -53,25 +53,15 @@
         //NUMERO DE ASIGNATURAS
         var url = "/mostrarAsigAlum";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
-                var arrayDeCadenas = data.split(",");
-
-                var laData = data;
                 
-                document.getElementById('asignaturas').innerHTML=arrayDeCadenas.length;
+                document.getElementById('asignaturas').innerHTML=data.length;
             });
 
         //NUMERO DE INCIDENCIAS
         var url = "/mostrarIncidAlum";
             $.get(url, {}, function(data){
 
-                //Separamos el array recibido y lo guardamos
-                var arrayDeCadenas = data.split(",");
-
-                var laData = data;
-               
-                document.getElementById('incidencias').innerHTML=arrayDeCadenas.length;
+                document.getElementById('incidencias').innerHTML=data.length;
             });
 
   })

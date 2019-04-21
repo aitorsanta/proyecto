@@ -47,48 +47,57 @@
         //NUMERO DE ASIGNATURAS
         var url = "/mostrarAsigProf";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
+                
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                
+                if (arrayDeCadenas=="") {
+                    document.getElementById('asignaturas').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 3 porque son los campos que tiene cada asignatura en ese método
                 document.getElementById('asignaturas').innerHTML=arrayDeCadenas.length;
+                }
             });
 
         //NUMERO DE ALUMNOS
         var url = "/mostrarAlumnosProf";
             $.get(url, {}, function(data){
 
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                
-                document.getElementById('alumnos').innerHTML=arrayDeCadenas.length;
+                if (arrayDeCadenas=="") {
+                    document.getElementById('alumnos').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 6 porque son los campos que tiene cada alumno en ese método
+                    document.getElementById('alumnos').innerHTML=arrayDeCadenas.length;
+                }
             });
 
         //NUMERO DE ACTIVIDADES
         var url = "/mostrarActivProf";
             $.get(url, {}, function(data){
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data; 
+                if (arrayDeCadenas=="") {
+                    document.getElementById('actividades').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 6 porque son los campos que tiene cada alumno en ese método
+                    document.getElementById('actividades').innerHTML=data.length;
+                }
                 
-                document.getElementById('actividades').innerHTML=laData.length;
             });
             
         //NUMERO DE INCIDENCIAS
         var url = "/mostrarIncidProf";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
+                if (arrayDeCadenas=="") {
+                    document.getElementById('incidencias').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 6 porque son los campos que tiene cada alumno en ese método
+                    document.getElementById('incidencias').innerHTML=data.length;
+                }
                
-                document.getElementById('incidencias').innerHTML=arrayDeCadenas.length;
             });
 
         /*
@@ -305,6 +314,7 @@
                                 <a href="introducirActividad.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Introducir actividad</a>
                                 <a href="mostrarActividades.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Mostrar actividades</a>
                                 <a href="calificar.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Calificar</a>
+                                <a href="mostrarCalificaciones.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Mostrar calificaciones</a>      
                                 <a href="introducirIncidencia.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Introducir incidencia</a>
                                 <a href="mostrarIncidencias.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Mostrar incidencias</a>
                                 <a href="cambiarContraseniaD.html" type="button" class="btn btn-primary btn-lg btn-block"><i class="fa fa-arrow-circle-right"></i> Cambiar contraseña</a>

@@ -106,12 +106,12 @@ function califs(){
                 //Vamos metiendo en el nuevo array la información por líneas
                 var i=0;
                 var j=0;
-                var indice=0;
+                
                 while(i<arrayDeCadenas.length){
                     if(numCol==2){
                         resul.push("");
                     }else if(numCol==3){
-                        resul.push([""+arrayDeCadenas[indice]+"",""+arrayDeCadenas[indice+1]+"",""+arrayDeCadenas[indice+2]+""]);
+                        resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+""]);
 
                     }else if(numCol==4){
                         resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+"",""+arrayDeCadenas[i+3]+""]);
@@ -198,81 +198,6 @@ function createCell(cell, text, style) {
 }
 
 
-function calificarAlumnos(){
-    document.getElementById("panelNotas").style.visibility="visible";
-    document.getElementById("cargarAct").style.visibility="hidden";
-
-    var cursoFull = document.getElementById("toolBox1").value;
-    var curso = cursoFull.substring(0,5);  
-    var asignatura = cursoFull.substring(8,cursoFull.length+1);
-    var actividad = document.getElementById("toolBox3").value; 
-
-    var url = "/calif?curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
-        $.get(url, {}, function(data){
-            
-            //Separamos el array recibido y lo guardamos
-            
-            var arrayDeCadenas = data.split(","); 
-            numAlumnos = arrayDeCadenas.length;
-            var resul = [];
-            
-            //Vamos metiendo en el nuevo array la información por líneas
-            var i=0;
-            while(i<arrayDeCadenas.length){
-                if(arrayDeCadenas[i+2]=="\u00a0"){
-                    resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+" "+""]);
-                }else{
-                    resul.push([""+arrayDeCadenas[i]+"",""+arrayDeCadenas[i+1]+"",""+arrayDeCadenas[i+2]+""]);   
-                }
-               
-                i=i+3;
-            }
-
-            
-            $('#tablaCalificaciones').dataTable({
-              
-              "data": resul,             
-  
-              "aoColumnDefs":[
-                { "data" : "Número" },
-                { "data" : "Nombre" },
-                { "data" : "Calificación" }
-              ]
-
-            });
-
-        });
-}
-
-function guardar(){
-    /*
-    Coger información de tabla
-    Comparar array actual con inicial
-    Mandarlo al server
-    Actualizar información de la BD
-    */
-
-    var cursoFull = document.getElementById("toolBox1").value;
-    var curso = cursoFull.substring(0,5);  
-    var asignatura = cursoFull.substring(8,cursoFull.length+1);
-    var actividad = document.getElementById("toolBox3").value; 
-
-    arrayActualizado = new Array();
-    
-    for (var i = 0; i < numAlumnos; i++) {
-        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
-    }; 
-
-    var url = "/actualizarNotas?arrayActualizado="+arrayActualizado+"&curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad;
-    $.get(url, {}, function(data){
-        if(data=="1"){
-            window.alert("Información actualizada correctamente");
-            location.reload();
-        }
-    });
-
-
-}
 function recargar(){
     location.reload();
 }
@@ -345,6 +270,9 @@ function recargar(){
                         </li>
                         <li>
                             <a href="calificar.html"><i class="fa fa-edit fa-fw"></i> Calificar</a>
+                        </li>
+                        <li>
+                            <a href="mostrarCalificaciones.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
                         </li>
                         <li>
                             <a href="introducirIncidencia.html"><i class="fa fa-edit fa-fw"></i> Introducir incidencia</a>

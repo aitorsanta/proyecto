@@ -40,48 +40,62 @@
         //NUMERO DE DOCENTES
         var url = "/matriculaProfesor";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                //Lo dividimos entre 5 porque son los campos que tiene cada profesor en ese método
+                if (arrayDeCadenas=="") {
+                    document.getElementById('profesores').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 5 porque son los campos que tiene cada profesor en ese método
                 document.getElementById('profesores').innerHTML=arrayDeCadenas.length/5;
+                }
+
+                
             });
 
         //NUMERO DE ALUMNOS
         var url = "/matriculaAlumno";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                //Lo dividimos entre 6 porque son los campos que tiene cada alumno en ese método
-                document.getElementById('alumnos').innerHTML=arrayDeCadenas.length/6;
+                if (arrayDeCadenas=="") {
+                    document.getElementById('alumnos').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 6 porque son los campos que tiene cada alumno en ese método
+                    document.getElementById('alumnos').innerHTML=arrayDeCadenas.length/6;
+                }
+
+
+                
             });
 
         //NUMERO DE ASIGNATURAS
         var url = "/mostrarAsig";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                //Lo dividimos entre 3 porque son los campos que tiene cada asignatura en ese método
+                if (arrayDeCadenas=="") {
+                    document.getElementById('asignaturas').innerHTML=0;
+                }else{
+                    //Lo dividimos entre 3 porque son los campos que tiene cada asignatura en ese método
                 document.getElementById('asignaturas').innerHTML=arrayDeCadenas.length/3;
+                }
+
+
+                
             });
 
         //NUMERO DE CURSOS
         var url = "/obtenerCursos";
             $.get(url, {}, function(data){
-
-                //Separamos el array recibido y lo guardamos
                 var arrayDeCadenas = data.split(",");
 
-                var laData = data;
-                document.getElementById('cursos').innerHTML=arrayDeCadenas.length;
+                if (arrayDeCadenas=="") {
+                    document.getElementById('cursos').innerHTML=0;
+                }else{
+                    document.getElementById('cursos').innerHTML=arrayDeCadenas.length;
+                }
+
+                
             });
 
   })

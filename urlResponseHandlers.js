@@ -494,13 +494,13 @@ function mostrarAsig(req, res){
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
-    	let sql_asig = "SELECT ID_curso, nombre, DNI_d FROM asignatura ORDER BY nombre";
+    	let sql_asig = "SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre";
 
     	db.all(sql_asig, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+row.DNI_d);
+    			arrayAsignaturas.push(row.ID_curso+","+row.nombre+","+row.nombre_d+" "+row.apellido1_d+" "+row.apellido2_d);
   			});
   			
   			res.write(""+arrayAsignaturas);
@@ -1351,13 +1351,13 @@ function obtenerIncidencias(req,res){
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
-    	let sql_a = "SELECT DNI_a,fecha,asignatura,asunto FROM incidencia WHERE DNI_p='"+elDNI+"' ORDER BY fecha";
+    	let sql_a = "SELECT nombre_a, apellido1_a, apellido2_a, fecha, asignatura, asunto FROM incidencia i, alumno a WHERE a.DNI_a=i.DNI_a AND DNI_p='"+elDNI+"' ORDER BY fecha";
 
     	db.all(sql_a, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.DNI_a+", "+row.asunto);
+    			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a+", "+row.asunto);
     			i=i+1;
   			});
 
@@ -1686,6 +1686,7 @@ function verNotas(req,res){
 				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
 					  		for (var i = 0; i < arrayID.length; i++) {
 					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+					  			
 						  			for (var j = 0; j < numFin; j++) {
 			    						arrayFinal.push(arrayNotas[indiceNotas]);
 			    						indiceNotas= indiceNotas+1;
@@ -1713,6 +1714,7 @@ function verNotas(req,res){
 
 
 	    				}
+	    				
 						res.write(""+arrayFinal);
 						res.end();
 	    			});
