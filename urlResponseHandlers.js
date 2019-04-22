@@ -50,6 +50,7 @@ exports.obtenerIncidencias = obtenerIncidencias;
 exports.mostrarAsigAlum = mostrarAsigAlum;
 exports.mostrarIncidAlum = mostrarIncidAlum;
 exports.obtenerIncidenciasAlum = obtenerIncidenciasAlum;
+exports.obtenerIncidenciasAlumTl = obtenerIncidenciasAlumTl;
 exports.obtenerTutores1 = obtenerTutores1;
 exports.calif = calif;
 exports.actualizarNotas = actualizarNotas;
@@ -1664,6 +1665,48 @@ function obtenerIncidenciasAlum(req,res){
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
     	let sql_a = "SELECT fecha,asignatura,asunto FROM incidencia WHERE DNI_a='"+elDNI+"' ORDER BY fecha";
+
+    	db.all(sql_a, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayIncid.push(i+", "+row.asignatura+", "+row.fecha+", "+row.asunto);
+    			i=i+1;
+  			});
+
+			res.write(""+arrayIncid);
+  			res.end();
+    		
+    	});
+	});
+}
+
+/*
+Las incidencias del alumno detalladas
+*/
+function obtenerIncidenciasAlumTl(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        hijoNombre = _url.query.hijoNombre;
+	        hijoAp1 = _url.query.hijoAp1;
+	        hijoAp2 = _url.query.hijoAp2;
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	
+	var i=1;
+
+	arrayIncid = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+    	let sql_a = "SELECT fecha,asignatura,asunto FROM incidencia i, alumno a WHERE a.DNI_a=i.DNI_a AND nombre_a='"+hijoNombre+"' AND apellido1_a='"+hijoAp1+"' AND apellido2_a='"+hijoAp2+"' ORDER BY fecha";
 
     	db.all(sql_a, (err, rows)=>{
     		if (err){throw err;}

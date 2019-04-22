@@ -242,4 +242,9 @@ app.get('/obtenerNomTL', function(req, res) {
 	controller.dispatch(urlResponseHandlers.obtenerNomTL, req, res);
 });
 
+app.get('/obtenerIncidenciasAlumTl', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.obtenerIncidenciasAlumTl, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
