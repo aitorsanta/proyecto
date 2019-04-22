@@ -87,7 +87,10 @@ $(document).ready(function(){
 
 function mostrar(n){
 
+
     var cursoFull = document.getElementById("toolBox1").value;
+    document.getElementById("mostrar").style.visibility="hidden";
+    document.getElementById("reload").style.visibility="visible";
 
     if(n==1){
         window.alert();
@@ -140,13 +143,9 @@ function mostrar(n){
 
 }
 
-/*
-Función copiada literalmente de la siguiente fuente:
-https://programacion.net/articulo/exportar_la_informacion_de_una_tabla_a_excel_mediante_javascript_2014
-
-El día 11 de marzo del 2019, a las 12:55.
-
-*/
+function recargar(){
+    location.reload();
+}
 
     </script>
 
@@ -289,7 +288,8 @@ El día 11 de marzo del 2019, a las 12:55.
 
                                     </body>
                                 </thead>
-                            </table> 
+                            </table>
+                            <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar <i class="fa fa-recycle"></i></button> 
                         </div>
                         <!-- /.panel-body -->
                     </div>

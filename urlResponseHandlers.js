@@ -19,6 +19,7 @@ exports.introNewTeacher = introNewTeacher;
 exports.introNewFamily = introNewFamily;
 exports.changePassword = changePassword;
 exports.matriculaAlumno = matriculaAlumno;
+exports.matriculaAlumnoTL = matriculaAlumnoTL;
 exports.obtenerCursos = obtenerCursos;
 exports.obtenerProfesores = obtenerProfesores;
 exports.matriculaProfesor = matriculaProfesor;
@@ -27,6 +28,7 @@ exports.matriculaAlumnoSinCurso = matriculaAlumnoSinCurso;
 exports.actualizarMatricula = actualizarMatricula;
 exports.obtenerNom = obtenerNom;
 exports.obtenerNomP = obtenerNomP;
+exports.obtenerNomTL = obtenerNomTL;
 exports.obtenerCurso = obtenerCurso;
 exports.introducirAsig = introducirAsig;
 exports.introducirCurso = introducirCurso;
@@ -53,6 +55,9 @@ exports.calif = calif;
 exports.actualizarNotas = actualizarNotas;
 exports.verNotas = verNotas;
 exports.verNotasAlum = verNotasAlum;
+exports.totalHijos = totalHijos;
+exports.mostrarAsigAlumTl = mostrarAsigAlumTl;
+exports.verNotasAlumTL = verNotasAlumTL;
 
 /*
 Función para logearte en la aplicación
@@ -81,6 +86,8 @@ function loginApp(req, res){
 		4 - Familia
 		0 - Error
 	    */
+
+
 
 	    //Si es el administrador de la aplicación
 	    if(em==usuadmin && contr==passadmin){
@@ -137,6 +144,8 @@ function loginApp(req, res){
 			    		console.log("TL1");
 			    		res.write(""+4, function(err){/*res.end();*/});
 			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos
+			    		dniSave = getDNI(em, "TL1");
+			    		people="TL1"; 
 			    		check = 1; 
 			    		res.end();		
 			    	});	
@@ -151,7 +160,8 @@ function loginApp(req, res){
 			    		if (err){throw err;}
 			    		console.log("TL2");
 			    		res.write(""+4);
-			    		//console.log(res.write(""+4)); //El usuario TL existe en la base de datos  
+			    		dniSave = getDNI(em, "TL2");
+			    		people="TL2";
 			    		check = 1; 	
 			    		res.end();	
 			    	});	
@@ -242,9 +252,25 @@ function getDNI(email,type){
 				dniSave = dniLocal;
 				return dniSave;
 	    });
-	}/*else if(){
-
-	}*/
+	}else if(type=="TL1"){
+		let sql_DNI = "SELECT DNI_TL1 FROM familia WHERE email_TL1 ='"+email+"'";
+			    
+		db.each(sql_DNI, (err, row)=>{
+			if (err){throw err;}
+				dniLocal = row;	
+				dniSave = dniLocal;
+				return dniSave;
+	    });
+	}else if(type=="TL2"){
+		let sql_DNI = "SELECT DNI_TL2 FROM familia WHERE email_TL2 ='"+email+"'";
+			    
+		db.each(sql_DNI, (err, row)=>{
+			if (err){throw err;}
+				dniLocal = row;	
+				dniSave = dniLocal;
+				return dniSave;
+	    });
+	}
 		//db.close();
 	});
 	dniSave = dniLocal;
@@ -432,23 +458,28 @@ function changePassword(req, res){
 	    }
 	  }
 
-	  elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
-
 	  //Tenemos que cifrar la contraseña
 	  var contraCifrado = rsa(pass);
 
+	  console.log("EL DNI: "+elDNI);
+
 	if(people=="alumno"){
+		elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
 		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
 		let sql_passUpdate = "UPDATE alumno SET contra_usu_a ='"+contraCifrado+"' WHERE DNI_a ='"+elDNI+"'";
 	    	db.run(sql_passUpdate, (err, row)=>{
 	    		if (err){throw err;}
-	    		res.write(""+"confirmarPassA.html");
+	    		res.write(""+1);
+	    		res.end();
 	    		//db.close();
 	    	});	
 	    });
 	}else if(people=="docente"){
+		elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
 		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
 
@@ -456,18 +487,46 @@ function changePassword(req, res){
 		    	db.run(sql_passUpdate, (err, row)=>{
 		    		if (err){throw err;}
 		    		res.write(""+1);
+		    		res.end();
 		    		//db.close();
 		    	});	
 		});
-	}else{
-		console.log(people);
+	}else if(people=="TL1"){
+		elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
+		console.log("elDNI: "+elDNI);
+
+		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+			console.log("LLEGA CON contraCifrado: "+contraCifrado+" DNI: "+elDNI);
+			let sql_passUpdate = "UPDATE familia SET contr_usu_TL1 ='"+contraCifrado+"' WHERE DNI_TL1 ='"+elDNI+"'";
+		    	db.run(sql_passUpdate, (err, row)=>{
+		    		if (err){throw err;}
+		    		res.write(""+1);
+		    		res.end();
+		    		//db.close();
+		    	});	
+		});
+	}else if(people=="TL2"){
+		elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
+
+		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+			let sql_passUpdate = "UPDATE familia SET contr_usu_TL2 ='"+contraCifrado+"' WHERE DNI_TL2 ='"+elDNI+"'";
+		    	db.run(sql_passUpdate, (err, row)=>{
+		    		if (err){throw err;}
+		    		res.write(""+1);
+		    		res.end();
+		    		//db.close();
+		    	});	
+		});
 	}
 
 }
 /*
 Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
 */
-function matriculaAlumno(req, res){
+function matriculaAlumno(req,res){
 	arrayAlumnos = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
@@ -484,6 +543,93 @@ function matriculaAlumno(req, res){
   			res.write(""+arrayAlumnos);
     		res.end();
     	});
+	}); 	
+}
+
+/*
+Recoge toda la información de los alumnos y lo manda al lado del cliente, para que se muestre en MOSTRAR USUARIOS
+*/
+function matriculaAlumnoTL(req,res){
+
+	elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
+	arrayAlumnos = new Array();
+	arrayHijos = new Array();
+	arrayDNIs = new Array();
+	arrayFinal = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	if(people=="TL1"){
+    		let sql_indice = "SELECT DNI_a FROM alumno a, familia f WHERE a.ID_familia=f.ID_familia AND DNI_TL1='"+elDNI+"'";
+
+    		db.all(sql_indice, (err, rows)=>{
+	    		if (err){throw err;}
+
+	    		rows.forEach((row) => {
+	    			arrayHijos.push(row.DNI_a);
+	  			});
+
+	    	//Creamos la consulta
+	    	let sql_alumnos = "SELECT DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
+	    
+	    	db.all(sql_alumnos, (err, rows)=>{
+	    		if (err){throw err;}
+				
+				rows.forEach((row) => {
+					arrayDNIs.push(row.DNI_a);
+	    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
+	  			});
+
+	    		for (var i = 0; i <arrayHijos.length; i++) {
+	    			for (var j = 0; j < arrayDNIs.length; j++) {
+	    				if (arrayHijos[i]==arrayDNIs[j]) {
+	    					arrayFinal.push(arrayAlumnos[j]);
+	    					j=arrayDNIs.length;
+	    				};
+	    			};
+	    		};
+	    		
+	  			res.write(""+arrayFinal);
+	    		res.end();
+    		});
+    	});
+    	}else if(people=="TL2"){
+    		let sql_indice = "SELECT DNI_a FROM alumno a, familia f WHERE a.ID_familia=f.ID_familia AND DNI_TL2='"+elDNI+"'";
+
+	    	db.all(sql_indice, (err, rows)=>{
+	    		if (err){throw err;}
+
+	    		rows.forEach((row) => {
+	    			arrayHijos.push(row.DNI_a);
+	  			});
+
+		    	//Creamos la consulta
+		    	let sql_alumnos = "SELECT DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
+		    
+		    	db.all(sql_alumnos, (err, rows)=>{
+		    		if (err){throw err;}
+					
+					rows.forEach((row) => {
+						arrayDNIs.push(row.DNI_a);
+		    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
+		  			});
+
+		    		for (var i = 0; i <arrayHijos.length; i++) {
+		    			for (var j = 0; j < arrayDNIs.length; j++) {
+		    				if (arrayHijos[i]==arrayDNIs[j]) {
+		    					arrayFinal.push(arrayAlumnos[j]);
+		    					j=arrayDNIs.length;
+		    				};
+		    			};
+		    		};
+		    		
+		  			res.write(""+arrayFinal);
+		    		res.end();
+	    		});
+	    	});
+    	}
+
 	}); 	
 }
 
@@ -736,6 +882,43 @@ function obtenerNomP(req, res){
 	    		res.write(""+row.nombre_d);
 	    		res.end();	
 	    	});	
+	});	
+}
+//Método para obtener el nombre del TL
+function obtenerNomTL(req, res){
+
+	//Obtenemos el DNI que se ha guardado anteriormente
+	var elDNI = "";
+
+	elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
+
+	//Generamos una consulta sql para obtener el nombre
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+		if (people=="TL1") {
+			let sql_nomTL = "SELECT nombre_TL1 FROM familia WHERE DNI_TL1 ='"+elDNI+"'";
+			    	
+	    	db.each(sql_nomTL, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		res.write(""+row.nombre_TL1);
+	    		res.end();	
+	    	});	
+
+		}else if(people=="TL2"){
+			let sql_nomTL = "SELECT nombre_TL2 FROM familia WHERE DNI_TL2 ='"+elDNI+"'";
+			    	
+	    	db.each(sql_nomTL, (err, row)=>{
+	    		if (err){throw err;}
+	    		//Enviamos el nombre al front-end
+	    		res.write(""+row.nombre_TL2);
+	    		res.end();	
+	    	});	
+		}
+		
+
+		
 	});	
 }
 
@@ -1013,6 +1196,7 @@ function introducirActividad(req, res){
 
 function mostrarActividades(req, res){
 	arrayActiv = new Array();
+	arrayActiv = [];
 
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -1045,7 +1229,7 @@ function mostrarActividades(req, res){
 				rows.forEach((row) => {
 	    			arrayActiv.push(row.cod_trimestre+","+row.nombre_act+","+row.peso*10);
   				});
-	  			
+
 	  			res.write(""+arrayActiv);
 	    		res.end();
     	});	
@@ -1226,7 +1410,7 @@ function mostrarAsigProf(req, res){
 Todas las asignaturas del alumno
 */
 function mostrarAsigAlum(req, res){
-	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+		elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
 
 	arrayAsignaturas = new Array();
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
@@ -1250,7 +1434,43 @@ function mostrarAsigAlum(req, res){
   			});
     		
     	});
-	}); 	
+	});
+}
+
+function mostrarAsigAlumTl(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        hijoNombre = _url.query.hijoNombre;
+	        hijoAp1 = _url.query.hijoAp1;
+	        hijoAp2 = _url.query.hijoAp2;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	arrayAsig = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+    		//Creamos la consulta
+	    	let sql_alumnos = "SELECT nombre, a.ID_curso FROM asignatura a, alumno l WHERE a.ID_curso = l.ID_curso AND nombre_a='"+hijoNombre+"' AND apellido1_a='"+hijoAp1+"' AND apellido2_a='"+hijoAp2+"' ORDER BY nombre";
+	    
+	    	db.all(sql_alumnos, (err, rows)=>{
+	    		if (err){throw err;}
+				
+				rows.forEach((row) => {
+	    			arrayAsig.push(row.ID_curso+" - "+row.nombre);
+	  			});
+
+	  			res.write(""+arrayAsig);
+	    		res.end();
+    		});
+
+    });
+
 }
 
 /*
@@ -1493,7 +1713,7 @@ function calif(req,res){
 		if(err){return console.error(err.message);}
     	
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1612,7 +1832,7 @@ function actualizarNotas(req,res){
 		if(err){return console.error(err.message);}
 
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad WHERE nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -1890,7 +2110,7 @@ function verNotasAlum(req,res){
 				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
 				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
 					  		for (var i = 0; i < arrayID.length; i++) {
-					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+					  			arrayFinal.push(arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 					  			media = 0;
 						  			for (var j = 0; j < numFin; j++) {
 			    						arrayFinal.push(arrayNotas[indiceNotas]);			    						
@@ -1903,13 +2123,9 @@ function verNotasAlum(req,res){
 	    					indiceNotas =0;
 
 	    					for (var i = 0; i < arrayID.length; i++) {
-	    						arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+	    						arrayFinal.push(arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 	    						//AGREGAR CALIFICACIONES
 	    						media = 0;
-	    						console.log("arrayActivCodigo.length: "+arrayActivCodigo.length);
-	    						console.log("arrayActivCodigo: "+arrayActivCodigo);
-	    						console.log("numAsigCalif.length: "+numAsigCalif.length);
-	    						console.log("numAsigCalif: "+numAsigCalif);
 	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
 	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
 	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
@@ -1944,5 +2160,229 @@ function verNotasAlum(req,res){
     	});	
 	
 	});		  
+}
+
+function verNotasAlumTL(req,res){
+		if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        trimestre = _url.query.trimestre;
+	        hijoNombre = _url.query.hijoNombre;
+	        hijoAp1 = _url.query.hijoAp1;
+	        hijoAp2 = _url.query.hijoAp2;
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	 
+	var codi =0;
+	arrayActivCodigo = new Array();
+
+	arrayDNIs = new Array();
+	arrayID = new Array();
+	arrayNoms = new Array();
+	arrayApe1s = new Array();
+	arrayApe2s = new Array();
+	arrayFinal = new Array();
+	arrayNotas = new Array();
+	arrayCodigoActiv = new Array();
+	arrayPeso = new Array();
+	var k=1;
+	var indiceNotas = 0;
+	numAsigCalif = new Array();
+	arrayFinal = [];
+	var elDNI ="";
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+
+
+		//Codigo asignatura
+    	let sql_a1 = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			codi = row.ID_asignatura;
+  			});
+
+    		let sql_a = "SELECT DNI_a FROM alumno WHERE ID_curso='"+curso+"' AND nombre_a='"+hijoNombre+"' AND apellido1_a='"+hijoAp1+"' AND apellido2_a='"+hijoAp2+"' ORDER BY apellido1_a";
+
+			    db.all(sql_a, (err, rows)=>{
+		    		if (err){throw err;}
+		    		
+		    		rows.forEach((row) => {
+		    			arrayID.push(row.DNI_a);
+		  			});
+
+		  			elDNI = arrayID[0];
+		  			console.log(elDNI);
+
+    				let sql_a2 = "SELECT cod_act FROM actividad WHERE cod_asig='"+codi+"' AND cod_trimestre='"+trimestre+"' ORDER BY cod_act";
+
+					db.all(sql_a2, (err, rows)=>{
+	    			if (err){throw err;}
+
+		    		rows.forEach((row) => {
+						arrayActivCodigo.push(row.cod_act);
+			  		});		
+
+		    		let sql_a3 = "SELECT calificacion, e.cod_act, peso FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' AND e.DNI_a='"+elDNI+"' ORDER BY l.apellido1_a, a.cod_asig, e.cod_act";
+					db.all(sql_a3, (err, rows)=>{
+	    			if (err){throw err;}
+		    			rows.forEach((row) => {
+							arrayNotas.push(row.calificacion);
+							numAsigCalif.push(row.cod_act);
+							arrayPeso.push(row.peso);
+				  		});
+
+				  		var numFin = (numAsigCalif.length)/(arrayNoms.length);
+				  		var media = 0;
+
+				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
+				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
+					  		for (var i = 0; i < arrayID.length; i++) {
+					  			arrayFinal.push(hijoNombre+" "+hijoAp1+" "+hijoAp2);
+					  			media = 0;
+						  			for (var j = 0; j < numFin; j++) {
+			    						arrayFinal.push(arrayNotas[indiceNotas]);			    						
+			    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
+			    						indiceNotas= indiceNotas+1;
+			    					};
+			    					arrayFinal.push(media.toFixed(2));
+		    				};
+	    				}else if(arrayNotas.length!=0){
+	    					indiceNotas =0;
+
+	    					for (var i = 0; i < arrayID.length; i++) {
+	    						arrayFinal.push(hijoNombre+" "+hijoAp1+" "+hijoAp2);
+	    						//AGREGAR CALIFICACIONES
+	    						media = 0;
+
+	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
+	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
+	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
+					    						arrayFinal.push(arrayNotas[indiceNotas]);
+					    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
+					    						indiceNotas= indiceNotas+1;
+					    						b=numAsigCalif;
+	    									}else if(a==b){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
+	    									}else if(a>numAsigCalif.length){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
+	    									}
+	    							}
+	    						};
+	    						arrayFinal.push(media.toFixed(2));
+	    					};
+
+
+	    				}
+						res.write(""+arrayFinal);
+						res.end();
+	    			});
+
+	  			});
+			
+			
+			//arrayActivCodigo = actividadesCodigo(actividades, codi,trimestre); 
+			//console.log(arrayActivCodigo);
+			});
+    	});	
+	
+	});		  
+}
+
+function totalHijos(req,res){
+	elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
+	arrayAlumnos = new Array();
+	arrayHijos = new Array();
+	arrayDNIs = new Array();
+	arrayFinal = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	if(people=="TL1"){
+    		let sql_indice = "SELECT DNI_a FROM alumno a, familia f WHERE a.ID_familia=f.ID_familia AND DNI_TL1='"+elDNI+"'";
+
+    		db.all(sql_indice, (err, rows)=>{
+	    		if (err){throw err;}
+
+	    		rows.forEach((row) => {
+	    			arrayHijos.push(row.DNI_a);
+	  			});
+
+	    	//Creamos la consulta
+	    	let sql_alumnos = "SELECT DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
+	    
+	    	db.all(sql_alumnos, (err, rows)=>{
+	    		if (err){throw err;}
+				
+				rows.forEach((row) => {
+					arrayDNIs.push(row.DNI_a);
+	    			arrayAlumnos.push(row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a);
+	  			});
+
+	    		for (var i = 0; i <arrayHijos.length; i++) {
+	    			for (var j = 0; j < arrayDNIs.length; j++) {
+	    				if (arrayHijos[i]==arrayDNIs[j]) {
+	    					arrayFinal.push(arrayAlumnos[j]);
+	    					j=arrayDNIs.length;
+	    				};
+	    			};
+	    		};
+	    		
+	  			res.write(""+arrayFinal);
+	    		res.end();
+    		});
+    	});
+    	}else if(people=="TL2"){
+    		let sql_indice = "SELECT DNI_a FROM alumno a, familia f WHERE a.ID_familia=f.ID_familia AND DNI_TL2='"+elDNI+"'";
+
+	    	db.all(sql_indice, (err, rows)=>{
+	    		if (err){throw err;}
+
+	    		rows.forEach((row) => {
+	    			arrayHijos.push(row.DNI_a);
+	  			});
+
+		    	//Creamos la consulta
+		    	let sql_alumnos = "SELECT DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
+		    
+		    	db.all(sql_alumnos, (err, rows)=>{
+		    		if (err){throw err;}
+					
+					rows.forEach((row) => {
+						arrayDNIs.push(row.DNI_a);
+		    			arrayAlumnos.push(row.nombre_a+" "+row.apellido1_a+" "+row.apellido2_a);
+		  			});
+
+		    		for (var i = 0; i <arrayHijos.length; i++) {
+		    			for (var j = 0; j < arrayDNIs.length; j++) {
+		    				if (arrayHijos[i]==arrayDNIs[j]) {
+		    					arrayFinal.push(arrayAlumnos[j]);
+		    					j=arrayDNIs.length;
+		    				};
+		    			};
+		    		};
+		    		
+		  			res.write(""+arrayFinal);
+		    		res.end();
+	    		});
+	    	});
+    	}
+
+	});
 }
 

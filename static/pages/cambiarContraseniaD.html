@@ -44,8 +44,9 @@
             var url = "/changePassword?pass="+contr1;
             $.get(url, {}, function(data){ 
                 //var pass = document.getElementById('contr1').value;
-                window.alert(data);
-                open(location.href = data);
+                if (data=="1") {
+                    window.alert("Contraseña actualizada satisfactoriamente");
+                };
             });
         }
         

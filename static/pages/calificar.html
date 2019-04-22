@@ -108,17 +108,22 @@ function activs(){
 
 
 function calificarAlumnos(){
-    document.getElementById("panelNotas").style.visibility="visible";
-    document.getElementById("button").style.visibility="visible";
-    document.getElementById("reload").style.visibility="visible";
-    document.getElementById("calificar").style.visibility="hidden";
-    document.getElementById("cargarAct").style.visibility="hidden";
 
     var cursoFull = document.getElementById("toolBox1").value;
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
     var actividad = document.getElementById("toolBox3").value;
     var trimestre = document.getElementById("toolBox2").value;  
+
+    if (cursoFull=="" || actividad=="" || trimestre=="") {
+        window.alert("ERROR. Todos los campos son obligatorios");
+        recargar();
+    }else{
+        document.getElementById("panelNotas").style.visibility="visible";
+        document.getElementById("button").style.visibility="visible";
+        document.getElementById("reload").style.visibility="visible";
+        document.getElementById("calificar").style.visibility="hidden";
+        document.getElementById("cargarAct").style.visibility="hidden";
 
     var url = "/calif?curso="+curso+"&asignatura="+asignatura+"&actividad="+actividad+"&trimestre="+trimestre;
         $.get(url, {}, function(data){
@@ -155,6 +160,7 @@ function calificarAlumnos(){
             });
 
         });
+    }
 }
 
 function guardar(){
@@ -359,8 +365,9 @@ function recargar(){
 
                                     </body>
                                 </thead>
-                            </table> 
-                            <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar</button> 
+                            </table>
+                            <!--class="fa fa-arrow-circle-right">--> 
+                            <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar <i class="fa fa-recycle"></i></button> 
                             <button id="button" class="btn btn-success btn-lg" onclick="guardar();return false;" style="visibility:hidden">Guardar</button> 
                         </div>
 

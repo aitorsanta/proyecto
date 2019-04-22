@@ -50,8 +50,47 @@
 var numAlumnos = 0;
 
 $(function(){
+    //Cargamos todxs lxs hijxs
+    var url = "/totalHijos";
+        $.get(url, {}, function(data){
+            var opciones = '';
+            var arrayDeCadenas = data.split(",");
+
+            //Con este bucle cargamos todos los hijxs (nombre y dos apellidos) de la BD en la lista
+            for (var i = 0; i< arrayDeCadenas.length; i++) {
+                opciones += '<option value="'+arrayDeCadenas[i]+'">' + arrayDeCadenas[i] +'</option>'
+            };
+
+            $('#toolBox0').append($('<option></option>'));
+            $('#toolBox0').append(opciones);
+        });
+
+    //Valores de TRIMESTRE
+        var opc = '';
+
+        for (var i = 1; i< 4; i++) {
+            opc += '<option value="'+i+'">' + i +'</option>'
+        };
+
+        $('#toolBox2').append($('<option></option>'));
+        $('#toolBox2').append(opc);
+
+    
+})
+
+function cargarHi(){
+    document.getElementById("a1").style.visibility="visible";
+    document.getElementById("a2").style.visibility="visible";
+    document.getElementById("toolBox1").style.visibility="visible";
+    document.getElementById("toolBox2").style.visibility="visible";
+    document.getElementById("cargarAct").style.visibility="visible";
+
+    var hijo = document.getElementById("toolBox0").value;
+    var hijoSeparado = hijo.split(" ");
+    
+
     //Cargamos todas las clases del profesor logueado en el toolbox
-    var url = "/obtenerClasesProfesor";
+    var url = "/mostrarAsigAlumTl?hijoNombre="+hijoSeparado[0]+"&hijoAp1="+hijoSeparado[1]+"&hijoAp2="+hijoSeparado[2];
         $.get(url, {}, function(data){
             var opciones = '';
             var arrayDeCadenas = data.split(",");
@@ -65,21 +104,13 @@ $(function(){
             $('#toolBox1').append(opciones);
         });
 
-        var opc = '';
-
-        for (var i = 1; i< 4; i++) {
-            opc += '<option value="'+i+'">' + i +'</option>'
-        };
-
-        $('#toolBox2').append($('<option></option>'));
-        $('#toolBox2').append(opc);
-    
-})
+}
 
 
 function califs(){
     document.getElementById("panelNotas").style.visibility="visible";
     document.getElementById("cargarAct").style.visibility="hidden";
+    document.getElementById("cargarHi1").style.visibility="hidden";
     document.getElementById("reload").style.visibility="visible";
 
     var cursoFull = document.getElementById("toolBox1").value;
@@ -87,19 +118,23 @@ function califs(){
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
     var trimestre = document.getElementById("toolBox2").value; 
-    
+
+    var hijo = document.getElementById("toolBox0").value;
+    var hijoSeparado = hijo.split(" ");
 
     var url = "/actividadesTrimestre?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
         $.get(url, {}, function(data){
+
             var opciones = '';
             var arrayDeCadenas = data.split(",");
 
             appendColumn(arrayDeCadenas.length, arrayDeCadenas);
 
-            var numCol = arrayDeCadenas.length+2; //Por la columna de nombre y número
+            var numCol = arrayDeCadenas.length+1; //Por la columna de nombre
 
 
-            var url = "/verNotas?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
+            var url = "/verNotasAlumTL?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre+"&hijoNombre="+hijoSeparado[0]+"&hijoAp1="+hijoSeparado[1]+"&hijoAp2="+hijoSeparado[2];
+
             $.get(url, {}, function(data){ 
                 var arrayDeCadenas = data.split(","); 
                 var resul = [];
@@ -259,31 +294,19 @@ function recargar(){
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="indexProf.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
+                            <a href="indexFam.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
                         </li>
                         <li>
-                            <a href="mostrarAlumnosProf.html"><i class="fa fa-table fa-fw"></i> Lista de alumnos</a>
+                            <a href="hijosHijas.html"><i class="fa fa-table fa-fw"></i> Hijos / hijas</a>
                         </li>
                         <li>
-                            <a href="introducirActividad.html"><i class="fa fa-edit fa-fw"></i> Introducir actividad</a>
+                            <a href="mostrarCalificacionesFam.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
                         </li>
                         <li>
-                            <a href="mostrarActividades.html"><i class="fa fa-table fa-fw"></i> Mostrar actividades</a>
+                            <a href="mostrarIncidenciasAlum.html"><i class="fa fa-table fa-fw"></i> Mostrar incidencias</a>
                         </li>
                         <li>
-                            <a href="calificar.html"><i class="fa fa-edit fa-fw"></i> Calificar</a>
-                        </li>
-                        <li>
-                            <a href="mostrarCalificaciones.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
-                        </li>
-                        <li>
-                            <a href="introducirIncidencia.html"><i class="fa fa-edit fa-fw"></i> Introducir incidencia</a>
-                        </li>
-                       <li>
-                            <a href="mostrarIncidencias.html"><i class="fa fa-table fa-fw"></i> Mostrar incidencias</a>
-                        </li>
-                        <li>
-                            <a href="cambiarContraseniaD.html"><i class="fa fa-edit fa-fw"></i> Cambiar contraseña</a>
+                            <a href="cambiarContraseniaF.html"><i class="fa fa-edit fa-fw"></i> Cambiar contraseña</a>
                         </li>
                     </ul>
                 </div>
@@ -305,23 +328,34 @@ function recargar(){
                         <form role="form">
                             <fieldset>
                                 <div class="form-group">
-                                    <label>Asignatura:</label>
-                                    <select class="form-control" id="toolBox1">
+                                    <label>Hijo / hija:</label>
+                                    <select class="form-control" id="toolBox0">
                                 </div>
                                 <div class="form-group">
                                     <select class="form-control">
                                 </div>
-                                <div class="form-group">
-                                    <label>Trimestre:</label>
-                                    <select class="form-control" id="toolBox2">
-                                </div>
-                                <div class="form-group">
-                                    <select class="form-control">
+                                 <div>
+                                    <button id="cargarHi1" onclick="cargarHi();return false;" type="submit" class="btn btn-lg btn-primary btn-block">Aceptar</button>
                                 </div>
                                 
-                                <div>
-                                    <button id="cargarAct" onclick="califs();return false;" type="submit" class="btn btn-lg btn-primary btn-block">Mostrar calificaciones</button>
+                                <div class="form-group">
+                                    <label id="a1" style="visibility:hidden">Asignatura:</label>
+                                    <select class="form-control" id="toolBox1" style="visibility:hidden">
                                 </div>
+                                <div class="form-group">
+                                    <select class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label id="a2" style="visibility:hidden">Trimestre:</label>
+                                    <select class="form-control" id="toolBox2" style="visibility:hidden">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control">
+                                </div>
+                                <div>
+                                    <button id="cargarAct" onclick="califs();return false;" type="submit" class="btn btn-lg btn-primary btn-block" style="visibility:hidden">Mostrar calificaciones</button>
+                                </div>
+                               
                             </fieldset>
                         </form>
                         
@@ -337,7 +371,6 @@ function recargar(){
                         <div class="panel-body" style="text-align:center">
                             <table id="tablaCalificaciones" width="100%" class="table table-striped table-bordered table-hover">
                                 <thead>
-                                    <th>Número</th>
                                     <th>Nombre</th>
                                     <tbody></tbody>
                                 </thead>
