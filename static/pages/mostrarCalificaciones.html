@@ -88,7 +88,7 @@ function califs(){
     var trimestre = document.getElementById("toolBox2").value; 
     
 
-    var url = "/actividadesTrimestreSinPeso?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
+    var url = "/actividadesTrimestre?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
         $.get(url, {}, function(data){
             var opciones = '';
             var arrayDeCadenas = data.split(",");
@@ -174,12 +174,13 @@ function califs(){
 /* Este método y el siguiente han sido extraidos desde la página https://www.redips.net/javascript/adding-table-rows-and-columns/ y adaptados por Aitor Santamaria Zuluaga el día 21/04/2019.
 */
 function appendColumn(n, arrayDeCadenas) {
+    arrayDeCadenas.push("MEDIA"); //Metemos también una columna de la media de cada alumno
     var cont = 0;
     var tbl = document.getElementById('tablaCalificaciones'), // table reference
         i;
 
     // open loop for each row and append cell
-    while(cont<n){
+    while(cont<n+1){
     for (i = 0; i < tbl.rows.length; i++) {
         createCell(tbl.rows[i].insertCell(tbl.rows[i].cells.length), arrayDeCadenas[cont], 'col');
     }

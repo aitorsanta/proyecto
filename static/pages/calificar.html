@@ -174,7 +174,20 @@ function guardar(){
     arrayActualizado = new Array();
     
     for (var i = 0; i < numAlumnos; i++) {
-            arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+            if(i!=0 && i!=1){
+                //Cambiamos las comas (' y ,) de los decimales por los puntos, porque la base de datos no permite almacenar con coma (dato de tipo numérico)
+
+                var conComa = document.getElementsByTagName("td")[i].innerHTML; // tu variable
+                
+                var conPunto=conComa.replace(",",".");
+                var bien=conPunto.replace("'",".");
+
+                arrayActualizado.push(bien);
+            }else{
+               arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML); 
+            }
+
+            
     }; 
 
 

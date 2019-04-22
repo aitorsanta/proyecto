@@ -33,6 +33,7 @@ exports.introducirCurso = introducirCurso;
 exports.mostrarAsig = mostrarAsig;
 exports.obtenerClasesProfesor = obtenerClasesProfesor;
 exports.matriculaAlumnoConCurso = matriculaAlumnoConCurso;
+exports.pesar = pesar;
 exports.introducirActividad = introducirActividad;
 exports.mostrarActividades = mostrarActividades;
 exports.actividadesTrimestre = actividadesTrimestre;
@@ -903,6 +904,66 @@ function matriculaAlumnoConCurso(req, res){
 	}); 	
 }
 
+function pesar(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        asignatura = _url.query.asignatura;
+	        curso = _url.query.curso;
+	        trimestre = _url.query.trimestre;
+	        nuevoPeso = _url.query.peso;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	arrayPeso = new Array();
+	var pesoTot=0;
+	arrayPeso = [];
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+		let sql_curso = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+
+		db.all(sql_curso, (err, rows)=>{
+    		if (err){throw err;}
+    		var codigo = JSON.stringify(rows).substring(18,20); //Cogemos el curso
+
+    		//Obtenemos actividad en la BD
+		    let sql_a1 = "SELECT peso FROM actividad WHERE cod_asig='"+codigo+"' AND cod_trimestre='"+trimestre+"'";
+			
+			db.all(sql_a1, (err, rows)=>{
+				if (err){throw err;}
+				rows.forEach((row) => {
+    				arrayPeso.push(row.peso);
+  				});
+
+  				var g =0;
+  				console.log(arrayPeso);
+  				while(g<arrayPeso.length){
+  					pesoTot = pesoTot + arrayPeso[g];
+  					g=g+1;
+  				}
+  				
+  				if ((parseInt(pesoTot)+parseInt(nuevoPeso))>10) {
+  					res.write("0");
+  					res.end();
+  				}else{
+  					//Correcto
+					res.write("1");
+					res.end();
+  				}
+				
+    	});	
+
+    	});
+
+	});
+}
+
 function introducirActividad(req, res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -1629,6 +1690,7 @@ function verNotas(req,res){
 	arrayFinal = new Array();
 	arrayNotas = new Array();
 	arrayCodigoActiv = new Array();
+	arrayPeso = new Array();
 	var k=1;
 	var indiceNotas = 0;
 	numAsigCalif = new Array();
@@ -1671,26 +1733,29 @@ function verNotas(req,res){
 			  		});
 
 
-		    		let sql_a3 = "SELECT calificacion, e.cod_act FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' ORDER BY l.apellido1_a, a.cod_asig, e.cod_act";
+		    		let sql_a3 = "SELECT calificacion, e.cod_act, peso FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' ORDER BY l.apellido1_a, a.cod_asig, e.cod_act";
 					db.all(sql_a3, (err, rows)=>{
 	    			if (err){throw err;}
 		    			rows.forEach((row) => {
 							arrayNotas.push(row.calificacion);
 							numAsigCalif.push(row.cod_act);
+							arrayPeso.push(row.peso);
 				  		});
 
 				  		var numFin = (numAsigCalif.length)/(arrayNoms.length);
-
+				  		var media = 0;
 
 				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
 				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
 					  		for (var i = 0; i < arrayID.length; i++) {
 					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
-					  			
+					  			media = 0;
 						  			for (var j = 0; j < numFin; j++) {
-			    						arrayFinal.push(arrayNotas[indiceNotas]);
+			    						arrayFinal.push(arrayNotas[indiceNotas]);			    						
+			    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
 			    						indiceNotas= indiceNotas+1;
 			    					};
+			    					arrayFinal.push(media.toFixed(2));
 		    				};
 	    				}else if(arrayNotas.length!=0){
 	    					indiceNotas =0;
@@ -1698,10 +1763,12 @@ function verNotas(req,res){
 	    					for (var i = 0; i < arrayID.length; i++) {
 	    						arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 	    						//AGREGAR CALIFICACIONES
+	    						media = 0;
 	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
 	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
 	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
 					    						arrayFinal.push(arrayNotas[indiceNotas]);
+					    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
 					    						indiceNotas= indiceNotas+1;
 					    						b=numAsigCalif;
 	    									}else if(a==b){
@@ -1710,6 +1777,7 @@ function verNotas(req,res){
 	    									}
 	    							}
 	    						};
+	    						arrayFinal.push(media.toFixed(2));
 	    					};
 
 

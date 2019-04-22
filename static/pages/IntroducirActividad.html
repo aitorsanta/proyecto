@@ -93,13 +93,24 @@ function guardar(){
             var asig = asignatura.substring(8,asignatura.length);
             var cur = asignatura.substring(0,5);
 
-            var url = "/introducirActividad?asignatura="+asig+"&curso="+cur+"&trimestre="+trimestre+"&nombre="+nombre+"&peso="+peso;
+
+            //Comprobamos que el peso total del trimestre de la asignatura no pasa los 10 puntos
+            var url = "/pesar?asignatura="+asig+"&curso="+cur+"&trimestre="+trimestre+"&peso="+peso;
             $.get(url, {}, function(data){
                 if(data=="1"){
-                    window.alert("Actividad insertada correctamente");
-                    document.getElementById("nombre").value="";
-                    document.getElementById("peso").value="";
-                    document.getElementById("trimestre").value="";
+                    var url = "/introducirActividad?asignatura="+asig+"&curso="+cur+"&trimestre="+trimestre+"&nombre="+nombre+"&peso="+peso;
+                    $.get(url, {}, function(data){
+                        if(data=="1"){
+                            window.alert("Actividad insertada correctamente");
+                            document.getElementById("nombre").value="";
+                            document.getElementById("peso").value="";
+                            document.getElementById("trimestre").value="";
+                        }
+                    });
+                }else{
+                        //Significa que el peso es superior
+                        window.alert("ERROR! El peso total de las actividades por trimestre supera los 10 puntos sobre 10. Por favor, corrija el valor.");
+                        document.getElementById("peso").value="";
                 }
             });
         }
