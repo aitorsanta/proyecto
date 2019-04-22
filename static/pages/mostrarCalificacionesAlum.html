@@ -51,7 +51,7 @@ var numAlumnos = 0;
 
 $(function(){
     //Cargamos todas las clases del profesor logueado en el toolbox
-    var url = "/obtenerClasesProfesor";
+    var url = "/mostrarAsigAlum";
         $.get(url, {}, function(data){
             var opciones = '';
             var arrayDeCadenas = data.split(",");
@@ -86,7 +86,6 @@ function califs(){
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
     var trimestre = document.getElementById("toolBox2").value; 
-    
 
     var url = "/actividadesTrimestre?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
         $.get(url, {}, function(data){
@@ -98,7 +97,7 @@ function califs(){
             var numCol = arrayDeCadenas.length+2; //Por la columna de nombre y número
 
 
-            var url = "/verNotas?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
+            var url = "/verNotasAlum?curso="+curso+"&asignatura="+asignatura+"&trimestre="+trimestre;
             $.get(url, {}, function(data){ 
                 var arrayDeCadenas = data.split(","); 
                 var resul = [];
@@ -258,31 +257,16 @@ function recargar(){
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="indexProf.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
+                            <a href="indexAlum.html"><i class="fa fa-dashboard fa-fw"></i> Entrada</a>
                         </li>
                         <li>
-                            <a href="mostrarAlumnosProf.html"><i class="fa fa-table fa-fw"></i> Lista de alumnos</a>
+                            <a href="mostrarCalificacionesAlum.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
                         </li>
                         <li>
-                            <a href="introducirActividad.html"><i class="fa fa-edit fa-fw"></i> Introducir actividad</a>
+                            <a href="mostrarIncidenciasAlum.html"><i class="fa fa-table fa-fw"></i> Mostrar incidencias</a>
                         </li>
                         <li>
-                            <a href="mostrarActividades.html"><i class="fa fa-table fa-fw"></i> Mostrar actividades</a>
-                        </li>
-                        <li>
-                            <a href="calificar.html"><i class="fa fa-edit fa-fw"></i> Calificar</a>
-                        </li>
-                        <li>
-                            <a href="mostrarCalificaciones.html"><i class="fa fa-table fa-fw"></i> Mostrar calificaciones</a>
-                        </li>
-                        <li>
-                            <a href="introducirIncidencia.html"><i class="fa fa-edit fa-fw"></i> Introducir incidencia</a>
-                        </li>
-                       <li>
-                            <a href="mostrarIncidencias.html"><i class="fa fa-table fa-fw"></i> Mostrar incidencias</a>
-                        </li>
-                        <li>
-                            <a href="cambiarContraseniaD.html"><i class="fa fa-edit fa-fw"></i> Cambiar contraseña</a>
+                            <a href="cambiarContraseniaA.html"><i class="fa fa-edit fa-fw"></i> Cambiar contraseña</a>
                         </li>
                     </ul>
                 </div>

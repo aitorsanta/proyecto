@@ -52,6 +52,7 @@ exports.obtenerTutores1 = obtenerTutores1;
 exports.calif = calif;
 exports.actualizarNotas = actualizarNotas;
 exports.verNotas = verNotas;
+exports.verNotasAlum = verNotasAlum;
 
 /*
 Función para logearte en la aplicación
@@ -942,7 +943,6 @@ function pesar(req,res){
   				});
 
   				var g =0;
-  				console.log(arrayPeso);
   				while(g<arrayPeso.length){
   					pesoTot = pesoTot + arrayPeso[g];
   					g=g+1;
@@ -950,6 +950,9 @@ function pesar(req,res){
   				
   				if ((parseInt(pesoTot)+parseInt(nuevoPeso))>10) {
   					res.write("0");
+  					res.end();
+  				}else if(arrayPeso.length>15){
+  					res.write("2");
   					res.end();
   				}else{
   					//Correcto
@@ -1239,7 +1242,7 @@ function mostrarAsigAlum(req, res){
 
 				db.all(sql_asig2, (err, rows)=>{
 	    		rows.forEach((row) => {
-	    			arrayAsignaturas.push(row.nombre);
+	    			arrayAsignaturas.push(codigo+" - "+row.nombre);
 	  			});
   			
   			res.write(""+arrayAsignaturas);
@@ -1672,7 +1675,6 @@ function verNotas(req,res){
 	        curso = _url.query.curso; //Curso introducido por el docente
 	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
 	        trimestre = _url.query.trimestre;
-	        actividades = _url.query.actividades; //Array de actividades
 	      } catch (e) {
 	      }
 	    }
@@ -1774,6 +1776,9 @@ function verNotas(req,res){
 	    									}else if(a==b){
 	    										arrayFinal.push("\u00a0");
 	    										b=numAsigCalif;
+	    									}else if(a>numAsigCalif.length){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
 	    									}
 	    							}
 	    						};
@@ -1783,6 +1788,149 @@ function verNotas(req,res){
 
 	    				}
 	    				
+						res.write(""+arrayFinal);
+						res.end();
+	    			});
+
+	  			});
+			
+			
+			//arrayActivCodigo = actividadesCodigo(actividades, codi,trimestre); 
+			//console.log(arrayActivCodigo);
+			});
+    	});	
+	
+	});		  
+}
+
+function verNotasAlum(req,res){
+		if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        trimestre = _url.query.trimestre;
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	 
+	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+	 
+	var codi =0;
+	arrayActivCodigo = new Array();
+
+	arrayDNIs = new Array();
+	arrayID = new Array();
+	arrayNoms = new Array();
+	arrayApe1s = new Array();
+	arrayApe2s = new Array();
+	arrayFinal = new Array();
+	arrayNotas = new Array();
+	arrayCodigoActiv = new Array();
+	arrayPeso = new Array();
+	var k=1;
+	var indiceNotas = 0;
+	numAsigCalif = new Array();
+	arrayFinal = [];
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+
+
+
+		//Codigo asignatura
+    	let sql_a1 = "SELECT ID_asignatura FROM asignatura WHERE nombre='"+asignatura+"' AND ID_curso='"+curso+"'";
+
+    	db.all(sql_a1, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			codi = row.ID_asignatura;
+  			});
+
+    		let sql_a = "SELECT nombre_a,apellido1_a,apellido2_a,DNI_a FROM alumno WHERE ID_curso='"+curso+"' AND DNI_a='"+elDNI+"' ORDER BY apellido1_a";
+
+			    db.all(sql_a, (err, rows)=>{
+		    		if (err){throw err;}
+		    		
+		    		rows.forEach((row) => {
+		    			arrayID.push(row.DNI_a);
+		    			arrayNoms.push(row.nombre_a);
+		    			arrayApe1s.push(row.apellido1_a);
+		    			arrayApe2s.push(row.apellido2_a);
+		  			});
+
+    				let sql_a2 = "SELECT cod_act FROM actividad WHERE cod_asig='"+codi+"' AND cod_trimestre='"+trimestre+"' ORDER BY cod_act";
+
+					db.all(sql_a2, (err, rows)=>{
+	    			if (err){throw err;}
+
+		    		rows.forEach((row) => {
+						arrayActivCodigo.push(row.cod_act);
+			  		});
+
+
+		    		let sql_a3 = "SELECT calificacion, e.cod_act, peso FROM evaluacion e, actividad a, alumno l WHERE e.cod_act=a.cod_act AND e.DNI_a=l.DNI_a AND a.cod_asig='"+codi+"' AND a.cod_trimestre='"+trimestre+"' AND e.DNI_a='"+elDNI+"' ORDER BY l.apellido1_a, a.cod_asig, e.cod_act";
+					db.all(sql_a3, (err, rows)=>{
+	    			if (err){throw err;}
+		    			rows.forEach((row) => {
+							arrayNotas.push(row.calificacion);
+							numAsigCalif.push(row.cod_act);
+							arrayPeso.push(row.peso);
+				  		});
+
+				  		var numFin = (numAsigCalif.length)/(arrayNoms.length);
+				  		var media = 0;
+
+				  		//Si todas las actividades están calificadas - PROCESO DIRECTO
+				  		if(numFin == arrayActivCodigo.length && arrayNotas.length!=0){
+					  		for (var i = 0; i < arrayID.length; i++) {
+					  			arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+					  			media = 0;
+						  			for (var j = 0; j < numFin; j++) {
+			    						arrayFinal.push(arrayNotas[indiceNotas]);			    						
+			    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
+			    						indiceNotas= indiceNotas+1;
+			    					};
+			    					arrayFinal.push(media.toFixed(2));
+		    				};
+	    				}else if(arrayNotas.length!=0){
+	    					indiceNotas =0;
+
+	    					for (var i = 0; i < arrayID.length; i++) {
+	    						arrayFinal.push((i+1)+","+arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
+	    						//AGREGAR CALIFICACIONES
+	    						media = 0;
+	    						console.log("arrayActivCodigo.length: "+arrayActivCodigo.length);
+	    						console.log("arrayActivCodigo: "+arrayActivCodigo);
+	    						console.log("numAsigCalif.length: "+numAsigCalif.length);
+	    						console.log("numAsigCalif: "+numAsigCalif);
+	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
+	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
+	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
+					    						arrayFinal.push(arrayNotas[indiceNotas]);
+					    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
+					    						indiceNotas= indiceNotas+1;
+					    						b=numAsigCalif;
+	    									}else if(a==b){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
+	    									}else if(a>numAsigCalif.length){
+	    										arrayFinal.push("\u00a0");
+	    										b=numAsigCalif;
+	    									}
+	    							}
+	    						};
+	    						arrayFinal.push(media.toFixed(2));
+	    					};
+
+
+	    				}
 						res.write(""+arrayFinal);
 						res.end();
 	    			});

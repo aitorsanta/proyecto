@@ -212,4 +212,9 @@ app.get('/pesar', function(req, res) {
 	controller.dispatch(urlResponseHandlers.pesar, req, res);
 });
 
+app.get('/verNotasAlum', function(req, res) {
+	//console.log("Introduciendo nuevo curso");
+	controller.dispatch(urlResponseHandlers.verNotasAlum, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})
