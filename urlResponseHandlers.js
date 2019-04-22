@@ -59,6 +59,8 @@ exports.verNotasAlum = verNotasAlum;
 exports.totalHijos = totalHijos;
 exports.mostrarAsigAlumTl = mostrarAsigAlumTl;
 exports.verNotasAlumTL = verNotasAlumTL;
+exports.mostrarAsigTodas = mostrarAsigTodas;
+exports.actualizarProfesor = actualizarProfesor;
 
 /*
 Función para logearte en la aplicación
@@ -1438,6 +1440,43 @@ function mostrarAsigAlum(req, res){
 	});
 }
 
+/*
+Todas las asignaturas del alumno
+*/
+function mostrarAsigTodas(req, res){
+
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var mail = 0;
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso;
+	      } catch (e) {
+	      }
+	    }
+	}
+
+
+	arrayAsignaturas = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	//Creamos la consulta
+
+    		let sql_asig2 = "SELECT nombre FROM asignatura WHERE ID_curso='"+curso+"' ORDER BY nombre";
+
+				db.all(sql_asig2, (err, rows)=>{
+	    			rows.forEach((row) => {
+	    				arrayAsignaturas.push(curso+" - "+row.nombre);
+	  				});
+  		
+  				res.write(""+arrayAsignaturas);
+  				res.end();
+  			});
+    		
+	});
+}
+
 function mostrarAsigAlumTl(req,res){
 	if (req.url != undefined) {
 	    var _url = url.parse(req.url, true);
@@ -2427,5 +2466,51 @@ function totalHijos(req,res){
     	}
 
 	});
+}
+
+function actualizarProfesor(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        curso = _url.query.curso; //Curso introducido por el docente
+	        asignatura = _url.query.asignatura; //Asignatura introducido por el docente
+	        nomDocente = _url.query.nomDocente;
+	        ap1Docente = _url.query.ap1Docente;
+	        ap2Docente = _url.query.ap2Docente;
+	      } catch (e) {
+	      }
+	    }
+	  }
+
+	arrayProfesor = new Array();
+	arrayAsignaturas = new Array();
+
+	 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+	 let sql_profDNI = "SELECT DNI_d FROM docente WHERE nombre_d='"+nomDocente+"' AND apellido1_d='"+ap1Docente+"' AND apellido2_d='"+ap2Docente+"'";
+
+	 db.all(sql_profDNI, (err, rows)=>{
+
+	 		rows.forEach((row) => {
+    			arrayProfesor.push(row.DNI_d); //El codigo de la actividad actual
+  			});	
+
+    	var doc = arrayProfesor[0];
+
+		 	let sql_docenteUpdate = "UPDATE asignatura SET DNI_d ='"+doc+"' WHERE ID_curso ='"+curso+"' AND nombre='"+asignatura+"'";
+		    	db.run(sql_docenteUpdate, (err, row)=>{
+		    		if (err){throw err;}
+		    		res.write(""+1);
+		    		res.end();
+		    		//db.close();
+		    	});	
+		   	
+
+		});
+	 });
+
 }
 
