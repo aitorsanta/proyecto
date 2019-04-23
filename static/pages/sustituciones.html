@@ -67,11 +67,13 @@
   })
 
 function cargar(){
+    document.getElementById('carga').style.visibility = "hidden";
     document.getElementById('a1').style.visibility = "visible"; 
     document.getElementById('asig').style.visibility = "visible"; 
     document.getElementById('a2').style.visibility = "visible"; 
     document.getElementById('docente').style.visibility = "visible"; 
     document.getElementById('button').style.visibility = "visible"; 
+    document.getElementById('reload').style.visibility = "visible";
 
     var curso = document.getElementById('curso').value;
 
@@ -93,6 +95,7 @@ function cargar(){
 
 function cambiar(){
 
+
     var cursoFull = document.getElementById("asig").value;
 
     var curso = cursoFull.substring(0,5);  
@@ -101,16 +104,23 @@ function cambiar(){
     var docente = document.getElementById("docente").value;    
     var docenteSeparado = docente.split(" ");
 
-    var url = "/actualizarProfesor?curso="+curso+"&asignatura="+asignatura+"&nomDocente="+docenteSeparado[0]+"&ap1Docente="+docenteSeparado[1]+"&ap2Docente="+docenteSeparado[2];
+    if (asignatura=="" || docente=="") {
+        window.alert("Error. Campos vacíos. Rellene todos los campos, por favor.");
+    }else{
+      var url = "/actualizarProfesor?curso="+curso+"&asignatura="+asignatura+"&nomDocente="+docenteSeparado[0]+"&ap1Docente="+docenteSeparado[1]+"&ap2Docente="+docenteSeparado[2];
             $.get(url, {}, function(data){
                 if (data=="1") {
                     window.alert("Información actualizada satisfactoriamente");
                     location.reload();
                 };
-            });
-
-        
+            });  
     }
+
+}
+
+function recargar(){
+    location.reload();
+}
 
 </script>
 
@@ -217,7 +227,7 @@ function cambiar(){
                                         <select class="form-control" id="curso"></select>
                                     </div>
                                     <div class="col-lg-3">
-                                    <button type="submit" class="btn btn-lg btn-primary btn-block" onclick="cargar();return false;">Cargar</button>
+                                    <button id="carga" type="submit" class="btn btn-lg btn-primary btn-block" onclick="cargar();return false;">Cargar</button>
                                     </div>
                                 </div>
                                 
@@ -241,7 +251,12 @@ function cambiar(){
                                 </div>
                             </fieldset>
                         </form>
-                        <button type="submit" class="btn btn-lg btn-success btn-block" style="visibility:hidden" id="button" onclick="cambiar()">Cambiar</button>
+                        <div class="row">
+                            <!--<div class="col-lg-3">-->
+                                <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar <i class="fa fa-recycle"></i></button>
+                                <button type="submit" class="btn btn-lg btn-success" style="visibility:hidden" id="button" onclick="cambiar()">Cambiar</button>
+                            <!--</div>-->
+                        </div>
                     </div>
                     </div>
                 </div>

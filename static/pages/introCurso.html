@@ -62,13 +62,36 @@
             window.alert("Atención, información incompleta");
             document.getElementById("curso").value = "";
         }else{
-            var url = "/introducirCurso?curso="+curso;
-            $.get(url, {}, function(data){
-                if(data==1){
-                    document.getElementById("curso").value = "";
-                    window.alert("Curso "+curso+" introducido satisfactoriamente");
+            if (curso.length>5 || curso.length<5) {
+
+                window.alert("Valor de curso incorrecto.\n Formato a seguir: ESO4C");
+                document.getElementById("curso").value = "";                
+           }else{
+            
+            var valorEtapa = curso.substring(0,3);
+            var valorNumero = curso.substring(3,4);
+            var valorLetra = curso.substring(4,5);
+            
+                //Comprobamos que el número es correcto [1,2,3 o 4]
+                if (valorNumero<0 || valorNumero>4) { //Porque solo hay 4 cursos en la ESO y dos en BCH
+                    window.alert("Valor de curso incorrecto.\n Formato a seguir: ESO4C");
+                    
+                }else{
+                    curso = curso.toUpperCase();
+                    
+                    var url = "/introducirCurso?curso="+curso;
+                    $.get(url, {}, function(data){
+                        if(data==1){
+                            document.getElementById("curso").value = "";
+                            window.alert("Curso "+curso+" introducido satisfactoriamente");
+                        }
+                    });
                 }
-            });
+
+            }
+
+
+            
         }
     }
 
