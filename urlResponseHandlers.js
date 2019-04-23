@@ -61,6 +61,7 @@ exports.mostrarAsigAlumTl = mostrarAsigAlumTl;
 exports.verNotasAlumTL = verNotasAlumTL;
 exports.mostrarAsigTodas = mostrarAsigTodas;
 exports.actualizarProfesor = actualizarProfesor;
+exports.comprobarContrasenia = comprobarContrasenia;
 
 /*
 Función para logearte en la aplicación
@@ -1517,10 +1518,14 @@ function mostrarAlumnosProf(req, res){
 	elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
 
 	arrayAlumnos = new Array();
+	arrayCursos = new Array();
+	arrayDNIs = new Array();
+	arrayNumero = new Array();
+
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
-    	let sql_a = "SELECT nombre_a, apellido1_a, apellido2_a FROM alumno a, curso c, asignatura g WHERE a.ID_curso = c.ID_curso AND c.ID_curso=g.ID_curso AND g.DNI_d='"+elDNI+"'";
+    	let sql_a = "SELECT nombre_a, apellido1_a, apellido2_a, a.ID_curso FROM alumno a, curso c, asignatura g WHERE a.ID_curso = c.ID_curso AND c.ID_curso=g.ID_curso AND g.DNI_d='"+elDNI+"' GROUP BY nombre_a";
 
     	db.all(sql_a, (err, rows)=>{
     		if (err){throw err;}
@@ -2508,6 +2513,104 @@ function actualizarProfesor(req,res){
 
 		});
 	 });
+
+}
+
+function comprobarContrasenia(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        contr = _url.query.contr; //Contrasenia
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	var contrCifrado = rsa(contr); //Ciframos lo introducido
+	arrayResp = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if (people=="alumno") {
+			elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+			let sql_contra = "SELECT contra_usu_a FROM alumno WHERE DNI_a='"+elDNI+"'";
+			db.all(sql_contra, (err, rows)=>{
+				rows.forEach((row) => {
+    				arrayResp.push(row.contra_usu_a); 
+  				});	
+
+  				if (arrayResp[0] == contrCifrado) {
+  					res.write(""+1);
+  					res.end();
+  				}else{
+  					res.write(""+0);
+  					res.end();
+  				}
+
+			});
+
+		}else if (people=="docente") {
+			elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
+
+			let sql_contra = "SELECT contra_usu_d FROM docente WHERE DNI_d='"+elDNI+"'";
+			db.all(sql_contra, (err, rows)=>{
+				rows.forEach((row) => {
+    				arrayResp.push(row.contra_usu_d); 
+  				});	
+
+  				if (arrayResp[0] == contrCifrado) {
+  					res.write(""+1);
+  					res.end();
+  				}else{
+  					res.write(""+0);
+  					res.end();
+  				}
+
+			});
+
+		}else if (people=="TL1"){
+			elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni
+			let sql_contra = "SELECT contr_usu_TL1 FROM familia WHERE DNI_TL1='"+elDNI+"'";
+			db.all(sql_contra, (err, rows)=>{
+				rows.forEach((row) => {
+    				arrayResp.push(row.contr_usu_TL1); 
+  				});	
+
+  				if (arrayResp[0] == contrCifrado) {
+  					res.write(""+1);
+  					res.end();
+  				}else{
+  					res.write(""+0);
+  					res.end();
+  				}
+
+			});
+		}else if (people=="TL2"){
+			elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni
+			let sql_contra = "SELECT contr_usu_TL2 FROM familia WHERE DNI_TL2='"+elDNI+"'";
+			db.all(sql_contra, (err, rows)=>{
+				rows.forEach((row) => {
+    				arrayResp.push(row.contr_usu_TL2); 
+  				});	
+
+  				if (arrayResp[0] == contrCifrado) {
+  					res.write(""+1);
+  					res.end();
+  				}else{
+  					res.write(""+0);
+  					res.end();
+  				}
+
+			});
+
+		}
+		
+			
+
+	});
 
 }
 

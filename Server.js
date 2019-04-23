@@ -209,4 +209,8 @@ app.get('/actualizarProfesor', function(req, res) {
 	controller.dispatch(urlResponseHandlers.actualizarProfesor, req, res);
 });
 
+app.get('/comprobarContrasenia', function(req, res) {
+	controller.dispatch(urlResponseHandlers.comprobarContrasenia, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

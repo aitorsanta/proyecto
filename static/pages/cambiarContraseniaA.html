@@ -32,24 +32,39 @@
 
     <script type="text/javascript">
 
-    function cambiar(contr1, contr2){
+    function cambiar(contr0, contr1, contr2){
         var resul;
-        //Comprobamos que las contraseñas son iguales
-        if(contr1 != contr2){
-            window.alert("Las contraseñas no coinciden. Vuelva a introducir los valores");
+        
+        //Comprobamos que la contraseña actual y la que el usuario afirma ser son las mismas
+
+        var url = "/comprobarContrasenia?contr="+contr0;
+        $.get(url, {}, function(data){ 
+            if (data=="1") {
+
+            //Comprobamos que las contraseñas son iguales
+            if(contr1 != contr2){
+                window.alert("Las contraseñas no coinciden. Vuelva a introducir los valores");
+                document.getElementById('contr1').value = "";
+                document.getElementById('contr2').value = "";
+            }else{
+                //Mandamos el valor al URLResponseHandler, para que actualice la tabla correspondiente
+                var url = "/changePassword?pass="+contr1;
+                $.get(url, {}, function(data){ 
+                    //var pass = document.getElementById('contr1').value;
+                    if (data=="1") {
+                        window.alert("Contraseña actualizada satisfactoriamente");
+                        location.reload();
+                    };
+                });
+            }
+        }else{
+            window.alert("La contraseña actual es incorrecta");
+            document.getElementById('contr0').value = "";
             document.getElementById('contr1').value = "";
             document.getElementById('contr2').value = "";
-        }else{
-            //Mandamos el valor al URLResponseHandler, para que actualice la tabla correspondiente
-            var url = "/changePassword?pass="+contr1;
-            $.get(url, {}, function(data){ 
-                //var pass = document.getElementById('contr1').value;
-                if (data=="1") {
-                    window.alert("Contraseña actualizada satisfactoriamente");
-                };
-            });
-        }
-        
+        }        
+       
+       }); 
 
 
     }
@@ -126,12 +141,18 @@
 
         <!-- Page Content -->
         <div id="page-wrapper">
-            <div class="panel-heading">
-                                <h3 class="panel-title">Cambiar contraseña</h3>
-                            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Cambiar contraseña</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
                             <div class="panel-body">
                                 <form role="form">
                                     <fieldset>
+                                        <div class="form-group">
+                                            <input class="form-control" placeholder="Contraseña actual" id="contr0" type="password" autofocus>
+                                        </div>
                                         <div class="form-group">
                                             <input class="form-control" placeholder="Nueva contraseña" id="contr1" type="password" autofocus>
                                         </div>
@@ -139,7 +160,7 @@
                                             <input class="form-control" placeholder="Introduzca de nuevo la contraseña" id="contr2" type="password" value="">
                                         </div>
                                         <!-- Change this to a button or input when using this as a form -->
-                                        <button class="btn btn-lg btn-success btn-block" onclick="cambiar(document.getElementById('contr1').value,document.getElementById('contr2').value)">Confirmar</button>
+                                        <button class="btn btn-lg btn-success btn-block" onclick="cambiar(document.getElementById('contr0').value,document.getElementById('contr1').value,document.getElementById('contr2').value);return false;">Confirmar</button>
                                     </fieldset>
                                 </form>
                             </div>
