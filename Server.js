@@ -213,4 +213,16 @@ app.get('/comprobarContrasenia', function(req, res) {
 	controller.dispatch(urlResponseHandlers.comprobarContrasenia, req, res);
 });
 
+app.get('/actualizarAlumnoTot', function(req, res) {
+	controller.dispatch(urlResponseHandlers.actualizarAlumnoTot, req, res);
+});
+
+app.get('/actualizarDocenteTot', function(req, res) {
+	controller.dispatch(urlResponseHandlers.actualizarDocenteTot, req, res);
+});
+
+app.get('/actualizarTutorTot', function(req, res) {
+	controller.dispatch(urlResponseHandlers.actualizarTutorTot, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

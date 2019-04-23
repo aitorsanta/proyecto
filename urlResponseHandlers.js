@@ -62,6 +62,9 @@ exports.verNotasAlumTL = verNotasAlumTL;
 exports.mostrarAsigTodas = mostrarAsigTodas;
 exports.actualizarProfesor = actualizarProfesor;
 exports.comprobarContrasenia = comprobarContrasenia;
+exports.actualizarAlumnoTot = actualizarAlumnoTot;
+exports.actualizarDocenteTot = actualizarDocenteTot;
+exports.actualizarTutorTot = actualizarTutorTot;
 
 /*
 Función para logearte en la aplicación
@@ -529,17 +532,19 @@ Recoge toda la información de los alumnos y lo manda al lado del cliente, para 
 */
 function matriculaAlumno(req,res){
 	arrayAlumnos = new Array();
+	var k = 1;
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, ID_curso, email_a FROM alumno ORDER BY apellido1_a";
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a, fecha_nac_a, DNI_a, ID_curso, ID_familia, email_a FROM alumno ORDER BY apellido1_a";
     
     	db.all(sql_alumnos, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_curso);
+    			arrayAlumnos.push(k+","+row.nombre_a+","+row.apellido1_a+","+row.apellido2_a+","+row.DNI_a+","+row.fecha_nac_a+","+row.email_a+","+row.ID_familia+","+row.ID_curso);
+    			k=k+1;
   			});
   			res.write(""+arrayAlumnos);
     		res.end();
@@ -757,18 +762,20 @@ Recoge toda la información de los profesores y lo manda al lado del cliente, pa
 */
 function matriculaProfesor(req, res){
 	arrayProfesores = new Array();
+	var k =1;
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_profesores = "SELECT nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d FROM docente ORDER BY apellido1_d";
+    	let sql_profesores = "SELECT nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d, DNI_d, telefono_d FROM docente ORDER BY apellido1_d";
     
     	db.all(sql_profesores, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayProfesores.push(row.nombre_d+","+row.apellido1_d+","+row.apellido2_d+","+row.fecha_nac_d+","+row.email_d);
+    			arrayProfesores.push(k+","+row.nombre_d+","+row.apellido1_d+","+row.apellido2_d+","+row.DNI_d+","+row.fecha_nac_d+","+row.email_d+","+row.telefono_d);
+    			k = k+1;
   			});
   			
   			res.write(""+arrayProfesores);
@@ -782,18 +789,23 @@ Recoge toda la información de los tutores y lo manda al lado del cliente, para 
 */
 function matriculaTutor(req, res){
 	arrayTutores = new Array();
+	var k =1;
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	
     	//Creamos la consulta
-    	let sql_tutores = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, ID_familia FROM familia ORDER BY apellido1_TL1";
+    	let sql_tutores = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, DNI_TL1, fecha_nac_TL1, email_TL1, telefono_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, DNI_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, ID_familia FROM familia ORDER BY apellido1_TL1";
     
     	db.all(sql_tutores, (err, rows)=>{
     		if (err){throw err;}
 
     		rows.forEach((row) => {
-    			arrayTutores.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1+","+row.fecha_nac_TL1+","+row.email_TL1+","+row.ID_familia+","+row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2+","+row.fecha_nac_TL2+","+row.email_TL2+","+row.ID_familia);
+    			//arrayTutores.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1+","+row.fecha_nac_TL1+","+row.email_TL1+","+row.ID_familia+","+row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2+","+row.fecha_nac_TL2+","+row.email_TL2+","+row.ID_familia);
+    			arrayTutores.push(k+","+row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1+","+row.DNI_TL1+","+row.fecha_nac_TL1+","+row.email_TL1+","+row.telefono_TL1+","+row.ID_familia);
+    			k=k+1;
+    			arrayTutores.push(k+","+row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2+","+row.DNI_TL2+","+row.fecha_nac_TL2+","+row.email_TL2+","+row.telefono_TL2+","+row.ID_familia);
+    			k=k+1;
   			});
   			
   			res.write(""+arrayTutores);
@@ -2612,5 +2624,188 @@ function comprobarContrasenia(req,res){
 
 	});
 
+}
+
+function actualizarAlumnoTot(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        arrayActualizado = _url.query.arrayActualizado; //Array actualizado
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	//Separamos los campos por el separador , y lo guardamos en un array
+	var arrayDeCadenas = arrayActualizado.split(",");
+	var i = 0;
+	var indiceContras = 0;
+	arrayContr = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+	//Obtenemos todas las contraseñas para volver a meterlas
+	let sql_contras = "SELECT contra_usu_a FROM alumno ORDER BY apellido1_a";
+
+	db.all(sql_contras, (err, rows)=>{
+
+		rows.forEach((row) => {
+    		arrayContr.push(row.contra_usu_a); 
+  		});
+
+		//Eliminamos la base de datos por completo, para recargar la información
+		let query_drop_alumno = "DELETE FROM alumno";
+		db.run(query_drop_alumno, (err, row)=>{
+				if (err){throw err;}
+		  	});
+
+
+		while(i<arrayDeCadenas.length){	
+
+			let query_insert_results = "INSERT INTO alumno (DNI_a, nombre_a, apellido1_a, apellido2_a, fecha_nac_a, email_a, contra_usu_a, ID_familia, ID_curso) VALUES ('"+arrayDeCadenas[i+3]+"','"+arrayDeCadenas[i]+"','"+arrayDeCadenas[i+1]+"','"+arrayDeCadenas[i+2]+"','"+arrayDeCadenas[i+4]+"','"+arrayDeCadenas[i+5]+"','"+arrayContr[indiceContras]+"','"+arrayDeCadenas[i+6]+"','"+arrayDeCadenas[i+7]+"')";
+		
+			db.run(query_insert_results, (err, row)=>{
+				if (err){throw err;}
+		  	});	
+
+			indiceContras = indiceContras + 1;
+		   	i=i+8;
+			}
+			res.write("1");
+			res.end();
+		});	
+	});	
+
+}
+
+function actualizarDocenteTot(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        arrayActualizado = _url.query.arrayActualizado; //Array actualizado
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	//Separamos los campos por el separador , y lo guardamos en un array
+	var arrayDeCadenas = arrayActualizado.split(",");
+	var i = 0;
+	var indiceContras = 0;
+	arrayContr = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+	//Obtenemos todas las contraseñas para volver a meterlas
+	let sql_contras = "SELECT contra_usu_d FROM docente ORDER BY apellido1_d";
+
+	db.all(sql_contras, (err, rows)=>{
+
+		rows.forEach((row) => {
+    		arrayContr.push(row.contra_usu_d); 
+  		});
+
+		//Eliminamos la base de datos por completo, para recargar la información
+		let query_drop_prof = "DELETE FROM docente";
+		db.run(query_drop_prof, (err, row)=>{
+				if (err){throw err;}
+		  	});
+
+
+		while(i<arrayDeCadenas.length){	
+
+			let query_insert_results = "INSERT INTO docente (DNI_d, nombre_d, apellido1_d, apellido2_d, fecha_nac_d, email_d, telefono_d, contra_usu_d) VALUES ('"+arrayDeCadenas[i+3]+"','"+arrayDeCadenas[i]+"','"+arrayDeCadenas[i+1]+"','"+arrayDeCadenas[i+2]+"','"+arrayDeCadenas[i+4]+"','"+arrayDeCadenas[i+5]+"','"+arrayDeCadenas[i+6]+"','"+arrayContr[indiceContras]+"')";
+		
+			db.run(query_insert_results, (err, row)=>{
+				if (err){throw err;}
+		  	});	
+
+			indiceContras = indiceContras + 1;
+		   	i=i+7;
+			}
+			res.write("1");
+			res.end();
+		});	
+	});
+}
+
+function actualizarTutorTot(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        arrayActualizado = _url.query.arrayActualizado; //Array actualizado
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	//Separamos los campos por el separador , y lo guardamos en un array
+	var arrayDeCadenas = arrayActualizado.split(",");
+	var i = 0;
+	var indiceContras = 0;
+	var indiceLoc = 0;
+	arrayContr1 = new Array();
+	arrayContr2 = new Array();
+	arrayCalle = new Array();
+	arrayPortal = new Array();
+	arrayPiso = new Array();
+	arrayMano = new Array();
+	arrayCiudad = new Array();
+	arrayCp = new Array();
+	arrayMunicipio = new Array();
+	arrayPais = new Array();
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+	//Obtenemos todas las contraseñas para volver a meterlas
+	let sql_contras = "SELECT contr_usu_TL1, contr_usu_TL2, calle, portal, piso, mano, ciudad, cp, municipio, pais FROM familia ORDER BY apellido1_TL1";
+
+	db.all(sql_contras, (err, rows)=>{
+
+		rows.forEach((row) => {
+    		arrayContr1.push(row.contr_usu_TL1)
+    		arrayContr2.push(row.contr_usu_TL2); 
+    		arrayCalle.push(row.calle);
+    		arrayPortal.push(row.portal);
+    		arrayPiso.push(row.piso);
+    		arrayMano.push(row.mano);
+    		arrayCiudad.push(row.ciudad);
+    		arrayCp.push(row.cp);
+    		arrayMunicipio.push(row.municipio);
+    		arrayPais.push(row.pais);
+  		});
+
+		//Eliminamos la base de datos por completo, para recargar la información
+		let query_drop_fam = "DELETE FROM familia";
+		db.run(query_drop_fam, (err, row)=>{
+				if (err){throw err;}
+		  	});
+
+
+		while(i<arrayDeCadenas.length){	
+
+			let query_insert_results = "INSERT INTO familia (ID_familia, nombre_TL1, apellido1_TL1, apellido2_TL1, fecha_nac_TL1, email_TL1, telefono_TL1, DNI_TL1, contr_usu_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2, fecha_nac_TL2, email_TL2, telefono_TL2, DNI_TL2, contr_usu_TL2, calle, portal, piso, mano, ciudad, cp, municipio, pais) VALUES ('"+arrayDeCadenas[i+7]+"','"+arrayDeCadenas[i]+"','"+arrayDeCadenas[i+1]+"','"+arrayDeCadenas[i+2]+"','"+arrayDeCadenas[i+4]+"','"+arrayDeCadenas[i+5]+"','"+arrayDeCadenas[i+6]+"','"+arrayDeCadenas[i+3]+"','"+arrayContr1[indiceContras]+"','"+arrayDeCadenas[i+8]+"','"+arrayDeCadenas[i+9]+"','"+arrayDeCadenas[i+10]+"','"+arrayDeCadenas[i+12]+"','"+arrayDeCadenas[i+13]+"','"+arrayDeCadenas[i+14]+"','"+arrayDeCadenas[i+11]+"','"+arrayContr2[indiceContras]+"','"+arrayCalle[indiceLoc]+"','"+arrayPortal[indiceLoc]+"','"+arrayPiso[indiceLoc]+"','"+arrayMano[indiceLoc]+"','"+arrayCiudad[indiceLoc]+"','"+arrayCp[indiceLoc]+"','"+arrayMunicipio[indiceLoc]+"','"+arrayPais[indiceLoc]+"')";
+		
+			db.run(query_insert_results, (err, row)=>{
+				if (err){throw err;}
+		  	});	
+
+			indiceContras = indiceContras + 1;
+			indiceLoc = indiceLoc + 1;
+		   	i=i+15;
+			}
+			res.write("1");
+			res.end();
+		});	
+	});
 }
 
