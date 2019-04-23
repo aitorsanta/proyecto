@@ -2,7 +2,7 @@ var url = require("url");
 var bigInt = require("big-integer"); //External library to work with big numbers
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
-const dbPath = path.resolve(__dirname, 'ProyectoAitor.db') //Path de la base de datos
+const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de datos
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -192,7 +192,6 @@ function generatePass(fecha, nombre){
 	oldPass = pass;
 
 	criptograma = rsa(pass);
-	console.log("ESTA ES LA CONTRASENIA: "+criptograma);
 
 	return criptograma;
 
@@ -464,7 +463,6 @@ function changePassword(req, res){
 	  //Tenemos que cifrar la contraseña
 	  var contraCifrado = rsa(pass);
 
-	  console.log("EL DNI: "+elDNI);
 
 	if(people=="alumno"){
 		elDNI = JSON.stringify(dniSave).substring(10,19); //Cogemos el dni
@@ -496,7 +494,6 @@ function changePassword(req, res){
 		});
 	}else if(people=="TL1"){
 		elDNI = JSON.stringify(dniSave).substring(12,21); //Cogemos el dni de familia
-		console.log("elDNI: "+elDNI);
 
 		let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
@@ -1803,7 +1800,6 @@ function calif(req,res){
     		rows.forEach((row) => {
     			arrayCodigoActiv.push(row.cod_act); //El codigo de la actividad actual
   			});	
-  		console.log(arrayCodigoActiv);
 
     	//Aquí tenemos todos los usuarios YA calificados
     	let sql_a1 = "SELECT e.DNI_a,a.cod_act FROM actividad a, evaluacion e, alumno l WHERE a.cod_act=e.cod_act AND e.DNI_a=l.DNI_a AND a.nombre_act='"+actividad+"' ORDER BY l.apellido1_a";
@@ -2203,24 +2199,25 @@ function verNotasAlum(req,res){
 		    				};
 	    				}else if(arrayNotas.length!=0){
 	    					indiceNotas =0;
-
+	    					console.log("Ha entrado aquí");
 	    					for (var i = 0; i < arrayID.length; i++) {
 	    						arrayFinal.push(arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 	    						//AGREGAR CALIFICACIONES
 	    						media = 0;
+
 	    						for (var a = 0; a < arrayActivCodigo.length; a++) { //Total actividades trimestre
 	    							for (var b = 0; b < numAsigCalif.length; b++) { //Total actividades calificadas
 	    									if (arrayActivCodigo[a]==numAsigCalif[b]) {
+	    										
 					    						arrayFinal.push(arrayNotas[indiceNotas]);
 					    						media = (media+(arrayNotas[indiceNotas]*(arrayPeso[indiceNotas]/10)));
 					    						indiceNotas= indiceNotas+1;
-					    						b=numAsigCalif;
 	    									}else if(a==b){
+	    										
 	    										arrayFinal.push("\u00a0");
-	    										b=numAsigCalif;
-	    									}else if(a>numAsigCalif.length){
+	    									}else if(a>b){
+	    										
 	    										arrayFinal.push("\u00a0");
-	    										b=numAsigCalif;
 	    									}
 	    							}
 	    						};

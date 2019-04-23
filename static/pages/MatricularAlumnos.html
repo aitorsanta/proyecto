@@ -107,20 +107,63 @@ function guardar(){
 
     arrayActualizado = new Array();
     var a="";
-
+    var senial =0;
+    var inicial=-1;
+    
     for (var i = 0; i < long; i++) { 
         //Volcamos información actual en el array
-        arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+         if(i==(inicial+6)){ //Solo la columna de curso
+           var valor = document.getElementsByTagName("td")[i].innerHTML; // la variable
+           
+           //Comprobamos que el curso tiene 5 dígitos
+           if (valor=="0") { //Si el valor es un 0 significa que no lo ha cambiado. Lo dejamos igual
+            arrayActualizado.push("0"); 
+            
+           }else if (valor.length>5 || valor.length<5) {
 
-    };
+                window.alert("Valor de curso incorrecto.\n Formato a seguir: ESO4C");
+                document.getElementsByTagName("td")[i].innerHTML.value="";
+                senial =1;
+                
+           }else{
+            
+            var valorEtapa = valor.substring(0,3);
+            var valorNumero = valor.substring(3,4);
+            var valorLetra = valor.substring(4,5);
+            
+                //Comprobamos que el número es correcto [1,2,3 o 4]
+                if (valorNumero<0 || valorNumero>4) { //Porque solo hay 4 cursos en la ESO y dos en BCH
+                    window.alert("Valor de curso incorrecto.\n Formato a seguir: ESO4C");
+                    senial =1;
+                }else{
+                    valor = valor.toUpperCase();
+                    arrayActualizado.push(valor);
+                    inicial = inicial +6;
+                }
 
-    var url = "/actualizarMatricula?arrayActualizado="+arrayActualizado;
-    $.get(url, {}, function(data){
-        if(data=="1"){
-            window.alert("Información actualizada correctamente");
-            location.reload();
+            }
+            
+           }else{
+                arrayActualizado.push(document.getElementsByTagName("td")[i].innerHTML);
+           }
+           
+            
+           
         }
-    });
+        
+    
+    if (senial==0) {
+        var url = "/actualizarMatricula?arrayActualizado="+arrayActualizado;
+        $.get(url, {}, function(data){
+            if(data=="1"){
+                window.alert("Información actualizada correctamente");
+                location.reload();
+            }
+        });
+    };
+        
+    
+    
 
 }
 

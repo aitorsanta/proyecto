@@ -89,7 +89,7 @@ function cargarHi(){
     var hijoSeparado = hijo.split(" ");
     
 
-    //Cargamos todas las clases del profesor logueado en el toolbox
+    //Cargamos todas las clases de los alumnos logueado en el toolbox
     var url = "/mostrarAsigAlumTl?hijoNombre="+hijoSeparado[0]+"&hijoAp1="+hijoSeparado[1]+"&hijoAp2="+hijoSeparado[2];
         $.get(url, {}, function(data){
             var opciones = '';
@@ -118,6 +118,12 @@ function califs(){
     var curso = cursoFull.substring(0,5);  
     var asignatura = cursoFull.substring(8,cursoFull.length+1);
     var trimestre = document.getElementById("toolBox2").value; 
+
+
+    if(cursoFull=="" || trimestre==""){
+        window.alert("Atención. Todos los campos son obligatorios");
+        location.reload();
+    }else{
 
     var hijo = document.getElementById("toolBox0").value;
     var hijoSeparado = hijo.split(" ");
@@ -202,7 +208,7 @@ function califs(){
 
         });
 
-
+    }
 
 
 }

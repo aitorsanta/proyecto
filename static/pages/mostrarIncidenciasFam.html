@@ -70,6 +70,7 @@ $(function(){
 
 
 function cargarHi(){
+    document.getElementById("panel1").style.visibility="visible";
 
     var hijo = document.getElementById("toolBox0").value;
     var hijoSeparado = hijo.split(" ");
@@ -105,6 +106,10 @@ function cargarHi(){
 
     });
     
+}
+
+function recargar(){
+    location.reload();
 }
 
 
@@ -215,7 +220,7 @@ function cargarHi(){
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div id="panel1" class="panel panel-default" style="visibility:hidden">
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <table id="tablaIncidencias" width="100%" class="table table-striped table-bordered table-hover" >
@@ -231,6 +236,7 @@ function cargarHi(){
                                     </body>
                                 </thead>
                             </table> 
+                            <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" >Recargar <i class="fa fa-recycle"></i></button>
                         </div>
                         <!-- /.panel-body -->
                     </div>

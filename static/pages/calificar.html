@@ -183,7 +183,7 @@ function guardar(){
             if(i!=0 && i!=1){
                 //Cambiamos las comas (' y ,) de los decimales por los puntos, porque la base de datos no permite almacenar con coma (dato de tipo numérico)
 
-                var conComa = document.getElementsByTagName("td")[i].innerHTML; // tu variable
+                var conComa = document.getElementsByTagName("td")[i].innerHTML; // la variable
                 
                 var conPunto=conComa.replace(",",".");
                 var bien=conPunto.replace("'",".");
