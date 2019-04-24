@@ -65,6 +65,9 @@ exports.comprobarContrasenia = comprobarContrasenia;
 exports.actualizarAlumnoTot = actualizarAlumnoTot;
 exports.actualizarDocenteTot = actualizarDocenteTot;
 exports.actualizarTutorTot = actualizarTutorTot;
+exports.obtenerAlumnos = obtenerAlumnos;
+exports.obtenerTutores = obtenerTutores;
+exports.eliminarUsuario = eliminarUsuario;
 
 /*
 Función para logearte en la aplicación
@@ -328,6 +331,8 @@ function introNewStudent(req,res){
 			console.log("Usuario "+nombre+" insertado correctamente.");		
 			people="alumno";    		
 			dniSave = dni;
+			res.write(""+1);
+			res.end();
 	  	});	
 
 		});	
@@ -374,6 +379,8 @@ function introNewTeacher(req,res){
 			console.log("Usuario "+nombre+" insertado correctamente.");		
 			people="docente";    		
 			dniSave = dni;
+			res.write(""+1);
+			res.end();
 	  	});	
 
 	  	//db.close();
@@ -437,6 +444,9 @@ function introNewFamily(req,res){
 		db.run(query_insert_fam, (err, row)=>{
 			if (err){throw err;}
 			console.log("Usuarios "+nombre+", "+nombre2+" insertados correctamente.");	
+			people="familia"; 
+			res.write(""+1);
+			res.end();
 
 	  	});	
 
@@ -734,6 +744,29 @@ function obtenerProfesores(req, res){
 }
 
 /*
+Obtiene la lista de todos los alumnos guardados en la base de datos.
+*/
+function obtenerAlumnos(req, res){
+	arrayAlumnos = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_alumnos = "SELECT nombre_a, apellido1_a, apellido2_a FROM alumno ORDER BY nombre_a";
+    
+    	db.all(sql_alumnos, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayAlumnos.push(row.nombre_a+","+row.apellido1_a+","+row.apellido2_a);
+  			});
+  			res.write(""+arrayAlumnos);
+    		res.end();
+    	});
+	});
+}
+
+/*
 Obtiene la lista de todos los tutores 1 guardados en la base de datos.
 */
 function obtenerTutores1(req, res){
@@ -749,6 +782,31 @@ function obtenerTutores1(req, res){
 
     		rows.forEach((row) => {
     			arrayTut.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1);
+  			});
+  			
+  			res.write(""+arrayTut);
+    		res.end();
+    	});
+	});
+}
+
+/*
+Obtiene la lista de todos los tutores 1 guardados en la base de datos.
+*/
+function obtenerTutores(req, res){
+	arrayTut = new Array();
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+		if(err){return console.error(err.message);}
+    	
+    	//Creamos la consulta
+    	let sql_tut = "SELECT nombre_TL1, apellido1_TL1, apellido2_TL1, nombre_TL2, apellido1_TL2, apellido2_TL2 FROM familia ORDER BY nombre_TL1, nombre_TL2";
+    
+    	db.all(sql_tut, (err, rows)=>{
+    		if (err){throw err;}
+
+    		rows.forEach((row) => {
+    			arrayTut.push(row.nombre_TL1+","+row.apellido1_TL1+","+row.apellido2_TL1);
+    			arrayTut.push(row.nombre_TL2+","+row.apellido1_TL2+","+row.apellido2_TL2);
   			});
   			
   			res.write(""+arrayTut);
@@ -2809,3 +2867,68 @@ function actualizarTutorTot(req,res){
 	});
 }
 
+function eliminarUsuario(req,res){
+	if (req.url != undefined) {
+	    var _url = url.parse(req.url, true);
+	    var pathname = _url.pathname;
+	    var curso = "";
+	    if(_url.query) {
+	      try {
+	        tipo = _url.query.tipo; //Tipo persona
+	        nombre = _url.query.nombre; //Nombre
+	        apellido1 = _url.query.apellido1; //Apellido1
+	        apellido2 = _url.query.apellido2; //Apellido2 
+	      } catch (e) {
+	      }
+	    }
+	}
+
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+
+		if (tipo=="Alumno") {
+			let query_drop = "DELETE FROM alumno WHERE nombre_a='"+nombre+"' AND apellido1_a='"+apellido1+"' AND apellido2_a='"+apellido2+"'";
+				db.run(query_drop, (err, row)=>{
+					if (err){throw err;}
+					res.write("1");
+					res.end();
+		  		});
+		}else if (tipo == "Docente"){
+			let query_drop = "DELETE FROM docente WHERE nombre_d='"+nombre+"' AND apellido1_d='"+apellido1+"' AND apellido2_d='"+apellido2+"'";
+				db.run(query_drop, (err, row)=>{
+					if (err){throw err;}
+					res.write("1");
+					res.end();
+		  		});
+
+		}else if (tipo == "Familia"){
+			arrayID = new Array();
+
+			let query_select = "SELECT ID_familia from familia WHERE nombre_TL1='"+nombre+"' AND apellido1_TL1='"+apellido1+"' AND apellido2_TL1='"+apellido2+"'";
+
+			db.all(query_select, (err, rows)=>{
+
+			rows.forEach((row) => {
+	    		arrayID.push(row.ID_familia);
+	  		});
+
+
+			let query_drop = "DELETE FROM familia WHERE nombre_TL1='"+nombre+"' AND apellido1_TL1='"+apellido1+"' AND apellido2_TL1='"+apellido2+"'";
+				db.run(query_drop, (err, row)=>{
+					if (err){throw err;}
+		  		});
+
+		  	var id = arrayID[0];	
+
+			let query_drop1 = "DELETE FROM alumno WHERE ID_familia='"+id+"'";
+				db.run(query_drop1, (err, row)=>{
+					if (err){throw err;}
+					res.write("1");
+					res.end();
+		  		});
+		  		
+			});
+
+		}
+	});
+
+}

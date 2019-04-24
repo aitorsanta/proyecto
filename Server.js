@@ -225,4 +225,16 @@ app.get('/actualizarTutorTot', function(req, res) {
 	controller.dispatch(urlResponseHandlers.actualizarTutorTot, req, res);
 });
 
+app.get('/obtenerAlumnos', function(req, res) {
+	controller.dispatch(urlResponseHandlers.obtenerAlumnos, req, res);
+});
+
+app.get('/obtenerTutores', function(req, res) {
+	controller.dispatch(urlResponseHandlers.obtenerTutores, req, res);
+});
+
+app.get('/eliminarUsuario', function(req, res) {
+	controller.dispatch(urlResponseHandlers.eliminarUsuario, req, res);
+});
+
 app.listen(port, () => {console.log(`Proyecto fin de grado en marcha: port ${port}!`)})

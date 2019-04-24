@@ -207,22 +207,23 @@
 
                     var url = "/introNewStudent?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&nom_tut="+tutores[0]+"&ap1_tut="+tutores[1]+"&ap2_tut="+tutores[2];      
                     $.get(url, {}, function(data){
-                      
+                      window.alert("Información actualizada satisfactoriamente");
                     });    
                 }else if(perfil == "Docente"){
                     var url = "/introNewTeacher?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&telf1="+telf1;      
                     $.get(url, {}, function(data){
-                      
+                      window.alert("Información actualizada satisfactoriamente");
                     });    
                 }else if(perfil == "Familia"){
                     var url = "/introNewFamily?perfil="+perfil+"&nombre="+nombre+"&apellido1="+apellido1+"&apellido2="+apellido2+"&fechaNacimiento="+fechaNacimiento+"&dni="+dni+"&email="+email+"&telf1="+telf1+"&nombre2="+nombre2+"&apellido12="+apellido12+"&apellido22="+apellido22+"&fechaNacimiento2="+fechaNacimiento2+"&dni2="+dni2+"&email2="+email2+"&telf2="+telf2+"&calle="+calle+"&portal="+portal+"&piso="+piso+"&mano="+mano+"&cp="+cp+"&ciudad="+ciudad+"&mun="+mun+"&pais="+pais;      
                     $.get(url, {}, function(data){
-                      
+                      window.alert("Información actualizada satisfactoriamente");
                     });
                 }
                 
 
-                enBlanco();
+                //enBlanco();
+                location.reload();
             }
         }
         
@@ -403,6 +404,9 @@
                         </li>
                         <li>
                             <a href="NuevoUsuario.html"><i class="fa fa-edit fa-fw"></i> Nuevo usuario</a>
+                        </li>
+                        <li>
+                            <a href="eliminarUsuario.html"><i class="fa fa-edit fa-fw"></i> Eliminar usuario</a>
                         </li>
                         <li>
                             <a href="modificarUsuarios.html"><i class="fa fa-edit fa-fw"></i> Modificar usuarios</a>
@@ -604,7 +608,7 @@
                         </div>
                         </div>
                             </form>
-                                <button type="submit" class="btn btn-lg btn-primary btn-guardar" onclick="saveData()">Guardar</button>
+                                <button type="submit" class="btn btn-lg btn-primary btn-guardar" onclick="saveData();return false;">Guardar</button>
                                 <!--<button type="reset" class="btn btn-default">Reset Button</button> -->
                             </div>
                             <!-- /.row (nested) -->

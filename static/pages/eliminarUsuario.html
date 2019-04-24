@@ -34,21 +34,31 @@
  <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
 <script type="text/javascript">
 
-    $(function(){
-        var url = "/obtenerCursos";
+function cargar(){
+    document.getElementById('carga').style.visibility = "hidden";
+    document.getElementById('a2').style.visibility = "visible"; 
+    document.getElementById('persona').style.visibility = "visible";
+    document.getElementById('reload').style.visibility = "visible";
+    document.getElementById('button').style.visibility = "visible";
+
+    var tipo = document.getElementById("tipo").value;
+
+    if(tipo=="Alumno"){
+        var url = "/obtenerAlumnos";
             $.get(url, {}, function(data){
                 var opciones = '';
                 var arrayDeCadenas = data.split(",");
 
-                //Con este bucle cargamos todas las asignaturas de la BD en la lista
+                //Con este bucle cargamos todos los alumnos (nombre y dos apellidos) de la BD en la lista
                 for (var i = 0; i< arrayDeCadenas.length; i++) {
-                    opciones += '<option value="'+arrayDeCadenas[i] + '">' + arrayDeCadenas[i] + '</option>';
+                    opciones += '<option value="'+arrayDeCadenas[i]+" "+arrayDeCadenas[i+1]+" "+arrayDeCadenas[i+2]+'">' + arrayDeCadenas[i] +" "+arrayDeCadenas[i+1] +" "+arrayDeCadenas[i+2] +'</option>'
+                    i=i+2;
                 };
 
-                $('#curso').append($('<option></option>'));
-                $('#curso').append(opciones);
+                $('#persona').append($('<option></option>'));
+                $('#persona').append(opciones);
             });
-
+    }else if(tipo=="Docente"){
         var url = "/obtenerProfesores";
             $.get(url, {}, function(data){
                 var opciones = '';
@@ -60,54 +70,55 @@
                     i=i+2;
                 };
 
-                $('#docente').append($('<option></option>'));
-                $('#docente').append(opciones);
+                $('#persona').append($('<option></option>'));
+                $('#persona').append(opciones);
             });
-
-  })
-
-function cargar(){
-    document.getElementById('carga').style.visibility = "hidden";
-    document.getElementById('a1').style.visibility = "visible"; 
-    document.getElementById('asig').style.visibility = "visible"; 
-    document.getElementById('a2').style.visibility = "visible"; 
-    document.getElementById('docente').style.visibility = "visible"; 
-    document.getElementById('button').style.visibility = "visible"; 
-    document.getElementById('reload').style.visibility = "visible";
-
-    var curso = document.getElementById('curso').value;
-
-    var url = "/mostrarAsigTodas?curso="+curso;
+    } else if (tipo=="Familia"){
+        var url = "/obtenerTutores1";
             $.get(url, {}, function(data){
                 var opciones = '';
                 var arrayDeCadenas = data.split(",");
 
-                //Con este bucle cargamos todas las asignaturas
+                //Con este bucle cargamos todos los alumnos (nombre y dos apellidos) de la BD en la lista
                 for (var i = 0; i< arrayDeCadenas.length; i++) {
-                    opciones += '<option value="'+arrayDeCadenas[i]+'">' + arrayDeCadenas[i] +'</option>'
+                    opciones += '<option value="'+arrayDeCadenas[i]+" "+arrayDeCadenas[i+1]+" "+arrayDeCadenas[i+2]+'">' + arrayDeCadenas[i] +" "+arrayDeCadenas[i+1] +" "+arrayDeCadenas[i+2] +'</option>'
+                    i=i+2;
                 };
 
-                $('#asig').append($('<option></option>'));
-                $('#asig').append(opciones);
+                $('#persona').append($('<option></option>'));
+                $('#persona').append(opciones);
             });
+    }
 
 }
 
-function cambiar(){
+function eliminar(){
 
 
-    var cursoFull = document.getElementById("asig").value;
+    var tipo = document.getElementById("tipo").value;
 
-    var curso = cursoFull.substring(0,5);  
-    var asignatura = cursoFull.substring(8,cursoFull.length+1);
+    var persona = document.getElementById("persona").value;    
+    var personaSeparada = persona.split(" ");
 
-    var docente = document.getElementById("docente").value;    
-    var docenteSeparado = docente.split(" ");
 
-    if (asignatura=="" || docente=="") {
+    var resp;
+      
+
+
+
+    if (persona=="") {
         window.alert("Error. Campos vacíos. Rellene todos los campos, por favor.");
     }else{
-      var url = "/actualizarProfesor?curso="+curso+"&asignatura="+asignatura+"&nomDocente="+docenteSeparado[0]+"&ap1Docente="+docenteSeparado[1]+"&ap2Docente="+docenteSeparado[2];
+    if (window.confirm("¿Estas seguro de que quiere eliminar el usuario? Recuerda que toda la información asociada se perderá por completo")) {
+        //Esto es aceptar
+        resp = 1;
+      } else {
+        //Esto es cancelar
+        resp = 0;
+      }
+
+     if(resp == 1){   
+      var url = "/eliminarUsuario?tipo="+tipo+"&nombre="+personaSeparada[0]+"&apellido1="+personaSeparada[1]+"&apellido2="+personaSeparada[2];
             $.get(url, {}, function(data){
                 if (data=="1") {
                     window.alert("Información actualizada satisfactoriamente");
@@ -115,6 +126,7 @@ function cambiar(){
                 };
             });  
     }
+}
 
 }
 
@@ -215,7 +227,7 @@ function recargar(){
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Sustituciones / Asignaciones</h1>
+                        <h1 class="page-header">Eliminar usuario</h1>
                     </div>
                     <!-- /.col-lg-12 -->
 
@@ -227,26 +239,23 @@ function recargar(){
                             <fieldset>
                                 <div class="form-group">
                                     <div class="col-lg-2">
-                                        <label>Curso:</label>
+                                        <label>Tipo:</label>
                                     </div>
                                     <div class="col-lg-6">
-                                        <select class="form-control" id="curso"></select>
+                                        <select class="form-control" id="tipo">   
+                                            <option></option> 
+                                            <option>Alumno</option>
+                                            <option>Docente</option>
+                                            <option>Familia</option>
+                                        </select>
                                     </div>
                                     <div class="col-lg-3">
                                     <button id="carga" type="submit" class="btn btn-lg btn-primary btn-block" onclick="cargar();return false;">Cargar</button>
                                     </div>
                                 </div>
-                                
                                 <div class="form-group">
-                                    <label id="a1" style="visibility:hidden">Asignatura:</label>
-                                    <select class="form-control" id="asig" style="visibility:hidden">
-                                </div>
-                                <div class="form-group">
-                                    <select class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label id="a2" style="visibility:hidden">Docente:</label>
-                                    <select class="form-control" id="docente" style="visibility:hidden">
+                                    <label id="a2" style="visibility:hidden">Persona:</label>
+                                    <select class="form-control" id="persona" style="visibility:hidden">
                                 </div>
                                 <div class="form-group">
                                     <!--<label>Docente:</label>-->
@@ -260,7 +269,7 @@ function recargar(){
                         <div class="row">
                             <!--<div class="col-lg-3">-->
                                 <button id="reload" class="btn btn-primary btn-lg" onclick="recargar()" style="visibility:hidden">Recargar <i class="fa fa-recycle"></i></button>
-                                <button type="submit" class="btn btn-lg btn-success" style="visibility:hidden" id="button" onclick="cambiar()">Cambiar</button>
+                                <button type="submit" class="btn btn-lg btn-danger" style="visibility:hidden" id="button" onclick="eliminar()">Eliminar</button>
                             <!--</div>-->
                         </div>
                     </div>
