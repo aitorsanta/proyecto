@@ -98,7 +98,6 @@ function loginApp(req, res){
 	    */
 
 
-
 	    //Si es el administrador de la aplicación
 	    if(em==usuadmin && contr==passadmin){
 	    	console.log("Usuario administrador");
@@ -178,10 +177,6 @@ function loginApp(req, res){
 
 		    	}
 		    	
-		    	/*if(check != 1){
-		    		res.write(""+5);
-		    		//res.end();
-		    	}*/
 
 		    	//db.close();
 	    	});
@@ -2751,23 +2746,29 @@ function actualizarDocenteTot(req,res){
 	      }
 	    }
 	}
+	console.log(arrayActualizado);
 
 	//Separamos los campos por el separador , y lo guardamos en un array
 	var arrayDeCadenas = arrayActualizado.split(",");
 	var i = 0;
 	var indiceContras = 0;
 	arrayContr = new Array();
+	arrayN = new Array();
 
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 
 	//Obtenemos todas las contraseñas para volver a meterlas
-	let sql_contras = "SELECT contra_usu_d FROM docente ORDER BY apellido1_d";
+	let sql_contras1 = "SELECT * FROM docente ORDER BY apellido1_d";
 
-	db.all(sql_contras, (err, rows)=>{
+	arrayContr = [];
+	
+	db.all(sql_contras1, (err, rows)=>{
 
 		rows.forEach((row) => {
     		arrayContr.push(row.contra_usu_d); 
   		});
+		console.log(arrayN);
+  		console.log(arrayContr);
 
 		//Eliminamos la base de datos por completo, para recargar la información
 		let query_drop_prof = "DELETE FROM docente";
@@ -2785,6 +2786,7 @@ function actualizarDocenteTot(req,res){
 		  	});	
 
 			indiceContras = indiceContras + 1;
+			console.log("Contraseñas utilizadas: "+indiceContras);
 		   	i=i+7;
 			}
 			res.write("1");
