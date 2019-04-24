@@ -69,10 +69,10 @@ exports.obtenerAlumnos = obtenerAlumnos;
 exports.obtenerTutores = obtenerTutores;
 exports.eliminarUsuario = eliminarUsuario;
 
-private static Connection getConnection() throws URISyntaxException, SQLException {
+/*private static Connection getConnection() throws URISyntaxException, SQLException {
     String dbUrl = System.getenv("JDBC_DATABASE_URL");
     return DriverManager.getConnection(dbUrl);
-}
+}*/
 
 /*
 Función para logearte en la aplicación
