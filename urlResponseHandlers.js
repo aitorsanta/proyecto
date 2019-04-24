@@ -70,7 +70,7 @@ exports.obtenerTutores = obtenerTutores;
 exports.eliminarUsuario = eliminarUsuario;
 
 private static Connection getConnection() throws URISyntaxException, SQLException {
-    URI dbUri = new URI(System.getenv("DATABASE_URL"));
+    URI dbUri = new URI(System.getenv("HEROKU_POSTGRESQL_SILVER_URL"));
 
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
