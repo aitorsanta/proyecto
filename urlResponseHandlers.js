@@ -229,11 +229,11 @@ function rsa(pass){
 	//Segundo paso: Lo ciframos siguiendo el algoritmo de RSA --> BIG NUMBERS !!
 	var passPower = 1;
 	for (var i = 0; i < e; i++) {
-		passPower = BigInt(passPower) * BigInt(passEncrypted);
+		passPower = bigInt(passPower) * bigInt(passEncrypted);
 	};
 	
 	//Generamos el criptograma siguiendo la fórmula de cifrado de mensaje: C=M^e mod(n)
-	var criptograma = BigInt(passPower) % BigInt(n);
+	var criptograma = bigInt(passPower) % bigInt(n);
 
 	//Devolvemos el texto cifrado
 	return criptograma;
