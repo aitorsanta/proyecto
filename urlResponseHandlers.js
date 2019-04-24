@@ -72,9 +72,9 @@ exports.eliminarUsuario = eliminarUsuario;
 private static Connection getConnection() throws URISyntaxException, SQLException {
     URI dbUri = new URI(System.getenv("HEROKU_POSTGRESQL_SILVER_URL"));
 
-    String username = dbUri.getUserInfo().split(":")[0];
-    String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+    String username = "dqpwmcpurzszey";
+    String password = "308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2";
+    String dbUrl = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
 
     return DriverManager.getConnection(dbUrl, username, password);
 }
