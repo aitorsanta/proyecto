@@ -12,11 +12,6 @@ var n = 253;
 var e = 3;
 var d = 147;
 
-private static Connection getConnection() throws URISyntaxException, SQLException {
-    String dbUrl = System.getenv("JDBC_DATABASE_URL");
-    return DriverManager.getConnection(dbUrl);
-}
-
 
 exports.loginApp = loginApp;
 exports.introNewStudent = introNewStudent;
@@ -73,6 +68,11 @@ exports.actualizarTutorTot = actualizarTutorTot;
 exports.obtenerAlumnos = obtenerAlumnos;
 exports.obtenerTutores = obtenerTutores;
 exports.eliminarUsuario = eliminarUsuario;
+
+private static Connection getConnection() throws URISyntaxException, SQLException {
+    String dbUrl = System.getenv("JDBC_DATABASE_URL");
+    return DriverManager.getConnection(dbUrl);
+}
 
 /*
 Función para logearte en la aplicación
