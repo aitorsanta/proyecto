@@ -3,9 +3,10 @@ var bigInt = require("big-integer"); //External library to work with big numbers
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de datos
-const { Client } = require('pg');
+var pg = require('pg');
 var connectionString = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
 var pgClient = new pg.Client(connectionString);
+pgClient.connect();
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -677,9 +678,27 @@ Recoge toda la información de las asignaturas y lo manda al lado del cliente, p
 function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
-	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+	
+	pgClient.connect();
+
+	var query = pgClient.query("SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre");
+
+	query.on("row", function(row,result){
+
+		result.addRow(row);
+		res.write(""+result);
+  		res.end();
+
+	});
+
+
+	/*let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
+    	
+		
+
+
     	let sql_asig = "SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre";
 
     	db.all(sql_asig, (err, rows)=>{
@@ -693,7 +712,7 @@ function mostrarAsig(req, res){
   			res.end();
     		
     	});
-	}); 	
+	}); */	
 }
 
 /*
