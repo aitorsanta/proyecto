@@ -3,6 +3,7 @@ var bigInt = require("big-integer"); //External library to work with big numbers
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de datos
+const { Client } = require('pg');
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -69,20 +70,30 @@ exports.obtenerAlumnos = obtenerAlumnos;
 exports.obtenerTutores = obtenerTutores;
 exports.eliminarUsuario = eliminarUsuario;
 
-/*
-private static Connection getConnection() throws URISyntaxException, SQLException {
-    URI dbUri = new URI(System.getenv("HEROKU_POSTGRESQL_SILVER_URL"));
-
-    String username = "dqpwmcpurzszey";
-    String password = "308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2";
-    String dbUrl = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
-
-    return DriverManager.getConnection(dbUrl, username, password);
-}*/
+const connectionData = {
+  user: 'aitorsanta',
+  host: '',
+  database: 'SandeDB',
+  password: '',
+  port: 5432,
+}
+const client = new Client(connectionData)
 
 /*
 Función para logearte en la aplicación
 */
+
+/*client.connect()
+client.query('SELECT * FROM table')
+    .then(response => {
+        console.log(response.rows)
+        client.end()
+    })
+    .catch(err => {
+        client.end()
+    })*/
+
+
 function loginApp(req, res){
 	var check = 0;
 
