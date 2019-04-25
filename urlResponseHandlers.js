@@ -4,6 +4,8 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de datos
 const { Client } = require('pg');
+var connectionString = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
+var pgClient = new pg.Client(connectionString);
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -70,14 +72,6 @@ exports.obtenerAlumnos = obtenerAlumnos;
 exports.obtenerTutores = obtenerTutores;
 exports.eliminarUsuario = eliminarUsuario;
 
-const connectionData = {
-  user: 'aitorsanta',
-  host: '',
-  database: 'SandeDB',
-  password: '',
-  port: 5432,
-}
-const client = new Client(connectionData)
 
 /*
 Función para logearte en la aplicación
