@@ -682,7 +682,7 @@ function mostrarAsig(req, res){
 	
 	console.log("Conectado");
 
-	var query = pgClient.query("SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre");
+	var query = pgClient.query("SELECT * FROM asignatura");
 
 	console.log(query);
 
