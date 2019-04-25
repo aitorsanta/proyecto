@@ -331,6 +331,17 @@ function introNewStudent(req,res){
 	  //Contraseña generada a partir del nombre y la fecha de nacimiento
 	  var con = generatePass(fechaNacimiento, nombre);
 
+	client.connect()
+	client.query('SELECT ID_familia FROM familia WHERE nombre_TL1='"+nom_tut+"' AND apellido1_TL1='"+ap1_tut+"' AND apellido2_TL1='"+ap2_tut+"'')
+	    .then(response => {
+	        console.log("Nom_tut: "+nom_tut);
+	        client.end()
+	    })
+	    .catch(err => {
+	        client.end()
+	    })
+
+/*
 	// Introducimos usuario en la BD
 	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
@@ -354,7 +365,7 @@ function introNewStudent(req,res){
 
 		});	
 	  	//db.close();
-	});
+	});*/
 	    
 }
 
