@@ -332,7 +332,7 @@ function introNewStudent(req,res){
 	  var con = generatePass(fechaNacimiento, nombre);
 
 	client.connect()
-	client.query('SELECT ID_familia FROM familia WHERE nombre_TL1='"+nom_tut+"' AND apellido1_TL1='"+ap1_tut+"' AND apellido2_TL1='"+ap2_tut+"'')
+	client.query('SELECT ID_familia FROM familia WHERE nombre_TL1='+nom_tut+' AND apellido1_TL1='+ap1_tut+' AND apellido2_TL1='+ap2_tut+'')
 	    .then(response => {
 	        console.log("Nom_tut: "+nom_tut);
 	        client.end()
