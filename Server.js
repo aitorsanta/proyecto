@@ -1,30 +1,11 @@
 var controller = require("./controller");
 var urlResponseHandlers = require("./urlResponseHandlers");
 let port = process.env.PORT;
-const { Client } = require('pg');
+var pg = require("pg");
 
 if (port == null || port == "") {
   port = 3000;
 }
-
-//******************************************************************************************
-
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
-});
-
-client.connect();
-
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  client.end();
-});
-
-//******************************************************************************************
 
 // Load the express library, which we installed using npm
 var express = require("express");

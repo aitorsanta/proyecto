@@ -6,7 +6,6 @@ const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de 
 var pg = require('pg');
 var connectionString = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
 var pgClient = new pg.Client(connectionString);
-pgClient.connect();
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -678,6 +677,8 @@ Recoge toda la información de las asignaturas y lo manda al lado del cliente, p
 function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
+
+	pgClient.connect();
 	
 	console.log("Conectado");
 
