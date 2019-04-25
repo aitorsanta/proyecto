@@ -680,12 +680,17 @@ function mostrarAsig(req, res){
 	arrayAsignaturas = new Array();
 	
 	pgClient.connect();
+	console.log("Conectado");
 
 	var query = pgClient.query("SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre");
+
+	console.log(query);
 
 	query.on("row", function(row,result){
 
 		result.addRow(row);
+		console.log("Row: "+row);
+		console.log("Result: "+result);
 		res.write(""+result);
   		res.end();
 
