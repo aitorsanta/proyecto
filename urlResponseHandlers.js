@@ -4,8 +4,8 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path')
 const dbPath = path.resolve(__dirname, 'ProyectoSande.db') //Path de la base de datos
 var pg = require('pg');
-var connectionString = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
-var pgClient = new pg.Client(connectionString);
+//var connectionString = "postgres://dqpwmcpurzszey:308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2@ec2-54-225-242-183.compute-1.amazonaws.com:5432/d51b3ojk2ef6m3";
+//var pgClient = new pg.Client(connectionString);
 const usuadmin = "admin";
 const passadmin = "root1234";
 var dniSave = ""; //Guardamos el dni aquí
@@ -14,6 +14,16 @@ var people = ""; //Variable que registra de qué tipo ha sido la última inserci
 var n = 253;
 var e = 3;
 var d = 147;
+
+const {Client} = require('pg');
+const connectionData = {
+	user: 'dqpwmcpurzszey',
+	host: 'ec2-54-225-242-183.compute-1.amazonaws.com',
+	database: 'd51b3ojk2ef6m3',
+	password: '308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2',
+	port: 5432,
+}
+const client = new Client(connectionData);
 
 
 exports.loginApp = loginApp;
@@ -678,23 +688,15 @@ function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
 
-	pgClient.connect();
-	
-	console.log("Conectado");
-
-	var query = pgClient.query("SELECT * FROM asignatura");
-
-	console.log(query);
-
-	query.on("row", function(row,result){
-
-		result.addRow(row);
-		console.log("Row: "+row);
-		console.log("Result: "+result);
-		res.write(""+result);
-  		res.end();
-
-	});
+	client.connect()
+	client.query('SELECT * FROM asignatura')
+    	.then(response => {
+        	console.log(response.rows)
+        	client.end()
+    	})
+    	.catch(err => {
+        	client.end()
+    	})
 
 
 	/*let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
