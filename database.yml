@@ -1,0 +1,14 @@
+development:
+	adapter: sqlite3
+	database: ProyectoSande.db
+
+test:
+	adapter: sqlite3
+	database: ProyectoSande.db
+
+production:
+	adapter: postgresql
+	database: d51b3ojk2ef6m3
+	username: dqpwmcpurzszey
+	password: 308b6d6c95d16c4198f7d70587a5e7aa09342b008f2dd7c5f33a51adb29ff6b2
+	host: ec2-54-225-242-183.compute-1.amazonaws.com
