@@ -46,7 +46,10 @@
     $(function(){
             var url = "/mostrarAsig";
 
+            window.alert("Voy al url: "+url);
+
         $.get(url, {}, function(data){ 
+
 
             //Separamos el array recibido y lo guardamos
             var arrayDeCadenas = data.split(",");
