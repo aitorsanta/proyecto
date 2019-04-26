@@ -688,12 +688,11 @@ function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
 
-	client.connect()
+	await client.connect()
 
-	client.query('SELECT $1::text as message', ['Hello world!'], (err, res) => {
-  		console.log(err ? err.stack : res.rows[0].message) // Hello World!
-  	client.end()
-	})
+const res = await client.query('SELECT $1::text as message', ['Hello world!'])
+console.log(res.rows[0].message) // Hello world!
+await client.end();
 	
 	/*client.connect()
 	client.query('SELECT * FROM asignatura')
