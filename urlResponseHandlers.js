@@ -688,21 +688,18 @@ function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
 
-	await client.connect()
 
-const res = await client.query('SELECT $1::text as message', ['Hello world!'])
-console.log(res.rows[0].message) // Hello world!
-await client.end();
 	
-	/*client.connect()
+	client.connect()
 	client.query('SELECT * FROM asignatura')
     	.then(response => {
         	console.log(response.rows)
         	client.end()
     	})
     	.catch(err => {
+    		console.log("Error");
         	client.end()
-    	})*/
+    	})
 
 
 	/*let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
