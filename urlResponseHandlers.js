@@ -1900,7 +1900,7 @@ function calif(req,res){
 		if(err){return console.error(err.message);}
     	
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"' AND s.nombre='"+asignatura+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
@@ -2018,7 +2018,7 @@ function actualizarNotas(req,res){
 		if(err){return console.error(err.message);}
 
 		//Codigo actividad
-    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"'";
+    	let sql_a1 = "SELECT cod_act FROM actividad a, asignatura s WHERE a.cod_asig=s.ID_asignatura AND nombre_act='"+actividad+"' AND cod_trimestre='"+trimestre+"' AND ID_curso='"+curso+"' AND s.nombre='"+asignatura+"'";
 
     	db.all(sql_a1, (err, rows)=>{
     		if (err){throw err;}
