@@ -688,29 +688,9 @@ Recoge toda la información de las asignaturas y lo manda al lado del cliente, p
 function mostrarAsig(req, res){
 	var elNombre="";
 	arrayAsignaturas = new Array();
-
-
-	
-	client.connect()
-	client.query('SELECT * FROM asignatura')
-    	.then(response => {
-    		System.out.println("Hello, logs!");
-        	console.log(response.rows)
-        	client.end()
-    	})
-    	.catch(err => {
-    		console.log("Error");
-        	client.end()
-    	})
-
-
-	/*let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
+	let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err)=>{
 		if(err){return console.error(err.message);}
     	//Creamos la consulta
-    	
-		
-
-
     	let sql_asig = "SELECT a.ID_curso, a.nombre, d.nombre_d, d.apellido1_d, d.apellido2_d FROM asignatura a, docente d WHERE a.DNI_d=d.DNI_d ORDER BY nombre";
 
     	db.all(sql_asig, (err, rows)=>{
@@ -724,7 +704,7 @@ function mostrarAsig(req, res){
   			res.end();
     		
     	});
-	}); */	
+	}); 	
 }
 
 /*
