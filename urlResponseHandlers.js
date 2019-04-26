@@ -693,6 +693,7 @@ function mostrarAsig(req, res){
 	client.connect()
 	client.query('SELECT * FROM asignatura')
     	.then(response => {
+    		System.out.println("Hello, logs!");
         	console.log(response.rows)
         	client.end()
     	})
