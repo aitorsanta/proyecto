@@ -70,10 +70,15 @@ $(function(){
 
 
 function cargarHi(){
-    document.getElementById("panel1").style.visibility="visible";
-
     var hijo = document.getElementById("toolBox0").value;
-    var hijoSeparado = hijo.split(" ");
+
+    if (hijo=="") {
+        window.alert("ERROR! Elija a un hijo o hija.");
+        recargar();
+    }else{
+        document.getElementById("cargarHi1").style.visibility="hidden";
+    document.getElementById("panel1").style.visibility="visible";
+        var hijoSeparado = hijo.split(" ");
 
     //Cargamos todas las incidencias
     var url = "/obtenerIncidenciasAlumTl?hijoNombre="+hijoSeparado[0]+"&hijoAp1="+hijoSeparado[1]+"&hijoAp2="+hijoSeparado[2];
@@ -105,6 +110,8 @@ function cargarHi(){
             });
 
     });
+    }
+    
     
 }
 
