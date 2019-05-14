@@ -2307,7 +2307,6 @@ function verNotasAlum(req,res){
 		    				};
 	    				}else if(arrayNotas.length!=0){
 	    					indiceNotas =0;
-	    					console.log("Ha entrado aquí");
 	    					for (var i = 0; i < arrayID.length; i++) {
 	    						arrayFinal.push(arrayNoms[i]+" "+arrayApe1s[i]+" "+arrayApe2s[i]);
 	    						//AGREGAR CALIFICACIONES
